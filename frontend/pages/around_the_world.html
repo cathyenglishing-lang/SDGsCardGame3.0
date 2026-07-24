@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Around the World in 80 Conversations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Karla:ital,wght@0,400;0,600;0,800;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16233B; --ink-soft:#3B4A66;
+  --paper:#EDE3D0; --paper-2:#F7F1E3; --paper-3:#DED0B6;
+  --stamp:#B5342B; --air:#2C5F9E; --customs:#1D7A5F; --gold:#C08A1E;
+  --z-GG:#7A5C3E; --z-LL:#7FB2D9; --z-CC:#CE7B98; --z-TT:#DD8232; --z-FF:#B5342B;
+  --z-DC:#DDA92B; --z-WW:#1D7A5F; --z-II:#2C5F9E; --z-CR:#71487F; --z-GC:#C08A1E;
+  --display:'Archivo Black','Haettenschweiler','Arial Black',sans-serif;
+  --body:'Karla','Trebuchet MS',system-ui,sans-serif;
+  --mono:'Space Mono','Courier New',monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--body); color:var(--ink); background:var(--ink);
+  background-image:radial-gradient(circle at 20% 10%,#22314f 0,transparent 55%),radial-gradient(circle at 80% 90%,#1d2b47 0,transparent 50%);
+  min-height:100vh; padding:14px; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px;margin:0 auto}
+.airmail{height:9px;background:repeating-linear-gradient(45deg,var(--stamp) 0 9px,var(--paper-2) 9px 18px,var(--air) 18px 27px,var(--paper-2) 27px 36px)}
+button{font-family:var(--body);cursor:pointer;border:none}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn{background:var(--ink);color:var(--paper-2);font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  font-size:.74rem;padding:11px 16px;border-radius:2px;transition:transform .12s,background .12s}
+.btn:hover{background:var(--air);transform:translateY(-1px)}
+.btn.stamp{background:var(--stamp)} .btn.stamp:hover{background:#8f2721}
+.btn.go{background:var(--customs)} .btn.go:hover{background:#13543f}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper-2)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.card-sheet{background:var(--paper-2);border-radius:3px;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+
+/* ---------- SETUP ---------- */
+#setup{max-width:620px;margin:4vh auto}
+.ticket{background:var(--paper-2);border-radius:3px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.ticket-head{padding:26px 26px 20px;border-bottom:2px dashed var(--paper-3);position:relative}
+.eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-soft)}
+h1{font-family:var(--display);font-size:clamp(1.7rem,5.2vw,2.6rem);line-height:.94;margin:10px 0 6px;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--stamp)}
+.sub{font-size:.85rem;color:var(--ink-soft);max-width:44ch}
+.ticket-body{padding:22px 26px 26px}
+.field-lbl{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:7px}
+.prow{display:flex;gap:8px;align-items:center;margin-bottom:9px}
+.prow input{flex:1;font-family:var(--body);font-size:.95rem;padding:9px 11px;border:1.5px solid var(--paper-3);border-radius:2px;background:#fff}
+.tagpick{display:flex;gap:5px}
+.tagpick button{width:24px;height:24px;border-radius:50%;border:2px solid transparent;opacity:.4}
+.tagpick button[aria-pressed="true"]{opacity:1;border-color:var(--ink);transform:scale(1.15)}
+.rules{margin-top:18px;padding-top:16px;border-top:1px solid var(--paper-3);font-size:.8rem;line-height:1.6;color:var(--ink-soft)}
+.rules b{color:var(--ink)}
+
+/* ---------- LAYOUT ---------- */
+#game{display:none}
+.topbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.brandmini{font-family:var(--display);color:var(--paper-2);font-size:.95rem;letter-spacing:.02em}
+.brandmini span{color:var(--z-DC)}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
+@media(max-width:900px){.stage{grid-template-columns:1fr}}
+
+/* ---------- BOARD ---------- */
+.boardbox{background:var(--paper);padding:9px;border-radius:3px;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+#board{display:grid;grid-template-columns:1.35fr repeat(9,1fr) 1.35fr;grid-template-rows:1.35fr repeat(9,1fr) 1.35fr;
+  aspect-ratio:1/1;gap:2px;background:var(--paper-3)}
+.sp{background:var(--paper-2);position:relative;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:3px;overflow:hidden;min-width:0}
+.sp .band{position:absolute;top:0;left:0;right:0;height:26%;}
+.sp.left .band,.sp.right .band{top:0;bottom:0;height:auto;width:26%;right:auto}
+.sp.right .band{left:auto;right:0}
+.sp .code{font-family:var(--display);font-size:clamp(.42rem,1.15vw,.72rem);line-height:1;letter-spacing:.02em}
+.sp .nm{font-family:var(--body);font-size:clamp(.34rem,.86vw,.55rem);line-height:1.05;color:var(--ink-soft);
+  text-transform:uppercase;letter-spacing:.03em;margin-top:1px}
+.sp.left,.sp.right{padding-left:5px;padding-right:5px}
+.sp.corner{background:var(--paper-3);justify-content:center;align-items:center;text-align:center;padding:5px}
+.sp.corner .code{font-size:clamp(.46rem,1.25vw,.8rem);color:var(--ink)}
+.sp.special{align-items:center;justify-content:center;text-align:center}
+.sp.special .glyph{font-size:clamp(.9rem,2.6vw,1.5rem);line-height:1}
+.owner{position:absolute;bottom:2px;right:2px;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--paper-2);box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.sp.here{box-shadow:inset 0 0 0 2px var(--gold)}
+.pawns{position:absolute;top:28%;left:2px;display:flex;flex-wrap:wrap;gap:1px;z-index:2}
+.pawn{width:clamp(8px,1.6vw,13px);height:clamp(8px,1.6vw,13px);border-radius:2px;border:1.5px solid #fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.4);transition:transform .2s}
+.pawn.active{transform:scale(1.25) rotate(-8deg)}
+.hub{grid-column:2/11;grid-row:2/11;background:var(--paper);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;padding:5% 8%;gap:3%;position:relative}
+.hub h2{font-family:var(--display);font-size:clamp(.85rem,3vw,1.9rem);line-height:.92;margin:0;letter-spacing:-.01em}
+.hub h2 em{font-style:normal;color:var(--stamp)}
+.hub .tag{font-family:var(--mono);font-size:clamp(.44rem,1.1vw,.68rem);letter-spacing:.24em;text-transform:uppercase;color:var(--ink-soft)}
+.dicebox{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.die{width:clamp(26px,5vw,42px);height:clamp(26px,5vw,42px);background:var(--paper-2);border:2px solid var(--ink);
+  border-radius:5px;display:grid;place-items:center;font-family:var(--display);font-size:clamp(.85rem,2.4vw,1.4rem)}
+.die.rolling{animation:tumble .5s ease}
+@keyframes tumble{0%{transform:rotate(0) scale(1)}40%{transform:rotate(180deg) scale(1.2)}100%{transform:rotate(360deg) scale(1)}}
+.hubmsg{font-size:clamp(.55rem,1.5vw,.82rem);color:var(--ink-soft);max-width:34ch;line-height:1.35;min-height:2.4em}
+
+/* ---------- SIDE PANEL ---------- */
+.panel{background:var(--paper-2);border-radius:3px;overflow:hidden;box-shadow:0 14px 34px rgba(0,0,0,.4)}
+.panel-h{font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;
+  padding:9px 12px;background:var(--ink);color:var(--paper-2)}
+.pl{display:flex;align-items:center;gap:9px;padding:9px 12px;border-bottom:1px solid var(--paper-3)}
+.pl:last-child{border-bottom:none}
+.pl.turn{background:#fff;box-shadow:inset 3px 0 0 var(--gold)}
+.pl .tagdot{width:15px;height:15px;border-radius:3px;flex:none;border:1.5px solid rgba(0,0,0,.2)}
+.pl .nm2{font-weight:800;font-size:.85rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl .cp{font-family:var(--mono);font-size:.8rem;font-weight:700}
+.pl .meta{font-family:var(--mono);font-size:.55rem;color:var(--ink-soft);letter-spacing:.08em}
+.jailed{color:var(--stamp);font-family:var(--mono);font-size:.55rem;letter-spacing:.1em}
+#log{max-height:190px;overflow-y:auto;padding:8px 12px;font-size:.76rem;line-height:1.5}
+#log div{padding:3px 0;border-bottom:1px dotted var(--paper-3);color:var(--ink-soft)}
+#log div b{color:var(--ink)}
+.panel-actions{padding:11px 12px;display:flex;flex-direction:column;gap:7px}
+
+/* ---------- PASSPORT STAMPS ---------- */
+#stamps{display:flex;flex-wrap:wrap;gap:6px;padding:11px 12px;min-height:52px}
+.stamp-mark{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;text-align:center;
+  font-family:var(--mono);font-size:.44rem;font-weight:700;line-height:1.1;letter-spacing:.02em;
+  border:2px solid currentColor;opacity:.82;transform:rotate(var(--r,-8deg));
+  mix-blend-mode:multiply;animation:stampIn .45s cubic-bezier(.2,1.5,.4,1)}
+@keyframes stampIn{0%{transform:scale(2.4) rotate(var(--r,-8deg));opacity:0}
+  60%{transform:scale(.92) rotate(var(--r,-8deg));opacity:.95}100%{transform:scale(1) rotate(var(--r,-8deg));opacity:.82}}
+.empty-note{font-size:.72rem;color:var(--ink-soft);padding:11px 12px;font-style:italic}
+
+/* ---------- MODAL / CARD ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,16,28,.86);display:none;place-items:center;
+  padding:16px;z-index:50;overflow-y:auto}
+.scrim.on{display:grid}
+.convo{width:min(620px,100%);background:var(--paper-2);border-radius:3px;overflow:hidden;
+  box-shadow:0 30px 70px rgba(0,0,0,.6);animation:dealIn .34s cubic-bezier(.2,.9,.3,1)}
+@keyframes dealIn{from{transform:translateY(26px) rotate(-1.2deg);opacity:0}to{transform:none;opacity:1}}
+.convo-top{padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:#fff}
+.convo-top .id{font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;font-weight:700}
+.convo-top .zn{font-family:var(--display);font-size:.9rem}
+.chip{font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;
+  background:rgba(255,255,255,.22);padding:4px 8px;border-radius:2px;white-space:nowrap}
+.convo-body{padding:18px}
+.blk{margin-bottom:15px}
+.blk-l{font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);
+  margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.blk-l:after{content:"";flex:1;height:1px;background:var(--paper-3)}
+.situation{font-size:1rem;line-height:1.6}
+.task{font-size:.96rem;line-height:1.55;font-weight:600;background:#fff;padding:12px 14px;border-left:3px solid var(--stamp)}
+.phrases{list-style:none;margin:0;padding:0}
+.phrases li{font-size:.9rem;line-height:1.5;padding:6px 0 6px 20px;position:relative;color:var(--ink-soft)}
+.phrases li:before{content:"\201C";position:absolute;left:0;top:4px;font-family:var(--display);font-size:1.1rem;color:var(--stamp)}
+.chall{font-size:.88rem;line-height:1.5;background:var(--paper);padding:11px 13px;border:1px dashed var(--ink-soft)}
+.keybox{background:var(--ink);color:var(--paper-2);padding:13px 15px;font-size:.83rem;line-height:1.55;display:none}
+.keybox.on{display:block}
+.keybox .kl{font-family:var(--mono);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--z-DC);margin-bottom:5px}
+.keybox p{margin:0 0 10px}
+.convo-foot{padding:14px 18px;background:var(--paper);display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.foot-btns{display:flex;gap:8px;flex-wrap:wrap}
+.reward{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;color:var(--ink-soft)}
+
+/* ---------- EVENT CARD ---------- */
+.event{width:min(430px,100%);background:var(--paper-2);border-radius:3px;overflow:hidden;text-align:center;
+  box-shadow:0 30px 70px rgba(0,0,0,.6);animation:dealIn .34s cubic-bezier(.2,.9,.3,1)}
+.event .ev-h{padding:14px;color:#fff;font-family:var(--display);font-size:1rem;letter-spacing:.04em}
+.event .ev-b{padding:24px 22px;font-size:1rem;line-height:1.6}
+.event .ev-f{padding:0 22px 22px}
+
+/* ---------- SCOREBOARD ---------- */
+.score-row{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--paper-3)}
+.score-row .rank{font-family:var(--display);font-size:1.1rem;width:26px;color:var(--ink-soft)}
+.score-row .who{flex:1;font-weight:800}
+.score-row .bon{font-family:var(--mono);font-size:.6rem;color:var(--ink-soft);display:block;font-weight:400;letter-spacing:.05em}
+.score-row .tot{font-family:var(--mono);font-weight:700}
+.score-row.win{background:#fff;box-shadow:inset 4px 0 0 var(--gold)}
+
+/* ---------- INDEX ---------- */
+.idx{width:min(760px,100%);background:var(--paper-2);border-radius:3px;box-shadow:0 30px 70px rgba(0,0,0,.6);max-height:88vh;display:flex;flex-direction:column}
+.idx-h{padding:14px 18px;background:var(--ink);color:var(--paper-2);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.idx-h h3{font-family:var(--display);margin:0;font-size:1rem}
+.idx-b{overflow-y:auto;padding:6px 0}
+.idx-z{padding:9px 18px;font-family:var(--display);font-size:.82rem;color:#fff;margin-top:2px}
+.idx-c{padding:10px 18px;border-bottom:1px solid var(--paper-3);font-size:.83rem;line-height:1.5}
+.idx-c .cid{font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;color:var(--ink-soft)}
+.idx-c .cq{display:block;margin-top:3px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.back-hub-link{position:fixed;top:14px;left:14px;z-index:60;font-family:var(--mono);
+  font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-2);
+  background:rgba(22,35,59,.82);padding:8px 12px;border-radius:2px;text-decoration:none;
+  border:1px solid rgba(255,255,255,.25)}
+.back-hub-link:hover{background:var(--ink)}
+</style>
+</head>
+<body>
+<a href="/pages/member_index.html" class="back-hub-link">← Back to Game Hub</a>
+<div class="wrap">
+
+<!-- ============ SETUP ============ -->
+<section id="setup">
+  <div class="ticket">
+    <div class="airmail"></div>
+    <div class="ticket-head">
+      <div class="eyebrow">Boarding Pass &nbsp;·&nbsp; Intercultural Communication &nbsp;·&nbsp; CEFR B1–B2</div>
+      <h1>Around the World<br>in <em>80 Conversations</em></h1>
+      <p class="sub">Ten zones. Eight conversations in each zone. You do not win by owning the most — you win by connecting the widest.</p>
+    </div>
+    <div class="ticket-body">
+      <span class="field-lbl">Travellers (2–4)</span>
+      <div id="plist"></div>
+      <div style="display:flex;gap:8px;margin:14px 0 4px">
+        <button class="btn ghost" id="addP">+ Add traveller</button>
+        <button class="btn go" id="start" style="flex:1">Begin the journey</button>
+      </div>
+      <div class="rules">
+        <b>How to play.</b> Roll, move, and land on a zone. Draw a Conversation Card and <b>say your answer out loud in English</b> — the group decides if you made the connection. Succeed and you claim the space and earn <b>Connection Points</b>.<br><br>
+        <b>Landing on someone else's space?</b> Answer their follow-up question instead of paying full toll.<br>
+        <b>Culture Shock!</b> sends you to <b>Lost in Translation</b>. The only way out is to complete a Repair card — avoiding the problem never works.<br><br>
+        <b>Final bonuses:</b> Zone Master +200 · Bridge Builder +300 (spaces in 5+ zones) · Repair Hero +150 (3+ repairs).
+      </div>
+    </div>
+    <div class="airmail"></div>
+  </div>
+</section>
+
+<!-- ============ GAME ============ -->
+<section id="game">
+  <div class="topbar">
+    <div class="brandmini">AROUND THE WORLD IN <span>80</span> CONVERSATIONS</div>
+    <div style="display:flex;gap:7px">
+      <button class="btn ghost" id="openIdx" style="color:var(--paper-2);border-color:var(--paper-2)">Card index</button>
+      <button class="btn stamp" id="finish">End &amp; score</button>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="boardbox"><div id="board"></div></div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="panel">
+        <div class="panel-h">Travellers</div>
+        <div id="players"></div>
+        <div class="panel-actions">
+          <button class="btn go" id="roll">Roll the dice</button>
+          <button class="btn ghost" id="endturn" disabled>End turn</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h" id="ppHead">Passport</div>
+        <div id="stamps"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h">Travel log</div>
+        <div id="log"></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="scrim" id="cardScrim"><div class="convo" id="convo"></div></div>
+<div class="scrim" id="evScrim"><div class="event" id="event"></div></div>
+<div class="scrim" id="endScrim"><div class="convo" id="endBox"></div></div>
+<div class="scrim" id="idxScrim"><div class="idx" id="idxBox"></div></div>
+<script src="/static/config.js"></script>
+<script src="/static/js/api.js"></script>
+<script>
+auth.requireLogin();
+</script>
+<script>
+// Around the World in 80 Conversations — card decks
+// move: Notice/Interpret/Respond/Clarify/Compare/Negotiate/Repair/Reflect
+// type: Interpret | Respond | Negotiate | Repair    tier: 1|2|3
+
+const CARDS = [
+
+/* ================= ZONE 1 — GREETING GATE (GG) ================= */
+{id:"GG01",zone:"GG",move:"Notice",type:"Interpret",tier:1,level:"B1",
+situation:`It is your first day in an international dormitory. Your new neighbour Kenji from Japan bows slightly when he meets you. Later, Aisha from Nigeria shakes your hand with both hands and holds it for a long time. Both of them are smiling.`,
+task:`Describe TWO things you noticed about how each person greeted you. Do not say which one is better.`,
+phrases:["I noticed that Kenji...","One difference between them was...","Both of them seemed to..."],
+challenge:`Why might a greeting last longer in some cultures than in others?`,
+answers:["Kenji bowed and kept some distance; Aisha used both hands and more touch. Both showed respect, but in different ways."],
+note:`Train students to describe behaviour before judging it. Greeting length often signals warmth and relationship-building rather than delay.`},
+
+{id:"GG02",zone:"GG",move:"Interpret",type:"Interpret",tier:1,level:"B1",
+situation:`You email a professor in Germany and begin with Hi Thomas. He replies politely but signs his message Prof. Dr. Thomas Berger. In your next email you write Hi Thomas again. He does not reply for three days.`,
+task:`Give TWO possible explanations for the professor's behaviour. Use maybe or it could be that.`,
+phrases:["Maybe he...","It could be that in his culture...","Another explanation is that..."],
+challenge:`How would you rewrite your first line to be safer in a new academic culture?`,
+answers:["Maybe titles matter a lot to him. It could be that he is simply busy. Both are possible."],
+note:`Point out the trap of single-cause thinking. In many German-speaking contexts, academic titles are used until the person invites first names.`},
+
+{id:"GG03",zone:"GG",move:"Respond",type:"Respond",tier:2,level:"B1",
+situation:`You are at an international welcome party. A new classmate from Brazil greets you with a hug and a kiss on the cheek. You feel surprised, because in your culture people usually smile and nod. Your classmate sees your face and looks worried.`,
+task:`Respond in a friendly way. Show you are happy to meet them, and explain your surprise politely.`,
+phrases:["Oh, sorry! I was just surprised because...","It is really nice to meet you. In my culture, we usually...","I would love to learn how people say hello in..."],
+challenge:`Your classmate asks, So what should I do next time? Suggest a greeting that works for both of you.`,
+answers:["Sorry, I was just surprised! Where I am from we usually just smile. But it is lovely to meet you."],
+note:`The key move is repairing the other person's worry first, then explaining. Order matters.`},
+
+{id:"GG04",zone:"GG",move:"Clarify",type:"Respond",tier:2,level:"B1",
+situation:`A visiting researcher introduces herself as Dr. Chen, but everyone in the lab calls her Wei-Ling. You are a first-year student and you are not sure which name you should use. You do not want to sound rude or too casual.`,
+task:`Ask her politely how she would like to be called. Use a full question, not just her name.`,
+phrases:["Excuse me, may I ask how you...","I want to make sure I address you...","Would you prefer that I call you..."],
+challenge:`She answers, Oh, anything is fine. What do you do now?`,
+answers:["Excuse me, Dr. Chen — may I ask what you would like me to call you?"],
+note:`Anything is fine is often a politeness move, not real information. Teach students to offer a choice: Then I will say Dr. Chen in class and Wei-Ling in the lab — is that OK?`},
+
+{id:"GG05",zone:"GG",move:"Compare",type:"Negotiate",tier:3,level:"B2",
+situation:`Your exchange group is designing a name badge for a welcome event. Some students want only first names, to feel friendly. Others want full names with titles and departments, to show respect. Nobody wants to offend the guests.`,
+task:`Compare the two ideas. Say one advantage of each, then suggest a badge design that works for both groups.`,
+phrases:["The advantage of first names is...","On the other hand, titles help people...","What if the badge showed both..."],
+challenge:`How would you handle a guest whose name is often mispronounced?`,
+answers:["First names feel warm; titles show respect. We could print the first name big and the title smaller underneath."],
+note:`Model the both-and structure rather than either-or. A pronunciation line on the badge is a strong inclusive answer.`},
+
+{id:"GG06",zone:"GG",move:"Negotiate",type:"Negotiate",tier:3,level:"B2",
+situation:`You are organising a buddy programme. Your international partner says, In my country, we visit each other at home without calling first. You feel uncomfortable with surprise visits, but you do not want to seem cold or unfriendly.`,
+task:`Negotiate a way of meeting that both of you feel comfortable with. Do not just say no.`,
+phrases:["I really like that you want to...","For me, it works better if...","How about we agree that..."],
+challenge:`Your partner says, But that feels too formal for friends. Respond without giving up your need.`,
+answers:["I love that you want to drop by. For me a quick message first works better — then I can actually be free for you."],
+note:`Watch for students who only defend their own comfort. Strong answers keep the relationship warm while stating a limit.`},
+
+{id:"GG07",zone:"GG",move:"Repair",type:"Repair",tier:3,level:"B2",
+situation:`At a conference you met a Korean professor. You called him by his first name in front of his students. He said nothing, but his students looked at each other. Later, a colleague tells you this was probably uncomfortable for him.`,
+task:`Repair the situation. Speak to the professor. Describe what happened, explain your intention, and say what you will do next time.`,
+phrases:["I think I may have...","I did not mean to...","From now on I will..."],
+challenge:`He says, Oh, it is really nothing. Do you drop the topic or continue? Explain your choice.`,
+answers:["Professor Park, I think I used your first name in front of your students. I did not mean to be disrespectful — I will use your title from now on."],
+note:`Repair sequence: describe, explain intention, commit to change. Note that no reaction is not the same as no problem.`},
+
+{id:"GG08",zone:"GG",move:"Reflect",type:"Repair",tier:3,level:"B2",
+situation:`Think about a real first meeting in your life that felt awkward. Maybe someone stood too close, used your name wrongly, or did not shake your hand. At the time, you probably explained it in one way only.`,
+task:`Tell the group what happened. Then give a different explanation you did not think of at the time.`,
+phrases:["At that time, I thought...","Now I think it could also have been...","Next time I would..."],
+challenge:`What is one greeting habit of your own that a visitor might misread?`,
+answers:["I thought he was cold because he did not smile. Now I think he may have been nervous about his English."],
+note:`This card connects the deck to lived experience. Push for a genuine second explanation, not a polite repetition of the first.`},
+
+/* ================= ZONE 2 — LANGUAGE LANE (LL) ================= */
+{id:"LL01",zone:"LL",move:"Notice",type:"Interpret",tier:1,level:"B1",
+situation:`In a group discussion, your Dutch classmate says, No, that idea will not work. Your Thai classmate says, That is interesting. Maybe we could also think about another way. Both of them disagree with the same idea.`,
+task:`Describe the difference in HOW they disagreed. Do not say who is more polite.`,
+phrases:["The first speaker used...","The second speaker started by...","Both of them wanted to..."],
+challenge:`Which style is easier for you to understand, and why?`,
+answers:["One disagreed directly and quickly; the other agreed first and suggested an alternative. Both were disagreeing."],
+note:`Direct and indirect are strategies, not levels of politeness. Avoid ranking cultures here.`},
+
+{id:"LL02",zone:"LL",move:"Interpret",type:"Interpret",tier:1,level:"B1",
+situation:`You ask your teammate if she can finish the report by Friday. She pauses for four seconds, then says, Friday... that is quite soon. She does not say yes or no. You need an answer today.`,
+task:`Give TWO possible meanings of her pause and her answer.`,
+phrases:["Maybe she is trying to...","It could mean that...","Another possibility is that she..."],
+challenge:`What question could you ask to find out which meaning is correct?`,
+answers:["Maybe she is saying no politely. It could also be that she is calculating her other deadlines."],
+note:`Silence carries meaning. Teach the follow-up: Would Monday be more realistic for you?`},
+
+{id:"LL03",zone:"LL",move:"Respond",type:"Respond",tier:2,level:"B1",
+situation:`During an online class, a classmate makes a joke about the weather in his country. Everyone laughs. You did not understand the joke at all, but the teacher then asks you, Funny, right? What do you think?`,
+task:`Respond honestly and comfortably. Do not pretend that you understood.`,
+phrases:["To be honest, I missed that one — could you...","I think I lost the joke somewhere! Is it about...","Sorry, my English brain is still waking up. Did he mean..."],
+challenge:`Your classmate explains the joke and it is still not funny to you. What do you say?`,
+answers:["To be honest I did not catch it — could someone explain? I want to laugh too!"],
+note:`Humour is the hardest thing to transfer across languages. Reward honesty over fake laughing.`},
+
+{id:"LL04",zone:"LL",move:"Clarify",type:"Respond",tier:2,level:"B1",
+situation:`Your supervisor sends this message: We should probably revisit the methodology at some point. You are not sure if this means change it now, change it later, or just think about it. The deadline is next week.`,
+task:`Write or say a polite clarification question that gets a specific answer.`,
+phrases:["Just to make sure I understand,...","Do you mean that I should... or...","Would it help if I..."],
+challenge:`Turn your question into a message with a clear deadline in it.`,
+answers:["Just to make sure I understand — should I revise the methodology before Friday, or discuss it at our next meeting?"],
+note:`Model the or-question. Offering two options is easier to answer than an open question.`},
+
+{id:"LL05",zone:"LL",move:"Compare",type:"Negotiate",tier:3,level:"B2",
+situation:`In your research group, one member always says exactly what he thinks, even in front of the professor. Another member never disagrees in the meeting, but sends her real opinion by message afterwards. The group is now slow at making decisions.`,
+task:`Compare the two communication styles. Say what each one gives the group and what it costs the group.`,
+phrases:["The direct style helps the group to...","However, it can make people feel...","The indirect style protects... but it costs..."],
+challenge:`Suggest one meeting rule that would use the strengths of both.`,
+answers:["Direct speech saves time but can shut people down. Indirect speech protects relationships but hides information."],
+note:`A strong answer names a cost for BOTH styles. A silent round of written comments is a good rule suggestion.`},
+
+{id:"LL06",zone:"LL",move:"Negotiate",type:"Negotiate",tier:3,level:"B2",
+situation:`Your international project team speaks English, but two members share the same first language and often switch into it during meetings. They say it is faster. Other members feel left out but have not said anything yet.`,
+task:`Negotiate a language agreement for the team. Respect both speed and inclusion.`,
+phrases:["I understand it is faster when you...","At the same time, some of us...","Could we agree that..."],
+challenge:`One member replies, But we are only discussing small details. Respond.`,
+answers:["I get that it is faster. Could we agree to switch back and give us a one-line summary in English after?"],
+note:`This is a real classroom issue. Avoid an English-only rule as the only answer — summarising is more inclusive and more realistic.`},
+
+{id:"LL07",zone:"LL",move:"Repair",type:"Repair",tier:3,level:"B2",
+situation:`You told a classmate, Your English is very good for someone from your country. You meant it as a compliment. She smiled, said thank you quietly, and has been distant with you since then.`,
+task:`Repair the relationship. Explain what you now understand about your words.`,
+phrases:["I have been thinking about what I said...","I realise it may have sounded like...","What I actually wanted to say was..."],
+challenge:`Rewrite the compliment so it is genuinely about her, not her country.`,
+answers:["I have been thinking about what I said. It probably sounded like I was surprised — I am sorry. I meant your presentation was really clear."],
+note:`Classic microaggression through a compliment. The repair must show understanding, not just apologise.`},
+
+{id:"LL08",zone:"LL",move:"Reflect",type:"Repair",tier:3,level:"B2",
+situation:`Think about a time when you were misunderstood in English, or when your accent or word choice caused a problem. Perhaps someone laughed, corrected you, or simply did not understand.`,
+task:`Tell the story briefly. Then say what you would do differently now, as a speaker or as a listener.`,
+phrases:["Once, I said... and the other person...","At that moment I felt...","Now I would probably..."],
+challenge:`What can a listener do to make a speaker feel safe in English?`,
+answers:["I said I am boring instead of I am bored and everyone laughed. Now I would just laugh and ask them to teach me the difference."],
+note:`Close by shifting responsibility to the listener too. Comprehension is shared work.`},
+
+/* ================= ZONE 3 — CLASSROOM CROSSING (CC) ================= */
+{id:"CC01",zone:"CC",move:"Notice",type:"Interpret",tier:1,level:"B1",
+situation:`In your EMI class, the American exchange students raise their hands constantly and often interrupt the lecturer with questions. Most local students write everything down and ask the lecturer privately after class.`,
+task:`Describe both behaviours without saying which group is a better student.`,
+phrases:["One group tends to...","The other group prefers to...","Both groups are trying to..."],
+challenge:`How might the lecturer wrongly interpret the quiet group?`,
+answers:["One group learns by asking publicly; the other prepares questions and asks privately. Both are engaged."],
+note:`Silence is often read as unpreparedness by teachers from participation-heavy cultures. Name that risk directly.`},
+
+{id:"CC02",zone:"CC",move:"Interpret",type:"Interpret",tier:1,level:"B1",
+situation:`Your professor writes on your essay: This is an interesting start. Some sections could be developed further. You are unsure whether this is a good grade, a warning, or just a polite comment.`,
+task:`Give TWO possible interpretations of this feedback.`,
+phrases:["It might mean that...","On the other hand, it could be...","In my school culture, this would usually mean..."],
+challenge:`What is one way to find out what it really means?`,
+answers:["It could be gentle criticism meaning rewrite this, or it could be genuine praise with a suggestion."],
+note:`Feedback softness varies enormously. Teach students to ask: Which section would you most want me to develop?`},
+
+{id:"CC03",zone:"CC",move:"Respond",type:"Respond",tier:2,level:"B1",
+situation:`A visiting lecturer asks the class a question. There is complete silence for ten seconds. She looks uncomfortable and says, In my country, students always answer. You know several classmates have good ideas but feel nervous about speaking English.`,
+task:`Say something helpful to the lecturer that explains the silence without embarrassing your classmates.`,
+phrases:["I think some of us are...","Could we have a minute to...","It is not that we do not have ideas — we..."],
+challenge:`Suggest one small change she could make to get more answers.`,
+answers:["I think many of us are still translating in our heads. Could we discuss in pairs for one minute first?"],
+note:`Think-pair-share is the answer students usually reach for. Let them discover it.`},
+
+{id:"CC04",zone:"CC",move:"Clarify",type:"Respond",tier:2,level:"B1",
+situation:`Your group assignment instructions say: Students are expected to critically engage with the source material. Your teammates from three countries all understand this differently: summarise it, criticise it, or add personal opinion.`,
+task:`Ask the lecturer one clear question that will settle the disagreement.`,
+phrases:["Could you clarify what you mean by...","Would you like us to... or...","Could you give an example of..."],
+challenge:`Explain critically engage to a first-year student in simple English.`,
+answers:["Could you clarify what critically engage means here — should we evaluate the arguments, or mainly compare the sources?"],
+note:`Academic keywords are cultural. Asking for one example is often more effective than asking for a definition.`},
+
+{id:"CC05",zone:"CC",move:"Compare",type:"Negotiate",tier:3,level:"B2",
+situation:`In your home university, the teacher is the main authority and students rarely challenge ideas in class. In your exchange university, students are graded on how much they argue with the reading and with the professor.`,
+task:`Compare the two classroom cultures. Name one strength of each system.`,
+phrases:["A strength of the first system is...","The second system helps students to...","The difficulty for a student moving between them is..."],
+challenge:`What advice would you give a student moving from one system to the other?`,
+answers:["One builds deep respect for expertise and shared attention; the other builds confidence and independent thinking."],
+note:`Do not let this become a critique of Asian education. Insist on a real strength for each.`},
+
+{id:"CC06",zone:"CC",move:"Negotiate",type:"Negotiate",tier:3,level:"B2",
+situation:`Your group must present together. One member believes the strongest speaker should present everything so the group gets a better grade. Two members want to practise their English and speak for equal time. The presentation is in five days.`,
+task:`Negotiate a plan that protects both the grade and the learning.`,
+phrases:["I understand you want the group to...","At the same time, we all need to...","What if the strongest speaker took... while the rest of us..."],
+challenge:`How would you divide the Q and A section?`,
+answers:["Everyone speaks, but the strongest speaker opens and closes, and we rehearse twice together."],
+note:`Watch for groups that silently sacrifice weaker speakers. Name the cost of that choice.`},
+
+{id:"CC07",zone:"CC",move:"Repair",type:"Repair",tier:3,level:"B2",
+situation:`During a class discussion you said, Sorry, but that is completely wrong, to a classmate. In your culture this is normal academic debate. Your classmate stopped speaking for the rest of the class and left quickly.`,
+task:`Repair the relationship after class. Keep your academic point, but rebuild the connection.`,
+phrases:["I want to say something about class today...","I still disagree about the data, but I...","How would you prefer me to..."],
+challenge:`How can you disagree strongly next time without the same effect?`,
+answers:["I still think the data says something different, but I said it badly and I am sorry. How would you rather I raise it next time?"],
+note:`Excellent card for showing that repair does not require abandoning your position.`},
+
+{id:"CC08",zone:"CC",move:"Reflect",type:"Repair",tier:3,level:"B2",
+situation:`Think about your own classroom habits: when you speak, when you stay quiet, when you ask questions, and how you show respect to a teacher.`,
+task:`Explain ONE of your habits to someone from a different education system. Then say how it might be misread by them.`,
+phrases:["In my classes, we usually...","We do this because...","Someone from another system might think that this means..."],
+challenge:`Which of your habits would you keep, and which would you change?`,
+answers:["We do not interrupt the teacher because it shows respect. A visitor might think we are not interested."],
+note:`Ends the zone by making the students the explainers, not the ones being explained.`},
+
+/* ================= ZONE 4 — TEAMWORK TOWN (TT) ================= */
+{id:"TT01",zone:"TT",move:"Notice",type:"Interpret",tier:1,level:"B1",
+situation:`Your project team agrees to meet at 2:00. Two members arrive at 1:55 and open their laptops. Two arrive at 2:15, apologise briefly, and start with ten minutes of friendly conversation before working.`,
+task:`Describe what each pair seems to think a meeting is for. Do not use the word late.`,
+phrases:["The first pair seems to treat the meeting as...","For the second pair, the beginning is...","Both groups care about..."],
+challenge:`What could go wrong if nobody talks about this?`,
+answers:["One pair sees the meeting as a task with a start time; the other sees it as a relationship space that then becomes work."],
+note:`Introduce monochronic and monochronic-polychronic time orientations without the jargon at B1.`},
+
+{id:"TT02",zone:"TT",move:"Interpret",type:"Interpret",tier:1,level:"B1",
+situation:`You send your team a draft and ask for comments. Two members reply with detailed corrections within an hour. One member writes, Looks great! One member says nothing at all for three days.`,
+task:`Give TWO possible explanations for the silent member.`,
+phrases:["Maybe he is...","It could also be that...","In some teams, silence means..."],
+challenge:`How would you check, without sounding annoyed?`,
+answers:["Maybe he is busy or unsure how to criticise politely. It could also be that he thinks silence means agreement."],
+note:`Silence-equals-agreement is common; so is silence-equals-disagreement. That ambiguity is the teaching point.`},
+
+{id:"TT03",zone:"TT",move:"Respond",type:"Respond",tier:2,level:"B1",
+situation:`In a team meeting, one member has spoken for eight minutes. Another member has tried to start speaking twice and stopped both times. You are not the leader, but you notice it.`,
+task:`Say something that opens space for the quiet member without embarrassing the talkative one.`,
+phrases:["That is a good point — before we move on, I think...","Sorry to jump in, I would love to hear...","Can we hear from... on this?"],
+challenge:`The talkative member keeps going. What do you say the second time?`,
+answers:["Thanks — that is useful. Mei, I think you wanted to say something earlier?"],
+note:`Naming the person is the crucial move. General invitations rarely work.`},
+
+{id:"TT04",zone:"TT",move:"Clarify",type:"Respond",tier:2,level:"B1",
+situation:`Your team leader says, Let us finish this as soon as possible. One member starts working immediately that night. Another assumes it means within two weeks. The real deadline is unclear.`,
+task:`Ask a question that turns as soon as possible into something specific.`,
+phrases:["Can we agree on an exact...","When you say as soon as possible, do you mean...","Would Thursday at 6pm work as..."],
+challenge:`Write the sentence you would send to the whole team afterwards.`,
+answers:["When you say as soon as possible, do you mean before Friday, or before the next meeting?"],
+note:`Vague time language is a top source of cross-cultural team conflict. Push for a date and a time.`},
+
+{id:"TT05",zone:"TT",move:"Compare",type:"Negotiate",tier:3,level:"B2",
+situation:`Half your team wants one leader who assigns tasks and checks progress. The other half wants a flat team where everyone decides together. Both sides think the other way will fail.`,
+task:`Compare the two structures. Name what each is good at and what each risks.`,
+phrases:["A clear leader is good when...","The risk is that...","A flat team gives everyone... but it can become..."],
+challenge:`Design a structure that uses both, and say when each applies.`,
+answers:["Leadership gives speed and clear responsibility but can silence people; flat teams give ownership but can drift."],
+note:`Strong answers separate decision types: routine decisions by the coordinator, big decisions together.`},
+
+{id:"TT06",zone:"TT",move:"Negotiate",type:"Negotiate",tier:3,level:"B2",
+situation:`One team member has missed two deadlines. He explains that he has a part-time job and family responsibilities. The presentation is in six days and the group is behind. Nobody wants to report him to the teacher.`,
+task:`Negotiate a realistic plan with him. Be fair to him and to the group.`,
+phrases:["I want to understand your situation...","The group also needs...","What could you realistically do by..."],
+challenge:`He agrees but misses the new deadline too. What now?`,
+answers:["I hear that your week is impossible. What can you realistically finish by Sunday, and what should we take over?"],
+note:`Ask what is realistic rather than demanding what is required. It usually produces a keepable promise.`},
+
+{id:"TT07",zone:"TT",move:"Repair",type:"Repair",tier:3,level:"B2",
+situation:`You rewrote a teammate's whole section because you thought the English was weak. You did not tell her first. She saw the final file this morning and wrote in the group chat: I see my part is gone.`,
+task:`Repair this in the group chat. Take responsibility and offer a way forward.`,
+phrases:["You are right, and I should have...","My reason was..., but that does not excuse...","Can we go through it together and..."],
+challenge:`How do you give language feedback to a teammate next time?`,
+answers:["You are right — I edited it without asking, and that was not OK. Can we go through both versions together tonight?"],
+note:`Editing someone's English without permission is a power move. Name that honestly.`},
+
+{id:"TT08",zone:"TT",move:"Reflect",type:"Repair",tier:3,level:"B2",
+situation:`Think about the best and the worst team you have ever worked in, at school, at work, or in a club.`,
+task:`Name ONE behaviour that made the good team work, and ONE behaviour that damaged the bad one. Then say which one you do yourself.`,
+phrases:["In the good team, people always...","In the bad team, the problem was that...","Honestly, the habit I need to change is..."],
+challenge:`What is one thing you will do differently in your next group task?`,
+answers:["In the good team we checked in every Monday. In the bad one nobody said when they were stuck."],
+note:`Push for self-inclusion. Reflection that only diagnoses others is incomplete.`},
+
+/* ================= ZONE 5 — FOOD & FESTIVAL AVENUE (FF) ================= */
+{id:"FF01",zone:"FF",move:"Notice",type:"Interpret",tier:1,level:"B1",
+situation:`At a shared dinner, one guest takes a very small portion and refuses a second serving three times before accepting. Another guest fills her plate immediately and asks for more. The host smiles at both of them.`,
+task:`Describe what each guest might believe about being a polite guest.`,
+phrases:["The first guest seems to think...","For the second guest, taking more may show...","Both of them are trying to..."],
+challenge:`How should a host offer food if guests come from both traditions?`,
+answers:["One shows respect by not taking too much; the other shows appreciation by eating a lot. Both mean thank you."],
+note:`Ritual refusal is common in many cultures. Hosts who offer only once may leave guests hungry.`},
+
+{id:"FF02",zone:"FF",move:"Interpret",type:"Interpret",tier:1,level:"B1",
+situation:`You give a visiting colleague a beautifully wrapped gift. He says thank you, puts it aside without opening it, and continues the conversation. You feel a little disappointed.`,
+task:`Give TWO possible explanations for why he did not open it.`,
+phrases:["Maybe in his culture...","It could be that he wants to...","Another explanation is..."],
+challenge:`What could you say if you would like him to open it now?`,
+answers:["Maybe opening a gift in front of the giver is considered impolite where he is from."],
+note:`Both opening immediately and waiting are polite somewhere. The disappointment is the real subject here.`},
+
+{id:"FF03",zone:"FF",move:"Respond",type:"Respond",tier:2,level:"B1",
+situation:`Your host family has cooked a special dish for you. It contains meat, and you do not eat meat. The whole family is watching you, waiting happily for your first bite.`,
+task:`Refuse the dish politely while protecting the host's feelings.`,
+phrases:["This looks wonderful — I should have told you earlier that I...","Could I try the... instead? It smells amazing.","Thank you so much for cooking. Unfortunately I..."],
+challenge:`The host says, Just a little bit! Respond a second time.`,
+answers:["It looks amazing, and I am sorry I did not mention it earlier — I do not eat meat. Could I have more of the vegetables?"],
+note:`The strongest answers praise the effort, take some responsibility, and offer an alternative.`},
+
+{id:"FF04",zone:"FF",move:"Clarify",type:"Respond",tier:2,level:"B1",
+situation:`You are invited to a colleague's home for dinner at 7pm. You do not know if you should bring something, arrive exactly on time, or take off your shoes at the door.`,
+task:`Ask your colleague TWO clarifying questions before the dinner.`,
+phrases:["Is there anything I could bring, or...","Would you like me to arrive at exactly...","Just so I do not get it wrong, should I..."],
+challenge:`Your colleague says, Oh, do not worry about anything. What do you do?`,
+answers:["Should I bring something, or just myself? And is 7 o clock exactly right, or a little later?"],
+note:`Asking is almost always safer than guessing. Model asking without apologising excessively.`},
+
+{id:"FF05",zone:"FF",move:"Compare",type:"Negotiate",tier:3,level:"B2",
+situation:`After a group dinner, the bill arrives. Two students want to split it exactly by what each person ate. One student wants to divide it equally. The oldest member wants to pay for everyone, as is normal in his country.`,
+task:`Compare the three approaches. Say what each one is really about.`,
+phrases:["Splitting exactly is about...","Dividing equally shows...","Paying for everyone is a way of..."],
+challenge:`Suggest a way to decide this BEFORE the food arrives next time.`,
+answers:["Exact splitting is about fairness, equal splitting is about simplicity, and hosting is about relationship and status."],
+note:`Money at the table is one of the most emotional intercultural moments. Deciding early prevents it.`},
+
+{id:"FF06",zone:"FF",move:"Negotiate",type:"Negotiate",tier:3,level:"B2",
+situation:`Your club is planning an international food festival. The proposed menu contains pork and alcohol. Several members cannot eat or drink these for religious reasons but have not complained. You noticed they went quiet during the planning.`,
+task:`Raise the issue and negotiate a menu that includes everyone, without making anyone the problem.`,
+phrases:["Before we finalise the menu, I want to check...","Could we make sure every table has...","What if we labelled every dish with..."],
+challenge:`One member says, But they can just eat something else. Respond.`,
+answers:["Let us make sure every table has options everyone can eat, and label every dish clearly."],
+note:`The move from special option to universal design is the key inclusion insight.`},
+
+{id:"FF07",zone:"FF",move:"Repair",type:"Repair",tier:3,level:"B2",
+situation:`You gave your Chinese host a clock as a farewell gift because it was expensive and beautiful. Your host thanked you politely, but a friend later tells you that in Chinese, giving a clock sounds like attending a funeral.`,
+task:`Repair the situation with your host. Do not pretend it did not happen.`,
+phrases:["I have just learned something about...","I had absolutely no idea, and I...","Please let me..."],
+challenge:`Should you replace the gift? Explain your reasoning.`,
+answers:["I just learned what giving a clock can mean. I had no idea and I am so sorry — please let me bring you something else."],
+note:`Good chance to discuss when repair helps and when it draws more attention to the mistake.`},
+
+{id:"FF08",zone:"FF",move:"Reflect",type:"Repair",tier:3,level:"B2",
+situation:`Think about one food, festival or gift-giving rule in your own culture that visitors often get wrong.`,
+task:`Explain the rule and the reason behind it in simple English. Then say how you would tell a visitor kindly if they broke it.`,
+phrases:["In my culture, people usually do not...","The reason is that...","If a visitor did it, I would probably say..."],
+challenge:`Is there a rule from your own culture you personally disagree with?`,
+answers:["We do not stick chopsticks upright in rice, because it looks like incense for the dead."],
+note:`The final question invites students to see their own culture as internally diverse, not fixed.`},
+
+/* ================= ZONE 6 — DIGITAL CULTURE DISTRICT (DC) ================= */
+{id:"DC01",zone:"DC",move:"Notice",type:"Interpret",tier:1,level:"B1",
+situation:`You message two classmates the same question at 9pm. One replies in thirty seconds with three short messages. The other replies the next morning with one long, complete paragraph.`,
+task:`Describe what each person seems to think a message is. Do not say who is more polite.`,
+phrases:["For the first classmate, messaging seems to be...","The second treats a message more like...","Both of them answered the..."],
+challenge:`Which style causes more misunderstanding, and why?`,
+answers:["One treats chat like conversation; the other treats it like email. Both replied fully."],
+note:`Reply speed is read as respect in some networks and as pressure in others.`},
+
+{id:"DC02",zone:"DC",move:"Interpret",type:"Interpret",tier:1,level:"B1",
+situation:`You send a long message explaining your idea to a group. Your team leader replies with a single thumbs-up emoji. You are not sure whether she has read it carefully, agreed with it, or ended the discussion.`,
+task:`Give TWO possible meanings of that emoji.`,
+phrases:["It might mean that she...","Or it could simply be a way of...","In my experience, a thumbs-up usually..."],
+challenge:`How would you get a clearer answer without sounding demanding?`,
+answers:["It might mean full agreement, or just I have seen this."],
+note:`Emoji meaning varies by generation as much as by nation. Ask students which reading feels natural to them.`},
+
+{id:"DC03",zone:"DC",move:"Respond",type:"Respond",tier:2,level:"B1",
+situation:`A professor from another country messages you on a social media app at 11pm about a class task. In your culture, teachers do not contact students there, and you feel uncomfortable, but you do not want to seem rude.`,
+task:`Reply politely and suggest a channel you are more comfortable with.`,
+phrases:["Thank you for the message. Would it be OK if we...","I check my university email more regularly, so...","I will reply properly tomorrow morning —..."],
+challenge:`How would you answer if it were your manager instead of your professor?`,
+answers:["Thanks for letting me know! Would it be OK to move this to email? I check that more carefully."],
+note:`Channel choice is a boundary. Redirecting is more effective than not replying.`},
+
+{id:"DC04",zone:"DC",move:"Clarify",type:"Respond",tier:2,level:"B1",
+situation:`In an online meeting, your international team keeps their cameras off. Your professor asks you to lead the next meeting and you do not know whether to ask everyone to turn cameras on.`,
+task:`Ask the team a clarifying question about camera use before the meeting.`,
+phrases:["Before Thursday, can I check whether people prefer...","Is there any reason cameras are difficult for...","Would it help if we agreed that..."],
+challenge:`One member replies, I have bad internet. Another says nothing. What do you decide?`,
+answers:["Can I check how people feel about cameras? I do not mind either way, but I would like us to agree."],
+note:`Camera norms involve bandwidth, privacy, home space, and gender. Never assume disengagement.`},
+
+{id:"DC05",zone:"DC",move:"Compare",type:"Negotiate",tier:3,level:"B2",
+situation:`Your team uses one app for everything: jokes, deadlines, files and personal news. A new member says she prefers to keep work and personal life separate and has muted the group. Now she misses deadlines.`,
+task:`Compare the two approaches to work and personal boundaries online. Name a benefit of each.`,
+phrases:["Mixing everything helps the team to...","Keeping them separate protects...","The problem appears when..."],
+challenge:`Suggest a structure that gives both without more apps than people can manage.`,
+answers:["Mixing builds closeness and speed; separating protects rest and focus. The failure point is one channel carrying both."],
+note:`Two channels, one muted and one never muted, is the usual practical answer.`},
+
+{id:"DC06",zone:"DC",move:"Negotiate",type:"Negotiate",tier:3,level:"B2",
+situation:`A classmate posted a group photo from your field trip online and tagged everyone. One student in the photo does not want her picture on social media. The classmate says, It is just a nice photo, do not be so sensitive.`,
+task:`Negotiate an agreement about photos for the rest of the trip.`,
+phrases:["I know you did not mean any harm...","For some people, being tagged means...","Could we agree that before posting, we..."],
+challenge:`What should happen to the photo that is already online?`,
+answers:["I know you meant well. Could we agree to ask before tagging? And could you untag her now?"],
+note:`Privacy norms differ by country, family situation and even legal status. Do not treat it as oversensitivity.`},
+
+{id:"DC07",zone:"DC",move:"Repair",type:"Repair",tier:3,level:"B2",
+situation:`You wrote a short message to your supervisor: Need the file today. Thanks. You meant it as efficient. She replied very formally and has been distant since. You realise it may have read as an order.`,
+task:`Repair the tone with a follow-up message. Show that you understand how it sounded.`,
+phrases:["Looking back at my message this morning...","I wrote it quickly and it came across as...","What I meant was..."],
+challenge:`Rewrite the original message in a warmer register without making it longer than three lines.`,
+answers:["My message this morning was too short and probably sounded like an order — sorry. I meant: would you have time to send the file today?"],
+note:`Brevity reads as efficiency in some cultures and as rudeness in others. Teach a softener plus a request.`},
+
+{id:"DC08",zone:"DC",move:"Reflect",type:"Repair",tier:3,level:"B2",
+situation:`Think about your own digital habits: how fast you reply, whether you use voice messages, how you end a conversation, and what you never post.`,
+task:`Describe ONE of your habits and explain the rule behind it. Then say how someone from another culture might misread it.`,
+phrases:["I usually reply within...","I never...","Someone else might think that means..."],
+challenge:`Which of your digital habits would you change for an international team?`,
+answers:["I often just stop replying when a chat ends. Others might think I am angry."],
+note:`Closing a chat without a closing move is a common source of unintended offence.`},
+
+/* ================= ZONE 7 — WORKPLACE WORLD (WW) ================= */
+{id:"WW01",zone:"WW",move:"Notice",type:"Interpret",tier:1,level:"B1",
+situation:`In your first internship meeting, the manager asks for opinions. The Swedish intern immediately disagrees with the manager. The other interns wait until the manager speaks first, then build on his idea.`,
+task:`Describe both behaviours and what each one might show about the relationship with authority.`,
+phrases:["The first intern seems to believe that...","The others may think that...","Both are trying to be..."],
+challenge:`Which behaviour is riskier in your own country, and why?`,
+answers:["One assumes opinions are equal regardless of rank; the other assumes the senior person sets the direction first."],
+note:`This is power distance without the jargon. Keep it descriptive at B1.`},
+
+{id:"WW02",zone:"WW",move:"Interpret",type:"Interpret",tier:1,level:"B1",
+situation:`Your manager reads your report and says, This is quite good. In your previous job, quite good meant excellent. Your British colleague looks at you sympathetically afterwards.`,
+task:`Give TWO possible meanings of quite good in this situation.`,
+phrases:["It could be genuine praise, meaning...","Or it could be a polite way of saying...","The colleague's face suggests..."],
+challenge:`How could you find out which one it is, in one question?`,
+answers:["It may mean solid work, or it may be soft criticism meaning it needs more work."],
+note:`Understatement is a real barrier. The follow-up question: What would take it from quite good to very good?`},
+
+{id:"WW03",zone:"WW",move:"Respond",type:"Respond",tier:2,level:"B1",
+situation:`Your manager gives you a task that you think will not work. You have a better idea, but he is twenty years older than you and this is your second week at the company.`,
+task:`Disagree politely and offer your alternative.`,
+phrases:["That makes sense. Could I ask about one part...","I may be missing something, but what if we...","Would it be possible to try... first?"],
+challenge:`He says no without explaining. What do you say?`,
+answers:["That makes sense. I may be missing something, but would it be possible to test the shorter version first?"],
+note:`I may be missing something is a strong low-risk opener for high power-distance settings.`},
+
+{id:"WW04",zone:"WW",move:"Clarify",type:"Respond",tier:2,level:"B1",
+situation:`Your team invites you to dinner and drinks after work every Friday. You are told it is optional, but you notice that people who attend seem to get better projects. You do not want to attend every week.`,
+task:`Ask a colleague a clarifying question about how important these evenings really are.`,
+phrases:["Can I ask you honestly — is Friday dinner...","Does it matter for work if someone...","How often do people usually..."],
+challenge:`How could you build the same relationships in another way?`,
+answers:["Can I ask you honestly, how important is Friday dinner for the team? I can come twice a month."],
+note:`Informal socialising is often where real work decisions happen. Naming it is legitimate.`},
+
+{id:"WW05",zone:"WW",move:"Compare",type:"Negotiate",tier:3,level:"B2",
+situation:`In one office, feedback is given directly in front of the team so everyone learns. In another, feedback is given privately, and public criticism would damage the person's standing permanently.`,
+task:`Compare the two feedback cultures. Name what each protects and what each risks.`,
+phrases:["Public feedback allows the team to...","However, it can cost the person...","Private feedback protects... but the team loses..."],
+challenge:`Design a feedback rule for a team that contains both kinds of people.`,
+answers:["Public feedback spreads learning but risks face; private feedback protects dignity but hides useful lessons."],
+note:`A common solution: praise in public, correct in private, discuss systems in public.`},
+
+{id:"WW06",zone:"WW",move:"Negotiate",type:"Negotiate",tier:3,level:"B2",
+situation:`Your international office has staff in three time zones. The weekly meeting is always at 9am for headquarters, which is 11pm for you. Nobody has ever questioned it, and you are the newest employee.`,
+task:`Raise the issue and negotiate a fairer arrangement.`,
+phrases:["I would like to raise something about the meeting time...","At the moment the cost falls mostly on...","Could we consider rotating..."],
+challenge:`Your manager says changing it is too complicated. Respond with one concrete alternative.`,
+answers:["Right now the late hour always falls on the same people. Could we rotate the time monthly, or record it?"],
+note:`Time zone equity is a real and underdiscussed workplace justice issue.`},
+
+{id:"WW07",zone:"WW",move:"Repair",type:"Repair",tier:3,level:"B2",
+situation:`You corrected your manager's English in front of a client. You thought you were being helpful. The meeting continued, but he has not spoken to you since, and he removed you from the next client meeting.`,
+task:`Repair the professional relationship. Address both what you did and what it cost him.`,
+phrases:["I would like to talk about the client meeting...","I realise that correcting you in front of...","In future I will..."],
+challenge:`How can you help with language issues without damaging someone's authority?`,
+answers:["I corrected you in front of the client, and I realise that undermined you. I am sorry. In future I will message you instead."],
+note:`Face loss in front of a client is severe. The repair must acknowledge the audience, not just the correction.`},
+
+{id:"WW08",zone:"WW",move:"Reflect",type:"Repair",tier:3,level:"B2",
+situation:`Think about the workplace you want to join after graduation, and the workplace habits you have learned from your family, your part-time jobs, or your student clubs.`,
+task:`Name ONE habit that will help you in an international workplace and ONE that could cause a misunderstanding.`,
+phrases:["One thing I do well is...","But I also tend to...","In an international team, that could look like..."],
+challenge:`What is one concrete thing you will practise this semester?`,
+answers:["I always finish work early, which helps. But I stay quiet when I disagree, and that could look like agreement."],
+note:`Anchor the zone in students future selves. Ask for a concrete practice commitment.`},
+
+/* ================= ZONE 8 — IDENTITY ISLAND (II) ================= */
+{id:"II01",zone:"II",move:"Notice",type:"Interpret",tier:1,level:"B1",
+situation:`A new classmate says: I was born in Vietnam, I grew up in Germany, my passport is Canadian, and I speak Cantonese at home. Someone in the group asks, But where are you REALLY from?`,
+task:`Describe what the question assumes about identity, and what the classmate's answer shows instead.`,
+phrases:["The question assumes that a person has...","But her answer shows that identity can be...","She may feel..."],
+challenge:`What is a better question to ask instead?`,
+answers:["The question assumes one place equals one identity. Her answer shows identity can be layered."],
+note:`Where are you really from is the classic example of a question that sounds curious and lands as exclusion.`},
+
+{id:"II02",zone:"II",move:"Interpret",type:"Interpret",tier:1,level:"B1",
+situation:`Your international group is asked to present about their culture. One student presents traditional clothing and festivals. Another says, Honestly, none of that is part of my daily life, and talks about her city instead.`,
+task:`Give TWO possible reasons for the second student's choice.`,
+phrases:["Maybe she feels that...","It could be that traditional images...","She might want people to see..."],
+challenge:`What is the risk of a culture presentation that only shows festivals?`,
+answers:["Maybe she does not want to be reduced to a postcard version of her country."],
+note:`Excellent card for critiquing the tourist-brochure model of culture teaching, including in our own classrooms.`},
+
+{id:"II03",zone:"II",move:"Respond",type:"Respond",tier:2,level:"B1",
+situation:`At a party, someone says to you, You do not seem like a typical Taiwanese person. You are not sure whether it is a compliment, a criticism, or just curiosity.`,
+task:`Respond in a way that neither accepts nor attacks. Open the conversation instead.`,
+phrases:["That is interesting — what does a typical... look like to you?","I am curious what made you...","There are twenty-three million of us, so..."],
+challenge:`They answer, You know, more quiet. Continue the conversation.`,
+answers:["Interesting — what does a typical Taiwanese person look like to you? I am curious."],
+note:`Turning the statement into a question keeps the relationship alive while exposing the stereotype.`},
+
+{id:"II04",zone:"II",move:"Clarify",type:"Respond",tier:2,level:"B1",
+situation:`A classmate's name is written as Nguyen Thi Mai on the class list. Your teacher calls her Nguyen. She does not correct him, but she does not look happy either.`,
+task:`Ask her privately how she would like to be called, and offer to help.`,
+phrases:["I noticed the teacher says... Is that how you...","How do you pronounce your name properly?","Would you like me to..."],
+challenge:`Should you correct the teacher? Explain your reasoning.`,
+answers:["How do you say your name properly? I want to get it right — and I can mention it to the teacher if you want."],
+note:`Names are the smallest and most frequent identity moment. Offer help, do not take over.`},
+
+{id:"II05",zone:"II",move:"Compare",type:"Negotiate",tier:3,level:"B2",
+situation:`Two students are both described as international. One is a wealthy exchange student from Paris staying one semester. One is a working student whose family moved country for safety and who will not go back.`,
+task:`Compare their experiences. Say why the same label may hide very different situations.`,
+phrases:["Although both are called international,...","For the first student, leaving is...","For the second, the same word means..."],
+challenge:`What does your university do that treats them as the same, and what should be different?`,
+answers:["One chose mobility and can return; for the other, movement was necessary and permanent."],
+note:`Introduces privilege into intercultural competence. Necessary for a B2 critical framing.`},
+
+{id:"II06",zone:"II",move:"Negotiate",type:"Negotiate",tier:3,level:"B2",
+situation:`Your student association is forming an international committee. One proposal is one seat per nationality. Another is that students who grew up between countries, or who belong to minority groups within a country, are also represented.`,
+task:`Negotiate a fair structure. Explain your reasoning to someone who prefers the simpler option.`,
+phrases:["The one-per-country idea is simple, but...","Some students do not fit into...","Could we base seats on... instead of..."],
+challenge:`Who might still be left out of your structure?`,
+answers:["One seat per country is simple but assumes each country has one culture and each person one country."],
+note:`Nation-state categories always leave someone out. Reward students who admit their own solution is incomplete.`},
+
+{id:"II07",zone:"II",move:"Repair",type:"Repair",tier:3,level:"B2",
+situation:`You asked a classmate to explain the Muslim view on a topic in class. She answered briefly and later told a friend she felt like a spokesperson for 1.9 billion people. The friend has now told you.`,
+task:`Repair the situation with your classmate. Show what you now understand about your question.`,
+phrases:["I have realised that when I asked you...","I put you in the position of...","Next time I would rather ask..."],
+challenge:`How would you ask about a topic like this without making one person represent a whole group?`,
+answers:["I asked you to speak for a whole religion, and that was not fair. Next time I will ask what YOU think, if you want to share."],
+note:`Spokesperson burden is one of the most common classroom harms in EMI settings. Directly relevant to teachers too.`},
+
+{id:"II08",zone:"II",move:"Reflect",type:"Repair",tier:3,level:"B2",
+situation:`Think about the different parts of your own identity: your family, your language or dialect, your region, your generation, your major, your interests, and any group you belong to.`,
+task:`Name THREE parts of your identity. Say which one people notice first, and which one people usually miss.`,
+phrases:["Three parts of my identity are...","People usually notice... first.","What people often miss is..."],
+challenge:`Has any part of your identity ever been misunderstood by someone from your own country?`,
+answers:["People see my nationality first. They usually miss that I grew up in a farming town and speak Taiwanese at home."],
+note:`The final challenge question breaks the inside-outside binary: misunderstanding happens within cultures too.`},
+
+/* ================= ZONE 9 — CONFLICT & REPAIR HARBOR (CR) ================= */
+{id:"CR01",zone:"CR",move:"Notice",type:"Interpret",tier:1,level:"B1",
+situation:`Two teammates disagree. One raises his voice, speaks quickly and gestures a lot. The other becomes very quiet and looks at the table. Afterwards, each one tells you the other was being aggressive.`,
+task:`Describe both behaviours and explain how each person could see the other as the aggressive one.`,
+phrases:["The first person shows disagreement by...","The second shows it by...","Each of them may read the other as..."],
+challenge:`What could a third person do in this moment?`,
+answers:["Loud engagement can feel like attack; silence can feel like cold refusal. Both are conflict styles."],
+note:`Silence as aggression is the part students rarely see. Spend time there.`},
+
+{id:"CR02",zone:"CR",move:"Interpret",type:"Interpret",tier:1,level:"B1",
+situation:`You ask a colleague to help you with a task. She says, Yes, I will try my best, but she does not do it. She says the same thing the next week. Nothing changes.`,
+task:`Give TWO possible meanings of I will try my best in this situation.`,
+phrases:["It might be a polite way of saying...","Or it could mean she genuinely...","In some workplaces, a direct no is..."],
+challenge:`How would you ask so that a no is easier for her to say?`,
+answers:["It may be a soft refusal, or a real intention blocked by workload."],
+note:`Teach the enabling question: Would it be easier if someone else took this? A face-saving exit produces honest answers.`},
+
+{id:"CR03",zone:"CR",move:"Respond",type:"Respond",tier:2,level:"B1",
+situation:`A classmate says something about your country that you find unfair. Everyone is listening. You feel angry, but you also do not want to start a public argument.`,
+task:`Respond calmly. Describe your reaction without attacking the speaker.`,
+phrases:["When you said that, I felt...","I am not sure that is true for...","Can I share a different picture of..."],
+challenge:`They reply, I was only joking. Respond again.`,
+answers:["When you said that, I felt uncomfortable, because it is not true for most people I know."],
+note:`Teach the I-statement: describe the behaviour, name the effect, stay factual.`},
+
+{id:"CR04",zone:"CR",move:"Clarify",type:"Respond",tier:2,level:"B1",
+situation:`Your teammate has been short and cold with you for three days. You do not know if you did something wrong, if she is stressed about her thesis, or if you are imagining it.`,
+task:`Ask her a clarifying question that does not accuse her of anything.`,
+phrases:["I may be wrong, but I felt that...","Is everything OK between us?","If I did something, I would really like to..."],
+challenge:`She says nothing is wrong, but the coldness continues. What do you do?`,
+answers:["I may be misreading this, but things have felt a bit distant. Is everything OK, or did I do something?"],
+note:`I may be wrong lowers the threat level and makes an honest answer possible.`},
+
+{id:"CR05",zone:"CR",move:"Compare",type:"Negotiate",tier:3,level:"B2",
+situation:`In one approach to conflict, people talk about the problem immediately and directly with the person involved. In another, a respected third person speaks to both sides separately first, and nobody has to lose face.`,
+task:`Compare the two approaches. Say what each protects and when each works better.`,
+phrases:["Direct conversation is faster and...","But it risks...","Using a third person protects... and is useful when..."],
+challenge:`Which would you choose for a conflict in your own group, and why?`,
+answers:["Direct talk is efficient and clear but risks face; mediation protects dignity but takes longer."],
+note:`Mediation is a serious professional skill, not an avoidance strategy. Frame it that way.`},
+
+{id:"CR06",zone:"CR",move:"Negotiate",type:"Negotiate",tier:3,level:"B2",
+situation:`Two members of your club have not spoken since an argument about money at the last event. Both are important to the club. Both have told you their version, and both expect you to agree with them.`,
+task:`Negotiate a way to bring them back into a working relationship. Stay neutral.`,
+phrases:["I am not going to decide who was right, but...","Would you be willing to...","What would you need from the other person in order to..."],
+challenge:`One of them says, I will talk to him only if he apologises first. Respond.`,
+answers:["I will not decide who was right. What would you need from him to be able to work together again?"],
+note:`Ask what would you need rather than who was wrong. It moves the conversation from the past to the future.`},
+
+{id:"CR07",zone:"CR",move:"Repair",type:"Repair",tier:3,level:"B2",
+situation:`You promised a friend from another country that you would help him with his visa paperwork. You forgot twice. He missed an appointment and now has to pay a fee. He says it is fine, but it clearly is not.`,
+task:`Give a full repair: describe what you did, take responsibility, and offer something concrete.`,
+phrases:["I forgot twice, and because of that you...","There is no good excuse — I...","Let me... and I will..."],
+challenge:`He says, Really, do not worry. Do you accept that, or continue? Explain.`,
+answers:["I forgot twice and it cost you money and an appointment. That is on me. Let me pay the fee and come with you on Thursday."],
+note:`The complete repair sequence: name the harm, own it, offer a concrete remedy, then let them decide.`},
+
+{id:"CR08",zone:"CR",move:"Reflect",type:"Repair",tier:3,level:"B2",
+situation:`Think about a conflict or misunderstanding in your life that was never repaired. Perhaps you avoided it, or the other person left, or too much time passed.`,
+task:`Say what you would say now, if you could. Use the repair steps: describe, explain, apologise or clarify, and suggest a way forward.`,
+phrases:["What actually happened was...","What I never explained was...","If I could speak to that person now, I would say..."],
+challenge:`What stopped you from repairing it at the time?`,
+answers:["I never explained that I was embarrassed, not angry. I would tell her that now."],
+note:`Powerful and personal. Give students the option to keep names private, and allow a pass.`},
+
+/* ================= ZONE 10 — GLOBAL CITIZENSHIP SQUARE (GC) ================= */
+{id:"GC01",zone:"GC",move:"Notice",type:"Interpret",tier:1,level:"B1",
+situation:`A travel advertisement shows a Western tourist smiling in a village. The local people are in the background, wearing traditional clothes, with no names. The slogan is Discover the real Africa.`,
+task:`Describe THREE things you notice about who is in the centre and who is in the background.`,
+phrases:["The tourist is shown as...","The local people are...","The words the real suggest that..."],
+challenge:`How would you redesign this advertisement?`,
+answers:["The tourist acts and is named; the local people are scenery. The real suggests one authentic version of a whole continent."],
+note:`Media analysis at B1 level. Who acts and who is looked at is the core question.`},
+
+{id:"GC02",zone:"GC",move:"Interpret",type:"Interpret",tier:1,level:"B1",
+situation:`A student wears a traditional headdress from another culture as a costume at a party. Some people say it is appreciation. Others say it is appropriation. The student says he loves that culture.`,
+task:`Explain BOTH positions fairly, without saying which one you agree with.`,
+phrases:["Those who call it appreciation argue that...","Those who call it appropriation point out that...","The difference may depend on..."],
+challenge:`What questions would help decide the difference in a real case?`,
+answers:["One side sees admiration and cultural exchange; the other sees a sacred or restricted item used as decoration."],
+note:`Key variables: sacredness, permission, power difference, profit, and whether the original group is credited.`},
+
+{id:"GC03",zone:"GC",move:"Respond",type:"Respond",tier:2,level:"B1",
+situation:`At a family dinner, a relative makes a negative generalisation about migrant workers in your country. Other people laugh quietly. You disagree strongly, but this person is older than you and you have to see them often.`,
+task:`Respond in a way that disagrees clearly but keeps the relationship possible.`,
+phrases:["I see it differently, because...","The people I have met...","Can I tell you about someone I know?"],
+challenge:`They say, You are too young to understand. Respond once more.`,
+answers:["I see it differently. The workers at my uncle's factory work harder than almost anyone I know."],
+note:`Family is where students most need this skill and least practise it. A specific personal story beats a statistic here.`},
+
+{id:"GC04",zone:"GC",move:"Clarify",type:"Respond",tier:2,level:"B1",
+situation:`In a group discussion, a classmate says something you think might be a microaggression, but you are not certain. You do not want to accuse them wrongly, and you do not want to let it pass.`,
+task:`Ask a clarifying question that invites them to explain what they meant.`,
+phrases:["What did you mean when you said...","I want to make sure I understood — did you mean...","Can you say more about that?"],
+challenge:`Their explanation makes it worse. What do you say next?`,
+answers:["What did you mean by that? I want to make sure I understood you correctly."],
+note:`Say more about that is one of the most useful phrases in the whole deck. It creates room without accusation.`},
+
+{id:"GC05",zone:"GC",move:"Compare",type:"Negotiate",tier:3,level:"B2",
+situation:`Your university wants to increase international students. One plan spends the money on recruitment and marketing abroad. Another plan spends it on support for the international students already here: language help, housing and mental health.`,
+task:`Compare the two plans. Say what each says about how the university sees international students.`,
+phrases:["The first plan treats students mainly as...","The second sees them as...","The long-term result of each would be..."],
+challenge:`Which plan would you choose, and what would you keep from the other?`,
+answers:["Recruitment treats students as income; support treats them as members. Recruitment without support damages reputation anyway."],
+note:`Very close to real internationalisation policy debates. Strong students will notice the two are connected.`},
+
+{id:"GC06",zone:"GC",move:"Negotiate",type:"Negotiate",tier:3,level:"B2",
+situation:`Your class is designing a campaign about global inequality. One group wants shocking photographs of poverty because they get attention. Another group says the photos take dignity away from the people in them.`,
+task:`Negotiate a campaign approach that is both effective and respectful.`,
+phrases:["Shocking images do get attention, but...","If we show people as...","What if we told the story through..."],
+challenge:`Who should decide how a community is shown?`,
+answers:["Shock gets clicks but shows people as helpless. We could show people acting and name them."],
+note:`Connects directly to SDG communication ethics. The answer to who decides should be the community itself.`},
+
+{id:"GC07",zone:"GC",move:"Repair",type:"Repair",tier:3,level:"B2",
+situation:`In a presentation, you used a country as an example of a poor place. A classmate from that country said afterwards: My city has better public transport than yours. You realise your example was lazy and wrong.`,
+task:`Repair this with your classmate, and decide what to do about the presentation.`,
+phrases:["You were right to say that...","I used your country as a symbol instead of...","In the final version I will..."],
+challenge:`What will you check before choosing an example next time?`,
+answers:["You were right. I used your country as a symbol rather than a real place, and I did not check. I will change that slide."],
+note:`Model repair that includes changing the artefact, not just apologising to the person.`},
+
+{id:"GC08",zone:"GC",move:"Reflect",type:"Repair",tier:3,level:"B2",
+situation:`Think about a stereotype you have held about another group, or one you were taught before you met anyone from that group.`,
+task:`Say what the stereotype was, where it came from, and what changed it, or what has not changed yet.`,
+phrases:["I used to believe that...","I think I learned it from...","What changed my mind was..."],
+challenge:`What is one thing you will do this year to keep changing it?`,
+answers:["I thought people from that country were unfriendly, because of a video I saw. Then I shared a dorm with someone from there."],
+note:`Close the whole game here. Honesty about our own bias is the final competence, not the first.`},
+];
+
+
+const ZONES={
+ GG:{name:"Greeting Gate",tag:"First meetings, first impressions",c:"var(--z-GG)"},
+ LL:{name:"Language Lane",tag:"Not just what you say — how you say it",c:"var(--z-LL)"},
+ CC:{name:"Classroom Crossing",tag:"Every classroom has its own culture",c:"var(--z-CC)"},
+ TT:{name:"Teamwork Town",tag:"Different teammates, one goal",c:"var(--z-TT)"},
+ FF:{name:"Food & Festival Ave",tag:"Sharing food, sharing culture",c:"var(--z-FF)"},
+ DC:{name:"Digital Culture District",tag:"Culture does not disappear online",c:"var(--z-DC)"},
+ WW:{name:"Workplace World",tag:"Getting the job done, together",c:"var(--z-WW)"},
+ II:{name:"Identity Island",tag:"You are more than one thing",c:"var(--z-II)"},
+ CR:{name:"Conflict & Repair Harbor",tag:"Repair is a skill",c:"var(--z-CR)"},
+ GC:{name:"Global Citizenship Sq",tag:"Think bigger than borders",c:"var(--z-GC)"}
+};
+const LAYOUT=[
+ {t:"corner",n:"Departure Gate",g:"\u2708"},
+ {t:"z",z:"GG",tier:1},{t:"z",z:"GG",tier:2},{t:"comm"},{t:"z",z:"GG",tier:3},
+ {t:"z",z:"LL",tier:1},{t:"z",z:"LL",tier:2},{t:"pass"},{t:"z",z:"LL",tier:3},
+ {t:"z",z:"CC",tier:1},
+ {t:"corner",n:"Lost in Translation",g:"\u2699"},
+ {t:"z",z:"CC",tier:2},{t:"z",z:"CC",tier:3},
+ {t:"z",z:"TT",tier:1},{t:"z",z:"TT",tier:2},{t:"comm"},{t:"z",z:"TT",tier:3},
+ {t:"z",z:"FF",tier:1},{t:"z",z:"FF",tier:2},{t:"z",z:"FF",tier:3},
+ {t:"corner",n:"Layover Lounge",g:"\u2615"},
+ {t:"z",z:"DC",tier:1},{t:"z",z:"DC",tier:2},{t:"pass"},{t:"z",z:"DC",tier:3},
+ {t:"z",z:"WW",tier:1},{t:"z",z:"WW",tier:2},{t:"z",z:"WW",tier:3},
+ {t:"z",z:"II",tier:1},{t:"z",z:"II",tier:2},
+ {t:"corner",n:"Culture Shock!",g:"\u26A1"},
+ {t:"z",z:"II",tier:3},
+ {t:"z",z:"CR",tier:1},{t:"z",z:"CR",tier:2},{t:"comm"},{t:"z",z:"CR",tier:3},
+ {t:"pass"},
+ {t:"z",z:"GC",tier:1},{t:"z",z:"GC",tier:2},{t:"z",z:"GC",tier:3}
+];
+const REWARD={1:100,2:150,3:220}, TOLL={1:50,2:80,3:120};
+
+const PASSPORT=[
+ {t:"Your flight is delayed six hours. You start talking to the passenger beside you. Tell the group one interesting thing about your hometown.",cp:60},
+ {t:"You used the wrong emoji in a group chat and confused everyone. Go to Digital Culture District.",go:21},
+ {t:"You gave a warm toast at an international dinner and everyone felt welcome. Advance to Food & Festival Avenue.",go:17},
+ {t:"You laughed at a joke you did not understand. Honesty is cheaper than pretending. Pay 50 CP.",cp:-50},
+ {t:"You learned to say thank you in three new languages this week. Collect 80 CP.",cp:80},
+ {t:"You assumed someone's nationality from their face. Go directly to Identity Island.",go:28},
+ {t:"Your visa paperwork was rejected because you did not ask for help. Pay 80 CP.",cp:-80},
+ {t:"You volunteered as a campus buddy for new arrivals. Collect 120 CP.",cp:120},
+ {t:"You interrupted a colleague three times in one meeting. Go to Conflict & Repair Harbor.",go:32},
+ {t:"You mispronounced a classmate's name, then asked her to teach you. Collect 70 CP.",cp:70},
+ {t:"Passport control: return to Departure Gate and collect your 200 CP.",go:0},
+ {t:"You sent an email at 2am with no greeting. Pay 40 CP and think about your tone.",cp:-40}
+];
+const COMMUNITY=[
+ {t:"Class fund: every player shares one English phrase they learned today. Everyone collects 30 CP.",all:30},
+ {t:"A classmate is sitting alone at lunch. Say one thing to include them. Collect 90 CP.",cp:90},
+ {t:"You translated for someone who was struggling at the clinic. Collect 110 CP.",cp:110},
+ {t:"Your group finished a project where everybody spoke. Every player collects 40 CP.",all:40},
+ {t:"You repeated a rumour about another country without checking it. Pay 60 CP.",cp:-60},
+ {t:"You asked a good question instead of assuming. Collect 80 CP.",cp:80},
+ {t:"World Forum: name one thing you have changed your mind about. Collect 100 CP.",cp:100},
+ {t:"You stayed silent when someone was being excluded. Pay 70 CP.",cp:-70},
+ {t:"You invited a new international student to your club. Collect 100 CP.",cp:100},
+ {t:"Everyone at the table thanks the quietest player for something they said. Everyone collects 30 CP.",all:30},
+ {t:"You wrote a message in your second language rather than your first. Collect 60 CP.",cp:60},
+ {t:"You apologised properly, without the word but. Collect 130 CP.",cp:130}
+];
+const TAGCOLORS=["#B5342B","#2C5F9E","#1D7A5F","#C08A1E"];
+
+/* ---------------- STATE ---------------- */
+let P=[], turn=0, moved=false, decks={}, viewing=0;
+const $=id=>document.getElementById(id);
+
+/* ---------------- SETUP ---------------- */
+function drawSetup(){
+  const box=$("plist"); box.innerHTML="";
+  P.forEach((p,i)=>{
+    const r=document.createElement("div"); r.className="prow";
+    const inp=document.createElement("input");
+    inp.value=p.name; inp.placeholder="Traveller "+(i+1); inp.maxLength=14;
+    inp.oninput=e=>p.name=e.target.value;
+    const tp=document.createElement("div"); tp.className="tagpick";
+    TAGCOLORS.forEach(c=>{
+      const b=document.createElement("button"); b.style.background=c;
+      b.setAttribute("aria-pressed",p.color===c); b.setAttribute("aria-label","Luggage tag colour");
+      b.onclick=()=>{p.color=c;drawSetup()};
+      tp.appendChild(b);
+    });
+    r.append(inp,tp);
+    if(P.length>2){
+      const x=document.createElement("button"); x.className="btn ghost"; x.textContent="\u2715";
+      x.onclick=()=>{P.splice(i,1);drawSetup()}; r.appendChild(x);
+    }
+    box.appendChild(r);
+  });
+  $("addP").disabled=P.length>=4;
+}
+function newPlayer(i){return{name:"",color:TAGCOLORS[i%4],cp:500,pos:0,owns:[],stamps:[],repairs:0,jail:0,waits:0}}
+P=[newPlayer(0),newPlayer(1)]; drawSetup();
+$("addP").onclick=()=>{P.push(newPlayer(P.length));drawSetup()};
+$("start").onclick=()=>{
+  P.forEach((p,i)=>{if(!p.name.trim())p.name="Traveller "+(i+1)});
+  const used=new Set(); P.forEach(p=>{while(used.has(p.color))p.color=TAGCOLORS[(TAGCOLORS.indexOf(p.color)+1)%4];used.add(p.color)});
+  $("setup").style.display="none"; $("game").style.display="block";
+  buildBoard(); refresh(); log("<b>"+P[0].name+"</b> boards first. Safe travels.");
+};
+
+/* ---------------- BOARD ---------------- */
+function gridPos(i){
+  if(i===0)return[11,11]; if(i<10)return[11,11-i]; if(i===10)return[11,1];
+  if(i<20)return[11-(i-10),1]; if(i===20)return[1,1];
+  if(i<30)return[1,1+(i-20)]; if(i===30)return[1,11];
+  return[1+(i-30),11];
+}
+function buildBoard(){
+  const b=$("board"); b.innerHTML="";
+  LAYOUT.forEach((s,i)=>{
+    const [r,c]=gridPos(i);
+    const d=document.createElement("div");
+    d.style.gridRow=r; d.style.gridColumn=c; d.id="sp"+i;
+    d.className="sp"+(c===1?" left":c===11?" right":"");
+    if(s.t==="corner"){
+      d.className+=" corner";
+      d.innerHTML='<div style="font-size:clamp(.8rem,2.2vw,1.3rem);line-height:1">'+s.g+'</div><div class="code">'+s.n+'</div>';
+    }else if(s.t==="z"){
+      const z=ZONES[s.z];
+      d.innerHTML='<div class="band" style="background:'+z.c+'"></div>'+
+        '<div class="code">'+s.z+'<span style="opacity:.5">'+"\u25CF".repeat(s.tier)+'</span></div>'+
+        '<div class="nm">'+z.name+'</div>';
+    }else{
+      d.className+=" special";
+      d.innerHTML='<div class="glyph">'+(s.t==="pass"?"\u2691":"\u2698")+'</div>'+
+        '<div class="nm">'+(s.t==="pass"?"Passport":"Community")+'</div>';
+    }
+    b.appendChild(d);
+  });
+  const hub=document.createElement("div"); hub.className="hub";
+  hub.innerHTML='<div class="tag">Ten zones \u00B7 Eighty conversations</div>'+
+    '<h2>AROUND THE<br>WORLD IN <em>80</em><br>CONVERSATIONS</h2>'+
+    '<div class="dicebox"><div class="die" id="d1">\u2013</div><div class="die" id="d2">\u2013</div></div>'+
+    '<div class="hubmsg" id="hubmsg">Roll the dice to begin.</div>';
+  b.appendChild(hub);
+}
+function refresh(){
+  document.querySelectorAll(".pawns").forEach(e=>e.remove());
+  document.querySelectorAll(".owner").forEach(e=>e.remove());
+  document.querySelectorAll(".sp.here").forEach(e=>e.classList.remove("here"));
+  LAYOUT.forEach((s,i)=>{
+    const cell=$("sp"+i); if(!cell)return;
+    const on=P.filter(p=>p.pos===i);
+    if(on.length){
+      const w=document.createElement("div"); w.className="pawns";
+      on.forEach(p=>{const q=document.createElement("div");q.className="pawn"+(P[turn]===p?" active":"");
+        q.style.background=p.color;q.title=p.name;w.appendChild(q)});
+      cell.appendChild(w);
+    }
+    const ow=P.find(p=>p.owns.includes(i));
+    if(ow){const o=document.createElement("div");o.className="owner";o.style.background=ow.color;cell.appendChild(o)}
+  });
+  $("sp"+P[turn].pos).classList.add("here");
+
+  $("players").innerHTML=P.map((p,i)=>{
+    const zc=new Set(p.owns.map(x=>LAYOUT[x].z)).size;
+    return '<div class="pl'+(i===turn?" turn":"")+'" onclick="viewPassport('+i+')" style="cursor:pointer">'+
+      '<div class="tagdot" style="background:'+p.color+'"></div>'+
+      '<div style="flex:1;min-width:0"><div class="nm2">'+esc(p.name)+'</div>'+
+      '<div class="meta">'+p.owns.length+' spaces \u00B7 '+zc+' zones \u00B7 '+p.repairs+' repairs'+
+      (p.jail?' <span class="jailed">\u2022 STUCK</span>':'')+'</div></div>'+
+      '<div class="cp">'+p.cp+'</div></div>';
+  }).join("");
+  drawStamps();
+}
+function esc(s){return String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
+function viewPassport(i){viewing=i;drawStamps()}
+function drawStamps(){
+  const p=P[viewing];
+  $("ppHead").textContent="Passport \u00B7 "+p.name;
+  $("stamps").innerHTML = p.stamps.length ? p.stamps.map(s=>{
+    const z=ZONES[s.z], r=(Math.random()*22-11).toFixed(1);
+    return '<div class="stamp-mark" style="color:'+z.c+';--r:'+r+'deg" title="'+s.id+' \u2014 '+z.name+'">'+s.z+'<br>'+s.move.slice(0,6)+'</div>';
+  }).join("") : '<div class="empty-note">No stamps yet. Complete a conversation to earn one.</div>';
+  if(!p.stamps.length)$("stamps").innerHTML='<div class="empty-note">No stamps yet. Complete a conversation to earn one.</div>';
+}
+function log(h){const d=document.createElement("div");d.innerHTML=h;$("log").prepend(d)}
+function hub(msg){$("hubmsg").innerHTML=msg}
+
+/* ---------------- DECKS ---------------- */
+function pick(z,tier){
+  const key=z+tier;
+  if(!decks[key]||!decks[key].length){
+    decks[key]=CARDS.filter(c=>c.zone===z&&c.tier===tier).sort(()=>Math.random()-.5);
+  }
+  return decks[key].pop();
+}
+function pickRepair(){
+  const pool=CARDS.filter(c=>c.type==="Repair");
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+/* ---------------- TURN ---------------- */
+$("roll").onclick=()=>{
+  const p=P[turn];
+  if(p.jail){ jailTurn(); return; }
+  const a=1+Math.floor(Math.random()*6), b=1+Math.floor(Math.random()*6);
+  $("d1").textContent=a; $("d2").textContent=b;
+  $("d1").classList.add("rolling"); $("d2").classList.add("rolling");
+  setTimeout(()=>{$("d1").classList.remove("rolling");$("d2").classList.remove("rolling")},520);
+  $("roll").disabled=true; moved=true;
+  const steps=a+b, old=p.pos;
+  p.pos=(p.pos+steps)%40;
+  if(p.pos<old){p.cp+=200;log("<b>"+esc(p.name)+"</b> passed the Departure Gate. +200 CP")}
+  hub("<b>"+esc(p.name)+"</b> rolled "+steps+".");
+  refresh();
+  setTimeout(()=>land(p),400);
+};
+$("endturn").onclick=nextTurn;
+function nextTurn(){
+  turn=(turn+1)%P.length; moved=false; viewing=turn;
+  $("roll").disabled=false; $("endturn").disabled=true;
+  hub("<b>"+esc(P[turn].name)+"</b>, it is your turn.");
+  refresh();
+}
+function done(){ $("endturn").disabled=false; refresh(); }
+
+function land(p){
+  const s=LAYOUT[p.pos];
+  if(s.t==="corner"){
+    if(p.pos===0){hub("Departure Gate. Your journey continues.");done()}
+    else if(p.pos===10){hub("Lost in Translation \u2014 you are only visiting today.");done()}
+    else if(p.pos===20){
+      showEvent("Layover Lounge","\u2615","Take a rest. Ask any other player <b>one question about their culture</b> and listen to the answer.<br><br>Both of you collect 50 CP.",
+        ()=>{P.forEach(x=>{}); p.cp+=50; const o=P[(turn+1)%P.length]; o.cp+=50;
+          log("<b>"+esc(p.name)+"</b> rested at the Layover Lounge. +50 CP each."); shutM("evScrim"); done();});
+    }
+    else if(p.pos===30){
+      showEvent("Culture Shock!","\u26A1","A big misunderstanding has happened.<br><br>Go directly to <b>Lost in Translation</b>. The only way out is to complete a <b>Repair card</b> \u2014 or wait two turns.",
+        ()=>{p.pos=10;p.jail=1;p.waits=0;log("<b>"+esc(p.name)+"</b> hit Culture Shock and is Lost in Translation.");shutM("evScrim");done()});
+    }
+    return;
+  }
+  if(s.t==="pass"||s.t==="comm"){
+    const deck=s.t==="pass"?PASSPORT:COMMUNITY;
+    const e=deck[Math.floor(Math.random()*deck.length)];
+    showEvent(s.t==="pass"?"Passport Card":"Global Community Card", s.t==="pass"?"\u2691":"\u2698", e.t, ()=>{
+      if(e.cp){p.cp+=e.cp;log("<b>"+esc(p.name)+"</b> "+(e.cp>0?"+":"")+e.cp+" CP")}
+      if(e.all){P.forEach(x=>x.cp+=e.all);log("Everyone collects "+e.all+" CP.")}
+      shutM("evScrim");
+      if(typeof e.go==="number"){
+        if(e.go<p.pos)p.cp+=200;
+        p.pos=e.go; refresh();
+        setTimeout(()=>land(p),350);
+      } else done();
+    }, s.t==="pass"?"var(--stamp)":"var(--customs)");
+    return;
+  }
+  // zone space
+  const owner=P.find(x=>x.owns.includes(p.pos));
+  if(owner&&owner!==p){ toll(p,owner,s); return; }
+  if(owner===p){
+    const c=pick(s.z,s.tier);
+    showCard(c,p,{mode:"bonus"});
+    return;
+  }
+  showCard(pick(s.z,s.tier),p,{mode:"claim"});
+}
+function jailTurn(){
+  const p=P[turn]; $("roll").disabled=true; moved=true;
+  showEvent("Lost in Translation","\u2699",
+    "You are stuck in a misunderstanding.<br><br>Complete a <b>Repair card</b> to get out, or wait. You have waited <b>"+p.waits+"</b> of 2 turns.",
+    null,"var(--z-CR)",[
+     {label:"Attempt a repair",cls:"go",fn:()=>{shutM("evScrim");showCard(pickRepair(),p,{mode:"jail"})}},
+     {label:"Wait a turn",cls:"ghost",fn:()=>{p.waits++;if(p.waits>=2){p.jail=0;p.waits=0;log("<b>"+esc(p.name)+"</b> waited it out and left Lost in Translation.")}shutM("evScrim");done()}}
+    ]);
+}
+
+/* ---------------- CARD MODAL ---------------- */
+function showCard(c,p,opt){
+  const z=ZONES[c.zone];
+  const rw = opt.mode==="bonus" ? Math.round(REWARD[c.tier]*0.5) : REWARD[c.tier];
+  let head = opt.mode==="jail" ? "Repair to escape" : opt.mode==="bonus" ? "Deepen your connection" : "Claim this space";
+  $("convo").innerHTML =
+   '<div class="convo-top" style="background:'+z.c+'">'+
+     '<div><div class="id">'+c.id+' \u00B7 '+head.toUpperCase()+'</div><div class="zn">'+z.name+'</div></div>'+
+     '<div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">'+
+       '<span class="chip">'+c.move+' \u2192 '+c.type+'</span><span class="chip">'+c.level+'</span></div></div>'+
+   '<div class="convo-body">'+
+     '<div class="blk"><div class="blk-l">Situation</div><div class="situation">'+c.situation+'</div></div>'+
+     '<div class="blk"><div class="blk-l">Your task</div><div class="task">'+c.task+'</div></div>'+
+     '<div class="blk"><div class="blk-l">Phrase bank \u2014 finish the sentence</div><ul class="phrases">'+
+       c.phrases.map(x=>'<li>'+x+'</li>').join("")+'</ul></div>'+
+     '<div class="blk" style="margin-bottom:0"><div class="blk-l">Challenge \u00B7 B2 \u00B7 +50 CP</div><div class="chall">'+c.challenge+'</div></div>'+
+   '</div>'+
+   '<div class="keybox" id="key"><div class="kl">Teacher key \u2014 sample answer</div><p>'+c.answers[0]+'</p>'+
+     '<div class="kl">Note</div><p style="margin:0">'+c.note+'</p></div>'+
+   '<div class="convo-foot">'+
+     '<span class="reward">Reward '+rw+' CP</span>'+
+     '<div class="foot-btns">'+
+       '<button class="btn ghost" id="keyBtn">Teacher key</button>'+
+       '<button class="btn ghost" id="cPass">Could not answer</button>'+
+       '<button class="btn go" id="cOk">Connection made</button>'+
+       '<button class="btn stamp" id="cOkX">+ Challenge</button>'+
+     '</div></div>';
+  openM("cardScrim");
+  $("keyBtn").onclick=()=>$("key").classList.toggle("on");
+  const settle=(ok,bonus)=>{
+    if(ok){
+      p.cp+=rw+(bonus?50:0);
+      p.stamps.push({z:c.zone,id:c.id,move:c.move});
+      if(c.type==="Repair")p.repairs++;
+      if(opt.mode==="claim"){p.owns.push(p.pos);log("<b>"+esc(p.name)+"</b> claimed "+ZONES[c.zone].name+" ("+c.id+"). +"+(rw+(bonus?50:0))+" CP")}
+      else if(opt.mode==="jail"){p.jail=0;p.waits=0;log("<b>"+esc(p.name)+"</b> repaired the misunderstanding and left Lost in Translation. +"+rw+" CP")}
+      else log("<b>"+esc(p.name)+"</b> deepened a connection ("+c.id+"). +"+(rw+(bonus?50:0))+" CP");
+    }else{
+      log("<b>"+esc(p.name)+"</b> passed on "+c.id+". No points \u2014 try again next time.");
+      if(opt.mode==="jail"){p.waits++;if(p.waits>=2){p.jail=0;p.waits=0}}
+    }
+    shutM("cardScrim"); done();
+  };
+  $("cOk").onclick=()=>settle(true,false);
+  $("cOkX").onclick=()=>settle(true,true);
+  $("cPass").onclick=()=>settle(false);
+}
+
+/* ---------------- TOLL ---------------- */
+function toll(p,owner,s){
+  const c=pick(s.z,s.tier), full=TOLL[s.tier], half=Math.round(full/2);
+  const z=ZONES[s.z];
+  $("convo").innerHTML=
+   '<div class="convo-top" style="background:'+z.c+'">'+
+     '<div><div class="id">CONNECTION TOLL \u00B7 '+c.id+'</div><div class="zn">'+z.name+'</div></div>'+
+     '<span class="chip">'+esc(owner.name)+' asks</span></div>'+
+   '<div class="convo-body">'+
+     '<div class="blk"><div class="blk-l">'+esc(owner.name)+' owns this space</div>'+
+       '<div class="situation">'+c.situation+'</div></div>'+
+     '<div class="blk" style="margin-bottom:0"><div class="blk-l">Answer this and pay half</div>'+
+       '<div class="task">'+c.challenge+'</div></div></div>'+
+   '<div class="convo-foot"><span class="reward">Toll '+full+' CP \u00B7 half '+half+' CP</span>'+
+     '<div class="foot-btns">'+
+       '<button class="btn ghost" id="tFull">Pay full '+full+'</button>'+
+       '<button class="btn go" id="tHalf">Good answer \u2014 pay '+half+'</button></div></div>';
+  openM("cardScrim");
+  const pay=n=>{p.cp-=n;owner.cp+=n;log("<b>"+esc(p.name)+"</b> paid "+n+" CP to <b>"+esc(owner.name)+"</b>.");shutM("cardScrim");done()};
+  $("tFull").onclick=()=>pay(full); $("tHalf").onclick=()=>pay(half);
+}
+
+/* ---------------- EVENT MODAL ---------------- */
+function showEvent(title,glyph,text,onOk,color,btns){
+  $("event").innerHTML='<div class="ev-h" style="background:'+(color||"var(--ink)")+'">'+glyph+' &nbsp;'+title+'</div>'+
+    '<div class="ev-b">'+text+'</div><div class="ev-f" id="evf"></div>';
+  const f=$("evf");
+  if(btns){btns.forEach(b=>{const x=document.createElement("button");x.className="btn "+b.cls;x.textContent=b.label;
+    x.style.margin="0 4px";x.onclick=b.fn;f.appendChild(x)})}
+  else{const x=document.createElement("button");x.className="btn go";x.textContent="Continue";x.onclick=onOk;f.appendChild(x)}
+  openM("evScrim");
+}
+function openM(id){$(id).classList.add("on")}
+function shutM(id){$(id).classList.remove("on")}
+
+/* ---------------- SCORING ---------------- */
+$("finish").onclick=()=>{
+  const rows=P.map(p=>{
+    const zs=new Set(p.owns.map(i=>LAYOUT[i].z));
+    let bonus=0, notes=[];
+    const zoneCount={}; p.owns.forEach(i=>{const z=LAYOUT[i].z;zoneCount[z]=(zoneCount[z]||0)+1});
+    const masters=Object.keys(zoneCount).filter(z=>zoneCount[z]===3);
+    if(masters.length){bonus+=200*masters.length;notes.push("Zone Master \u00D7"+masters.length+" +"+200*masters.length)}
+    if(zs.size>=5){bonus+=300;notes.push("Bridge Builder +300")}
+    if(p.repairs>=3){bonus+=150;notes.push("Repair Hero +150")}
+    notes.push(p.stamps.length+" stamps");
+    return{p,total:p.cp+bonus,notes:notes.join(" \u00B7 ")};
+  }).sort((a,b)=>b.total-a.total);
+  $("endBox").innerHTML='<div class="convo-top" style="background:var(--ink)">'+
+    '<div><div class="id">FINAL SCORE</div><div class="zn">Best connected wins</div></div></div>'+
+    rows.map((r,i)=>'<div class="score-row'+(i===0?" win":"")+'"><div class="rank">'+(i+1)+'</div>'+
+      '<div class="who">'+esc(r.p.name)+'<span class="bon">'+r.notes+'</span></div>'+
+      '<div class="tot">'+r.total+'</div></div>').join("")+
+    '<div class="convo-foot"><span class="reward">Owning one zone is worth less than reaching five</span>'+
+    '<button class="btn ghost" onclick="shutM(\'endScrim\')">Keep playing</button></div>';
+  openM("endScrim");
+};
+
+/* ---------------- CARD INDEX ---------------- */
+$("openIdx").onclick=()=>{
+  let h='<div class="idx-h"><h3>All 80 conversations</h3><button class="btn stamp" onclick="shutM(\'idxScrim\')">Close</button></div><div class="idx-b">';
+  Object.keys(ZONES).forEach(z=>{
+    h+='<div class="idx-z" style="background:'+ZONES[z].c+'">'+z+' \u00B7 '+ZONES[z].name+' \u2014 '+ZONES[z].tag+'</div>';
+    CARDS.filter(c=>c.zone===z).forEach(c=>{
+      h+='<div class="idx-c"><span class="cid">'+c.id+' \u00B7 '+c.move+' \u2192 '+c.type+' \u00B7 '+c.level+'</span>'+
+         '<span class="cq"><b>'+c.task+'</b></span>'+
+         '<span class="cq" style="color:var(--ink-soft)">'+c.situation+'</span></div>';
+    });
+  });
+  $("idxBox").innerHTML=h+'</div>'; openM("idxScrim");
+};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){["evScrim","endScrim","idxScrim"].forEach(shutM)}});
+</script>
+</body>
+</html>
