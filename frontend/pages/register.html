@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register | CardLearn SDGs</title>
+
+  <style>
+    :root {
+      --bg-1: #0f172a;
+      --bg-2: #1e1b4b;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.72);
+      --glass: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --input-bg: rgba(15, 23, 42, 0.58);
+      --success: rgba(34, 197, 94, 0.18);
+      --success-border: rgba(34, 197, 94, 0.45);
+      --error: rgba(239, 68, 68, 0.18);
+      --error-border: rgba(239, 68, 68, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.44), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(14, 165, 233, 0.25), transparent 30%),
+        linear-gradient(135deg, var(--bg-2), var(--bg-1) 58%);
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 20;
+    }
+
+    .topbar a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      padding: 10px 14px;
+      border: 1px solid var(--glass-border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      transition: 0.2s ease;
+    }
+
+    .topbar a:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      min-height: 100vh;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 56px;
+      align-items: center;
+      padding: 88px 0 56px;
+    }
+
+    .hero {
+      max-width: 560px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      margin-bottom: 22px;
+      border: 1px solid var(--glass-border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 14px;
+    }
+
+    .brand {
+      margin: 0 0 18px;
+      font-size: clamp(2.5rem, 5vw, 4.7rem);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+    }
+
+    .brand span {
+      display: block;
+      background: linear-gradient(90deg, #ffffff, #bfdbfe, #c4b5fd);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .desc {
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 17px;
+      max-width: 480px;
+      margin-bottom: 28px;
+    }
+
+    .features {
+      display: grid;
+      gap: 12px;
+      max-width: 460px;
+    }
+
+    .feature {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: rgba(99, 102, 241, 0.24);
+      flex: 0 0 auto;
+    }
+
+    .feature strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 15px;
+    }
+
+    .feature p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 480px;
+      margin-left: auto;
+      padding: 32px;
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.08));
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+      backdrop-filter: blur(22px);
+    }
+
+    .card-header {
+      margin-bottom: 24px;
+    }
+
+    .card-header h2 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      letter-spacing: -0.03em;
+    }
+
+    .card-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .alert {
+      display: none;
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert.ok {
+      background: var(--success);
+      border: 1px solid var(--success-border);
+    }
+
+    .alert.err {
+      background: var(--error);
+      border: 1px solid var(--error-border);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 13px;
+    }
+
+    .status-pill.verified {
+      color: #bbf7d0;
+      background: rgba(34, 197, 94, 0.16);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 46px;
+      padding: 11px 13px;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 14px;
+      outline: none;
+      background: var(--input-bg);
+      color: white;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.36);
+    }
+
+    input:focus,
+    select:focus {
+      border-color: rgba(129, 140, 248, 0.9);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.22);
+      background: rgba(15, 23, 42, 0.72);
+    }
+
+    select option {
+      color: #111827;
+    }
+
+    .otp-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .btn {
+      min-height: 46px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.58;
+    }
+
+    .btn-primary {
+      width: 100%;
+      margin-top: 8px;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), #8b5cf6);
+      box-shadow: 0 14px 30px rgba(99, 102, 241, 0.32);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--primary-hover), #7c3aed);
+    }
+
+    .btn-secondary {
+      padding: 0 16px;
+      color: white;
+      white-space: nowrap;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .privacy-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 4px 0 18px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .privacy-box input {
+      width: 18px;
+      height: 18px;
+      min-height: unset;
+      margin-top: 2px;
+      accent-color: var(--primary);
+      flex: 0 0 auto;
+    }
+
+    .privacy-box label {
+      display: inline;
+      margin: 0;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .link-text {
+      color: #93c5fd;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-content {
+      width: min(520px, 100%);
+      padding: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 22px;
+      background: #ffffff;
+      color: #111827;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+    }
+
+    .modal-content h3 {
+      margin: 0 0 12px;
+      font-size: 24px;
+    }
+
+    .modal-content p {
+      margin: 0 0 18px;
+      color: #4b5563;
+      line-height: 1.8;
+    }
+
+    .modal-content button {
+      width: 100%;
+      min-height: 42px;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      background: #111827;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 920px) {
+      .page {
+        grid-template-columns: 1fr;
+        gap: 34px;
+        padding-top: 92px;
+      }
+
+      .hero {
+        max-width: none;
+        text-align: center;
+      }
+
+      .desc,
+      .features {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .card {
+        max-width: 560px;
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 24px, 1180px);
+        padding-bottom: 28px;
+      }
+
+      .topbar {
+        top: 12px;
+        left: 12px;
+      }
+
+      .card {
+        padding: 24px;
+        border-radius: 22px;
+      }
+
+      .form-grid,
+      .otp-row {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-secondary {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <a href="../">← Back Home</a>
+  </div>
+
+  <main class="page">
+    <section class="hero" aria-label="CardLearn SDGs introduction">
+      <div class="badge">🌱 SDGs × Card Learning × English Interaction</div>
+      <h1 class="brand">🃏 CardLearn <span>SDGs</span></h1>
+      <p class="desc">
+        Use card missions, situational dialogue, and interactive challenges to turn the Sustainable Development Goals into a learning journey students can understand, discuss, and practice.
+      </p>
+
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">🎯</div>
+          <div>
+            <strong>Mission-Based Learning</strong>
+            <p>Guide students through SDG issues with card-based missions.</p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">💬</div>
+          <div>
+            <strong>English Interaction</strong>
+            <p>Use scenario prompts to help learners express sustainability ideas.</p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📈</div>
+          <div>
+            <strong>Learning Records</strong>
+            <p>Create an account to save progress and support future personalization.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" aria-label="register form">
+      <div class="card-header">
+        <h2>Create Account</h2>
+        <p>Verify your email to start using CardLearn SDGs.</p>
+      </div>
+
+      <div id="msg" class="alert" role="status"></div>
+      <div id="emailStatus" class="status-pill">❌ Email not verified</div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input id="name" autocomplete="name" placeholder="Enter your name" />
+        </div>
+
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender">
+            <option value="">Prefer not to say</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label for="birth_date">Birthday</label>
+          <input type="date" id="birth_date" />
+        </div>
+
+        <div class="form-group full">
+          <label for="email">Email</label>
+          <div class="otp-row">
+            <input id="email" type="email" autocomplete="email" placeholder="example@email.com" />
+            <button id="sendOtpBtn" class="btn btn-secondary" type="button" onclick="sendOTP()">Send Code</button>
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label for="otp">Verification Code</label>
+          <div class="otp-row">
+            <input id="otp" inputmode="numeric" placeholder="Enter the code from your email" />
+            <button id="verifyOtpBtn" class="btn btn-secondary" type="button" onclick="verifyOTP()">Verify Email</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" autocomplete="new-password" placeholder="At least 8 characters" />
+        </div>
+
+        <div class="form-group">
+          <label for="confirm_password">Confirm Password</label>
+          <input type="password" id="confirm_password" autocomplete="new-password" placeholder="Enter your password again" />
+        </div>
+      </div>
+
+      <div class="privacy-box">
+        <input type="checkbox" id="privacy_agreed" />
+        <label for="privacy_agreed">
+          I have read and agree to the
+          <span class="link-text" onclick="openPrivacy()">Privacy Policy</span>
+        </label>
+      </div>
+
+      <button id="registerBtn" class="btn btn-primary" type="button" onclick="register()">Register</button>
+    </section>
+  </main>
+
+  <div id="privacyModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="privacyTitle">
+    <div class="modal-content">
+      <h3 id="privacyTitle">Privacy Policy</h3>
+      <p>
+        This platform uses your registration information to create your account, verify your email, and save necessary learning records.
+        Full terms for school projects and privacy regulations can be added here.
+      </p>
+      <button type="button" onclick="closePrivacy()">Got it</button>
+    </div>
+  </div>
+
+  <script src="/static/config.js"></script>
+  <script src="/static/js/api.js"></script>
+  <script>
+    let emailVerified = false;
+
+    function getValue(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function setLoading(buttonId, loadingText, isLoading) {
+      const button = document.getElementById(buttonId);
+      if (!button) return;
+
+      if (isLoading) {
+        button.dataset.originalText = button.innerText;
+        button.innerText = loadingText;
+        button.disabled = true;
+      } else {
+        button.innerText = button.dataset.originalText || button.innerText;
+        button.disabled = false;
+      }
+    }
+
+    function showMessage(text, ok = true) {
+      const message = document.getElementById("msg");
+      message.className = `alert show ${ok ? "ok" : "err"}`;
+      message.innerText = text;
+    }
+
+    function getApiErrorMessage(error) {
+      return error?.message || error?.detail || "An unknown error occurred.";
+    }
+
+    function updateEmailStatus() {
+      const status = document.getElementById("emailStatus");
+      status.innerText = emailVerified ? "✅ Email verified" : "❌ Email not verified";
+      status.classList.toggle("verified", emailVerified);
+    }
+
+    async function sendOTP() {
+      const email = getValue("email");
+      if (!email) return showMessage("Enter your email first.", false);
+      if (!isValidEmail(email)) return showMessage("The email format is invalid. Please check it before sending a code.", false);
+
+      setLoading("sendOtpBtn", "Sending...", true);
+      try {
+        await api.sendOTP(email);
+
+        emailVerified = false;
+        updateEmailStatus();
+        showMessage("The verification code has been sent. Please check your inbox.");
+      } catch (error) {
+        showMessage(getApiErrorMessage(error), false);
+      } finally {
+        setLoading("sendOtpBtn", "", false);
+      }
+    }
+
+    async function verifyOTP() {
+      const email = getValue("email");
+      const otp = getValue("otp");
+
+      if (!email) return showMessage("Enter your email first.", false);
+      if (!isValidEmail(email)) return showMessage("The email format is invalid. Please check it before verifying.", false);
+      if (!otp) return showMessage("Enter the verification code.", false);
+
+      setLoading("verifyOtpBtn", "Verifying...", true);
+      try {
+        await api.verifyOTP(email, otp);
+
+        emailVerified = true;
+        updateEmailStatus();
+        showMessage("Email verified successfully.");
+      } catch (error) {
+        emailVerified = false;
+        updateEmailStatus();
+        showMessage(getApiErrorMessage(error), false);
+      } finally {
+        setLoading("verifyOtpBtn", "", false);
+      }
+    }
+
+    async function register() {
+      const name = getValue("name");
+      const gender = getValue("gender");
+      const birthDate = getValue("birth_date");
+      const email = getValue("email");
+      const password = getValue("password");
+      const confirmPassword = getValue("confirm_password");
+      const privacyAgreed = document.getElementById("privacy_agreed").checked;
+
+      if (!emailVerified) return showMessage("Verify your email first.", false);
+      if (!name) return showMessage("Enter your name.", false);
+      if (!email) return showMessage("Enter your email.", false);
+      if (!isValidEmail(email)) return showMessage("The email format is invalid.", false);
+      if (!password) return showMessage("Enter your password.", false);
+      if (password.length < 8) return showMessage("Password must be at least 8 characters.", false);
+      if (password !== confirmPassword) return showMessage("Passwords do not match.", false);
+      if (!privacyAgreed) return showMessage("Please agree to the Privacy Policy.", false);
+
+      const payload = {
+        name,
+        gender,
+        birth_date: birthDate || null,
+        email,
+        password,
+        confirm_password: confirmPassword,
+        privacy_agreed: true
+      };
+
+      setLoading("registerBtn", "Registering...", true);
+      try {
+        await api.register(payload);
+
+        showMessage("Registration successful. Redirecting to sign in...");
+        setTimeout(() => location.href = "login.html", 900);
+      } catch (error) {
+        showMessage(getApiErrorMessage(error), false);
+      } finally {
+        setLoading("registerBtn", "", false);
+      }
+    }
+
+    function openPrivacy() {
+      document.getElementById("privacyModal").classList.remove("hidden");
+    }
+
+    function closePrivacy() {
+      document.getElementById("privacyModal").classList.add("hidden");
+    }
+
+    document.getElementById("privacyModal").addEventListener("click", (event) => {
+      if (event.target.id === "privacyModal") closePrivacy();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closePrivacy();
+    });
+  </script>
+</body>
+</html>

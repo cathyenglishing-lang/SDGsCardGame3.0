@@ -1,0 +1,1837 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>CardLearn SDG - Pro Poker Edition</title>
+<style>
+:root {
+  --poker-ratio: 1.4;
+  --card-width: 220px;
+  --card-height: calc(var(--card-width) * var(--poker-ratio));
+  --back-color-1: #1e3a8a;
+  --back-color-2: #1e1b4b;
+  --primary-gradient: linear-gradient(135deg, #6366f1, #a855f7);
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(circle at top, #1e1b4b, #030712);
+  color: white;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.game-wrapper {
+  position: relative;
+  height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  width: 80%;
+  margin: 0 auto 20px auto;
+  z-index: 10;
+}
+
+/* ==== Topic Button State ==== */
+.topic {
+  background: rgba(255,255,255,0.1);
+  padding: 15px;
+  border-radius: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid rgba(255,255,255,0.1);
+  position: relative;
+  user-select: none;
+}
+.topic:hover:not(.completed) {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-2px);
+}
+.topic.active {
+  background: var(--primary-gradient);
+  box-shadow: 0 0 20px rgba(168,85,247,0.5);
+  border-color: white;
+}
+/* Completed parts turn green and cannot be clicked again. */
+.topic.completed {
+  background: linear-gradient(135deg, #064e3b, #065f46) !important;
+  border: 2px solid #34d399 !important;
+  cursor: not-allowed !important;
+  box-shadow: 0 0 18px rgba(52,211,153,0.4);
+}
+.topic.completed::after {
+  content: "Complete";
+  position: absolute;
+  top: 6px; right: 10px;
+  font-size: 0.72em;
+  color: #6ee7b7;
+  font-weight: bold;
+}
+
+#status {
+  text-align: center;
+  font-size: 1.4em;
+  font-weight: bold;
+  height: 1.5em;
+  color: #cbd5e1;
+}
+
+.subtopic-box {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  perspective: 2000px;
+}
+
+/* ==== Poker Cards ==== */
+.poker-card {
+  width: var(--card-width);
+  height: var(--card-height);
+  position: relative;
+  perspective: 1500px;
+}
+.card-inner {
+  position: absolute;
+  width: 100%; height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  transform-style: preserve-3d;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+  border-radius: 12px;
+}
+.subtopic-poker .card-inner { transform: none !important; }
+.poker-card.draggable.flipped .card-inner { transform: rotateY(180deg); }
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%; height: 100%;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.card-front {
+  background: white;
+  color: #0f172a;
+  font-weight: bold;
+  font-size: 1.2em;
+  text-align: center;
+}
+.card-back {
+  background-color: var(--back-color-1);
+  background-image:
+    radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%),
+    repeating-conic-gradient(from 0deg, var(--back-color-1) 0deg 90deg, var(--back-color-2) 90deg 180deg);
+  background-size: 100% 100%, 20px 20px;
+  color: gold;
+  font-size: 1.8em;
+  font-weight: 900;
+  border: 4px double rgba(255,215,0,0.3);
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+}
+
+@keyframes flyIn {
+  from { opacity:0; transform:translate(400px,400px) rotate(45deg) scale(0.5); }
+  to   { opacity:1; transform:translate(0,0) rotate(0deg) scale(1); }
+}
+.subtopic-poker.dealing {
+  animation: flyIn 0.6s cubic-bezier(0.175,0.885,0.32,1.275) forwards;
+}
+.subtopic-poker.correct .card-inner { box-shadow: 0 0 30px #22c55e; }
+
+/* ==== Dealing Area ==== */
+.deck-panel {
+  position: fixed;
+  right: 50px; bottom: 50px;
+  z-index: 100;
+}
+.deck {
+  background-color: var(--back-color-1);
+  background-image:
+    radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%),
+    repeating-conic-gradient(from 0deg, var(--back-color-1) 0deg 90deg, var(--back-color-2) 90deg 180deg);
+  background-size: 100% 100%, 20px 20px;
+  border: 3px solid white;
+  transform: rotate(5deg);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.deck:hover { transform: rotate(5deg) scale(1.05); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+.dealt-card-container {
+  position: absolute;
+  bottom: calc(var(--card-height) + 30px);
+  right: 10px;
+  width: var(--card-width);
+  height: var(--card-height);
+}
+.poker-card.draggable {
+  cursor: grab;
+  animation: dealOut 0.5s ease-out forwards;
+}
+@keyframes dealOut {
+  0%   { transform:translate(50px,150px) rotate(20deg); opacity:0; }
+  100% { transform:translate(0,0) rotate(-5deg); opacity:1; }
+}
+
+/* ==== Timer ==== */
+#gameTimer {
+  position: fixed;
+  bottom: 50px; left: 50px;
+  z-index: 100;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2.2em;
+  font-weight: bold;
+  color: #fde047;
+  text-shadow: 0 0 12px rgba(253,224,71,0.5);
+  letter-spacing: 3px;
+  user-select: none;
+}
+#gameTimer .timer-label {
+  display: block;
+  font-size: 0.4em;
+  letter-spacing: 2px;
+  color: #94a3b8;
+  margin-bottom: 2px;
+}
+
+/* ==== Speech Caption Box ==== */
+#sentenceBox {
+  position: fixed;
+  bottom: 80px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15,23,42,0.95);
+  padding: 20px 40px;
+  border-radius: 20px;
+  opacity: 0; visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+  border: 2px solid #6366f1;
+  z-index: 200;
+  max-width: 85%;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  line-height: 1.6;
+}
+#sentenceBox.active { opacity:1; visibility:visible; bottom:100px; }
+#sentenceBox .sentence-text {
+  color: #e2e8f0;
+  font-size: 1.65em;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+@keyframes shake {
+  0%,100% { transform:translateX(0); }
+  25%      { transform:translateX(-8px); }
+  75%      { transform:translateX(8px); }
+}
+
+/* ════ Toast ════ */
+#toast {
+  position: fixed;
+  top: 30px; left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: rgba(15,23,42,0.97);
+  border: 1px solid #6366f1;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-size: 1em; font-weight: 600;
+  z-index: 999;
+  transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+  pointer-events: none;
+  white-space: nowrap;
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+
+/* ===== Enhanced layout + interaction polish ===== */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(99,102,241,.28), transparent 32%),
+    radial-gradient(circle at 82% 20%, rgba(34,197,94,.18), transparent 28%),
+    linear-gradient(180deg, rgba(255,255,255,.05), transparent 45%);
+  z-index: -1;
+}
+.game-wrapper {
+  box-sizing: border-box;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.game-title {
+  margin: 0;
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  letter-spacing: .03em;
+}
+.progress-panel {
+  min-width: 240px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 18px;
+  background: rgba(15,23,42,.62);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 16px 42px rgba(0,0,0,.25);
+}
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  color: #cbd5e1;
+  font-size: .82rem;
+  margin-bottom: 8px;
+}
+.progress-bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(148,163,184,.25);
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg,#22c55e,#fde047,#a855f7);
+  transition: width .35s ease;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.super-finish-btn {
+  display: none;
+  min-height: 40px;
+  border: 1px solid rgba(251,191,36,.45);
+  border-radius: 8px;
+  padding: 0 14px;
+  color: #451a03;
+  background: linear-gradient(135deg, #fde68a, #f59e0b);
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(245,158,11,.22);
+}
+.super-finish-btn.show {
+  display: inline-flex;
+  align-items: center;
+}
+.topic-grid {
+  width: min(1120px, 94vw);
+  gap: 12px;
+}
+.topic {
+  min-height: 62px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+  backdrop-filter: blur(14px);
+}
+.topic strong { letter-spacing: .02em; }
+.topic small { color: #cbd5e1; line-height: 1.35; }
+#status {
+  margin: 4px auto 0;
+  min-height: 34px;
+  height: auto;
+  padding: 8px 18px;
+  width: fit-content;
+  max-width: min(920px, 92vw);
+  border-radius: 999px;
+  background: rgba(15,23,42,.56);
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: 0 14px 38px rgba(0,0,0,.18);
+}
+.subtopic-box {
+  gap: clamp(14px, 2vw, 30px);
+  align-items: center;
+  padding: 18px 310px 110px 40px;
+  box-sizing: border-box;
+}
+.subtopic-poker { transition: transform .2s ease, filter .2s ease; }
+.subtopic-poker:hover:not(.correct) { filter: brightness(1.08); }
+.subtopic-poker.correct { transform: translateY(-6px); }
+.dealt-card-container { filter: drop-shadow(0 22px 30px rgba(0,0,0,.35)); }
+.card-front { overflow: hidden; }
+.card-controls {
+  position: absolute;
+  left: 50%;
+  bottom: -62px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: max-content;
+  z-index: 30;
+}
+.card-action-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 800;
+  color: white;
+  background: linear-gradient(135deg,#22c55e,#16a34a);
+  box-shadow: 0 12px 24px rgba(22,163,74,.28);
+  cursor: pointer;
+  transition: transform .18s ease, opacity .18s ease, box-shadow .18s ease;
+}
+.card-action-btn:hover:not(:disabled) { transform: translateY(-2px) scale(1.03); }
+.card-action-btn:disabled { opacity: .48; cursor: not-allowed; box-shadow: none; }
+.card-action-btn.secondary { background: linear-gradient(135deg,#6366f1,#a855f7); }
+.repeat-count-chip {
+  color: #fde68a;
+  background: rgba(15,23,42,.88);
+  border: 1px solid rgba(253,224,71,.22);
+  border-radius: 999px;
+  padding: 9px 12px;
+  font-size: .82rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+#sentenceBox {
+  max-height: 42vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+#gameTimer {
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: rgba(15,23,42,.62);
+  border: 1px solid rgba(255,255,255,.1);
+  backdrop-filter: blur(16px);
+}
+.deck::after {
+  content: "CLICK TO DEAL";
+  position: absolute;
+  left: 50%;
+  bottom: -34px;
+  transform: translateX(-50%);
+  color: #cbd5e1;
+  font-size: .72rem;
+  letter-spacing: .12em;
+  white-space: nowrap;
+}
+@media (max-width: 1080px) {
+  :root { --card-width: 185px; }
+  .topic-grid { grid-template-columns: repeat(2, 1fr); }
+  .subtopic-box { padding-right: 230px; flex-wrap: wrap; align-content: center; }
+  .deck-panel { right: 24px; bottom: 36px; }
+  #gameTimer { left: 24px; bottom: 36px; }
+}
+@media (max-width: 760px) {
+  body { overflow: auto; }
+  .game-wrapper { min-height: 100vh; height: auto; padding-bottom: 220px; }
+  .game-header { flex-direction: column; align-items: stretch; }
+  .topic-grid { grid-template-columns: 1fr; }
+  .subtopic-box { padding: 20px 12px 120px; }
+  .deck-panel { position: fixed; right: 16px; bottom: 24px; }
+  #gameTimer { left: 16px; bottom: 24px; font-size: 1.5em; }
+  #sentenceBox .sentence-text { font-size: 1.25em; }
+}
+
+
+
+/* ===== Final relayout: keep hand card, deck, timer, and subtitles from covering each other ===== */
+:root {
+  --card-width: 190px;
+  --side-panel-width: 292px;
+  --safe-bottom: 150px;
+}
+body {
+  overflow: hidden;
+}
+.game-wrapper {
+  width: 100%;
+  max-width: none;
+  padding: 18px calc(var(--side-panel-width) + 34px) 18px 22px;
+}
+.game-header {
+  margin-right: 0;
+}
+.topic-grid {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto 12px auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.topic {
+  padding: 11px 12px;
+  min-height: 58px;
+}
+.topic small {
+  font-size: .76rem;
+}
+#status {
+  margin: 0 auto 8px;
+  font-size: 1.05rem;
+}
+.subtopic-box {
+  min-height: 0;
+  height: calc(100vh - 215px);
+  padding: 10px 8px var(--safe-bottom) 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(172px, 1fr));
+  place-items: center;
+  align-content: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.subtopic-poker {
+  width: min(var(--card-width), 100%);
+}
+.subtopic-poker .card-front {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+.deck-panel {
+  position: fixed;
+  top: 104px;
+  right: 18px;
+  bottom: 18px;
+  width: var(--side-panel-width);
+  z-index: 130;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  gap: 14px;
+  box-sizing: border-box;
+  padding: 16px 14px;
+  border-radius: 28px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: linear-gradient(180deg, rgba(15,23,42,.78), rgba(15,23,42,.52));
+  box-shadow: 0 24px 60px rgba(0,0,0,.36);
+  backdrop-filter: blur(18px);
+}
+.deck-panel::before {
+  content: "Current Card";
+  color: #cbd5e1;
+  font-size: .78rem;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.dealt-card-container {
+  position: relative;
+  inset: auto;
+  width: var(--card-width);
+  height: calc(var(--card-width) * var(--poker-ratio) + 76px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: visible;
+}
+.dealt-card-container .poker-card {
+  position: relative;
+  transform: none !important;
+  animation: dealOutSide .35s ease-out forwards;
+}
+@keyframes dealOutSide {
+  from { opacity: 0; transform: translateY(18px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.deck {
+  width: 150px;
+  height: 210px;
+  align-self: end;
+  transform: rotate(3deg);
+}
+.deck:hover {
+  transform: rotate(3deg) translateY(-3px) scale(1.03);
+}
+.deck::after {
+  bottom: -28px;
+}
+.card-controls {
+  bottom: -58px;
+  gap: 7px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 250px;
+}
+.card-action-btn {
+  padding: 9px 12px;
+  font-size: .82rem;
+}
+.repeat-count-chip {
+  padding: 8px 10px;
+  font-size: .76rem;
+}
+#gameTimer {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  bottom: auto;
+  left: auto;
+  width: var(--side-panel-width);
+  box-sizing: border-box;
+  text-align: center;
+  z-index: 140;
+  font-size: 1.8em;
+}
+#sentenceBox {
+  left: 22px;
+  right: calc(var(--side-panel-width) + 34px);
+  bottom: 18px;
+  transform: none;
+  max-width: none;
+  max-height: 120px;
+  padding: 14px 18px;
+  border-radius: 20px;
+  text-align: left;
+  overflow-y: auto;
+  z-index: 150;
+}
+#sentenceBox.active {
+  bottom: 18px;
+}
+#sentenceBox span {
+  font-size: clamp(1rem, 1.65vw, 1.45rem);
+  padding: 1px 6px;
+  margin: 2px;
+}
+@media (max-width: 1120px) {
+  :root { --card-width: 170px; --side-panel-width: 260px; }
+  .game-wrapper { padding-right: calc(var(--side-panel-width) + 26px); }
+  .topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .subtopic-box { height: calc(100vh - 255px); grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .deck { width: 130px; height: 182px; }
+  #sentenceBox { right: calc(var(--side-panel-width) + 28px); }
+}
+@media (max-width: 780px) {
+  body { overflow: auto; }
+  .game-wrapper { height: auto; min-height: 100vh; padding: 14px 12px 390px; }
+  .game-header { flex-direction: column; align-items: stretch; }
+  .topic-grid { grid-template-columns: 1fr; }
+  .subtopic-box { height: auto; min-height: 420px; padding: 14px 4px 20px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  #gameTimer { top: auto; right: 12px; bottom: 314px; width: calc(50vw - 18px); font-size: 1.3em; }
+  .deck-panel { top: auto; left: 12px; right: 12px; bottom: 12px; width: auto; height: 292px; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr; }
+  .deck-panel::before { grid-column: 1 / -1; }
+  .dealt-card-container { width: 150px; height: 230px; }
+  .dealt-card-container .poker-card { width: 150px; height: 210px; }
+  .deck { width: 112px; height: 157px; align-self: center; }
+  .card-controls { width: 200px; bottom: -54px; }
+  #sentenceBox { left: 12px; right: 12px; bottom: 314px; max-height: 92px; }
+  #sentenceBox.active { bottom: 314px; }
+}
+
+
+/* ===== Compact cards + clearer drag feedback ===== */
+:root {
+  --card-width: 158px;
+  --side-panel-width: 252px;
+  --card-radius: 18px;
+}
+.poker-card {
+  border-radius: var(--card-radius);
+}
+.card-inner {
+  border-radius: var(--card-radius);
+  box-shadow: 0 14px 28px rgba(0,0,0,.32);
+  transition: transform .22s ease, box-shadow .22s ease, filter .22s ease;
+}
+.card-front,
+.card-back {
+  border-radius: var(--card-radius);
+  padding: 12px;
+}
+.card-front {
+  justify-content: flex-start;
+  gap: 8px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,1), rgba(241,245,249,.96));
+  border: 1px solid rgba(148,163,184,.45);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.75);
+}
+.match-card-face,
+.playable-card-face,
+.correct-card-face {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+.card-kicker,
+.card-corner {
+  align-self: flex-start;
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: #3730a3;
+  background: rgba(99,102,241,.12);
+  font-size: .66rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.card-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+  font-size: clamp(.86rem, 1.05vw, 1rem);
+  line-height: 1.22;
+  font-weight: 900;
+  text-align: center;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.drop-hint,
+.drag-hint {
+  margin-top: auto;
+  padding: 7px 9px;
+  border-radius: 12px;
+  background: rgba(15,23,42,.06);
+  border: 1px dashed rgba(99,102,241,.26);
+  color: #475569;
+  font-size: .68rem;
+  font-weight: 800;
+  text-align: center;
+}
+.playable-card-face {
+  gap: 8px;
+}
+.card-scroll-text {
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  color: #111827;
+  font-size: .72rem;
+  line-height: 1.34;
+  font-weight: 750;
+  text-align: left;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+.draggable .card-back {
+  font-size: 1.45em;
+}
+.subtopic-box {
+  grid-template-columns: repeat(auto-fit, minmax(142px, 1fr));
+  gap: 16px;
+}
+.deck-panel {
+  padding: 14px 12px;
+}
+.dealt-card-container {
+  width: var(--card-width);
+  height: calc(var(--card-width) * var(--poker-ratio) + 72px);
+}
+.deck {
+  width: 124px;
+  height: 174px;
+}
+.card-controls {
+  bottom: -56px;
+  width: 232px;
+}
+.card-action-btn {
+  padding: 8px 10px;
+}
+.repeat-count-chip {
+  padding: 7px 9px;
+}
+.subtopic-poker.drop-ready:not(.correct) .card-inner {
+  box-shadow: 0 0 0 3px rgba(253,224,71,.46), 0 18px 34px rgba(0,0,0,.34);
+  transform: translateY(-4px);
+}
+.subtopic-poker.drop-ready:not(.correct) .drop-hint {
+  background: rgba(253,224,71,.22);
+  border-color: rgba(253,224,71,.8);
+  color: #854d0e;
+}
+.subtopic-poker.drop-over:not(.correct) .card-inner {
+  transform: translateY(-12px) scale(1.08);
+  box-shadow: 0 0 0 4px rgba(34,197,94,.65), 0 28px 52px rgba(34,197,94,.22);
+  filter: brightness(1.05);
+}
+.poker-card.draggable[draggable="true"] {
+  cursor: grab;
+}
+.poker-card.draggable[draggable="true"] .card-inner {
+  box-shadow: 0 0 0 3px rgba(253,224,71,.36), 0 18px 40px rgba(0,0,0,.38);
+}
+.poker-card.draggable[draggable="true"] .drag-hint {
+  background: rgba(34,197,94,.14);
+  border-color: rgba(34,197,94,.45);
+  color: #166534;
+}
+.poker-card.draggable.dragging {
+  cursor: grabbing;
+  opacity: .72;
+  transform: rotate(-7deg) scale(1.05) !important;
+  filter: saturate(1.2);
+}
+body.is-dragging-card .subtopic-poker:not(.correct) {
+  animation: dropPulse 1.1s ease-in-out infinite;
+}
+@keyframes dropPulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.16); }
+}
+.correct-card-face {
+  gap: 6px;
+  justify-content: flex-start;
+}
+.correct-card-face .card-title {
+  flex: 0 0 auto;
+  min-height: 38px;
+  font-size: .76rem;
+  color: #1d4ed8;
+}
+.correct-text {
+  width: 100%;
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  color: #0f172a;
+  font-size: .62rem;
+  line-height: 1.28;
+  font-weight: 650;
+  text-align: left;
+}
+@media (max-width: 1120px) {
+  :root { --card-width: 148px; --side-panel-width: 236px; }
+  .subtopic-box { grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
+  .deck { width: 112px; height: 157px; }
+}
+@media (max-width: 780px) {
+  :root { --card-width: 142px; }
+  .dealt-card-container { width: 142px; height: 232px; }
+  .dealt-card-container .poker-card { width: 142px; height: 199px; }
+  .subtopic-box { grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
+  .card-controls { width: 198px; }
+  .card-scroll-text { font-size: .66rem; -webkit-line-clamp: 7; }
+}
+
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+<div class="game-wrapper">
+  <div class="game-header">
+    <h1 class="game-title">SDG Pecha Kucha Card Game</h1>
+    <div class="header-actions">
+      <button id="superFinishBtn" class="super-finish-btn" type="button">Super Finish</button>
+      <div class="progress-panel" aria-label="game progress">
+        <div class="progress-text"><span id="progressLabel">Progress</span><strong id="progressNumber">0 / 0</strong></div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="game-guide" aria-label="How to play">
+    <div class="game-guide-step"><strong>1. Choose a part</strong><span>Select one Pecha Kucha section.</span></div>
+    <div class="game-guide-step"><strong>2. Deal and listen</strong><span>Click the deck, then listen once.</span></div>
+    <div class="game-guide-step"><strong>3. Match the idea</strong><span>Drag the sentence or click a topic card.</span></div>
+    <div class="game-guide-step"><strong>4. Present</strong><span>Use completed cards as your speaking outline.</span></div>
+  </div>
+  <div class="topic-grid" id="topicGrid"></div>
+  <div id="status">Choose a Pecha Kucha part to begin.</div>
+  <div class="subtopic-box" id="subBox"></div>
+  <div id="sentenceBox"></div>
+  <div id="gameTimer"><span class="timer-label">TIME</span>00:00</div>
+  <div class="deck-panel">
+    <div class="dealt-card-container" id="dealtCardHolder"></div>
+    <div class="poker-card deck" id="mainDeck" onclick="dealNextCard()">
+      <div class="card-inner"><div class="card-back">SDG</div></div>
+    </div>
+  </div>
+  
+
+
+</div>
+<style>
+.end-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.end-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+}
+
+.game-guide {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto 10px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  background: rgba(15,23,42,.50);
+  box-shadow: 0 12px 32px rgba(0,0,0,.18);
+}
+
+.game-guide-step {
+  min-width: 0;
+}
+
+.game-guide-step strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #bfdbfe;
+  font-size: .76rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.game-guide-step span {
+  display: block;
+  color: rgba(248,250,252,.76);
+  font-size: .76rem;
+  line-height: 1.32;
+}
+
+/* ===== Compact cards + clearer drag feedback ===== */
+:root {
+  --card-width: 158px;
+  --side-panel-width: 252px;
+  --card-radius: 18px;
+}
+.poker-card {
+  border-radius: var(--card-radius);
+}
+.card-inner {
+  border-radius: var(--card-radius);
+  box-shadow: 0 14px 28px rgba(0,0,0,.32);
+  transition: transform .22s ease, box-shadow .22s ease, filter .22s ease;
+}
+.card-front,
+.card-back {
+  border-radius: var(--card-radius);
+  padding: 12px;
+}
+.card-front {
+  justify-content: flex-start;
+  gap: 8px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,1), rgba(241,245,249,.96));
+  border: 1px solid rgba(148,163,184,.45);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.75);
+}
+.match-card-face,
+.playable-card-face,
+.correct-card-face {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+.card-kicker,
+.card-corner {
+  align-self: flex-start;
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: #3730a3;
+  background: rgba(99,102,241,.12);
+  font-size: .66rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.card-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+  font-size: clamp(.86rem, 1.05vw, 1rem);
+  line-height: 1.22;
+  font-weight: 900;
+  text-align: center;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.drop-hint,
+.drag-hint {
+  margin-top: auto;
+  padding: 7px 9px;
+  border-radius: 12px;
+  background: rgba(15,23,42,.06);
+  border: 1px dashed rgba(99,102,241,.26);
+  color: #475569;
+  font-size: .68rem;
+  font-weight: 800;
+  text-align: center;
+}
+.playable-card-face {
+  gap: 8px;
+}
+.card-scroll-text {
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  color: #111827;
+  font-size: .72rem;
+  line-height: 1.34;
+  font-weight: 750;
+  text-align: left;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+.draggable .card-back {
+  font-size: 1.45em;
+}
+.subtopic-box {
+  grid-template-columns: repeat(auto-fit, minmax(142px, 1fr));
+  gap: 16px;
+  height: calc(100vh - 286px);
+}
+.deck-panel {
+  padding: 14px 12px;
+}
+.dealt-card-container {
+  width: var(--card-width);
+  height: calc(var(--card-width) * var(--poker-ratio) + 72px);
+}
+.deck {
+  width: 124px;
+  height: 174px;
+}
+.card-controls {
+  bottom: -56px;
+  width: 232px;
+}
+.card-action-btn {
+  padding: 8px 10px;
+}
+.repeat-count-chip {
+  padding: 7px 9px;
+}
+.subtopic-poker.drop-ready:not(.correct) .card-inner {
+  box-shadow: 0 0 0 3px rgba(253,224,71,.46), 0 18px 34px rgba(0,0,0,.34);
+  transform: translateY(-4px);
+}
+.subtopic-poker.drop-ready:not(.correct) .drop-hint {
+  background: rgba(253,224,71,.22);
+  border-color: rgba(253,224,71,.8);
+  color: #854d0e;
+}
+.subtopic-poker.drop-over:not(.correct) .card-inner {
+  transform: translateY(-12px) scale(1.08);
+  box-shadow: 0 0 0 4px rgba(34,197,94,.65), 0 28px 52px rgba(34,197,94,.22);
+  filter: brightness(1.05);
+}
+.poker-card.draggable[draggable="true"] {
+  cursor: grab;
+}
+.poker-card.draggable[draggable="true"] .card-inner {
+  box-shadow: 0 0 0 3px rgba(253,224,71,.36), 0 18px 40px rgba(0,0,0,.38);
+}
+.poker-card.draggable[draggable="true"] .drag-hint {
+  background: rgba(34,197,94,.14);
+  border-color: rgba(34,197,94,.45);
+  color: #166534;
+}
+.poker-card.draggable.dragging {
+  cursor: grabbing;
+  opacity: .72;
+  transform: rotate(-7deg) scale(1.05) !important;
+  filter: saturate(1.2);
+}
+body.is-dragging-card .subtopic-poker:not(.correct) {
+  animation: dropPulse 1.1s ease-in-out infinite;
+}
+@keyframes dropPulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.16); }
+}
+.correct-card-face {
+  gap: 6px;
+  justify-content: flex-start;
+}
+.correct-card-face .card-title {
+  flex: 0 0 auto;
+  min-height: 38px;
+  font-size: .76rem;
+  color: #1d4ed8;
+}
+.correct-text {
+  width: 100%;
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  color: #0f172a;
+  font-size: .62rem;
+  line-height: 1.28;
+  font-weight: 650;
+  text-align: left;
+}
+
+/* Keep instruction messages useful without covering the topic cards. */
+#status {
+  position: fixed;
+  left: 22px;
+  right: calc(var(--side-panel-width) + 34px);
+  bottom: 14px;
+  z-index: 145;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  min-height: 0;
+  padding: 10px 16px;
+  border-radius: 16px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sentenceBox,
+#sentenceBox.active {
+  bottom: 70px;
+}
+
+.subtopic-box {
+  height: calc(100vh - 246px);
+  padding-bottom: calc(var(--safe-bottom) + 52px);
+}
+
+.game-guide {
+  padding: 7px 10px;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+
+.game-guide-step strong,
+.game-guide-step span {
+  font-size: .68rem;
+  line-height: 1.22;
+}
+
+.topic-grid {
+  gap: 7px;
+  margin-bottom: 7px;
+}
+
+.topic {
+  min-height: 42px;
+  padding: 7px 9px;
+  border-radius: 10px;
+}
+
+.topic strong {
+  font-size: .88rem;
+  line-height: 1.1;
+}
+
+.topic small {
+  font-size: .66rem;
+  line-height: 1.2;
+}
+
+.topic.completed::after {
+  top: 3px;
+  right: 7px;
+  font-size: .6em;
+}
+
+@media (max-width: 1120px) {
+  :root { --card-width: 148px; --side-panel-width: 236px; }
+  .game-guide { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .subtopic-box { grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
+  .deck { width: 112px; height: 157px; }
+}
+@media (max-width: 780px) {
+  :root { --card-width: 142px; }
+  .game-guide { grid-template-columns: 1fr; }
+  #status {
+    left: 12px;
+    right: 12px;
+    bottom: 314px;
+    padding: 9px 12px;
+    font-size: .92rem;
+  }
+  #sentenceBox,
+  #sentenceBox.active {
+    bottom: 366px;
+  }
+  .dealt-card-container { width: 142px; height: 232px; }
+  .dealt-card-container .poker-card { width: 142px; height: 199px; }
+  .subtopic-box { grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); height: auto; padding-bottom: 70px; }
+  .card-controls { width: 198px; }
+  .card-scroll-text { font-size: .66rem; -webkit-line-clamp: 7; }
+}
+
+</style>
+<script src="/static/config.js"></script>
+<script src="/static/js/api.js"></script>
+<script>
+/* ── Voice preload ── */
+let cachedVoice = null;
+function loadPreferredVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return;
+  cachedVoice =
+    voices.find(v => v.name === 'Google US English') ||
+    voices.find(v => v.name.includes('Aria')) ||
+    voices.find(v => v.lang === 'en-US' && !v.localService) ||
+    voices.find(v => v.lang === 'en-US') || null;
+}
+window.speechSynthesis.onvoiceschanged = loadPreferredVoice;
+loadPreferredVoice();
+
+/* ── Login check ── */
+const user = auth.requireLogin()?.user;
+if (!user) { alert("Please sign in first."); window.location.href = "/"; }
+const canUseSuperFinish = ["teacher", "admin"].includes(user.role);
+
+/* ── Game state ── */
+let currentTopic    = null;
+let matchedCount    = 0;
+let totalToMatch    = 0;
+let currentCardData = null;
+let canDrag         = false;
+let gameData        = [];
+let errorCount      = 0;
+let repeatListenCount = 0;
+let timerStarted    = false;
+let activeUtterance = null;
+const repeatListenStats = {};
+const overallRepeatListenStats = {};
+const completedPartRecords = [];
+let isSpeaking = false;
+
+// Track completion state: partStatus[partId] = 'completed' | undefined.
+const partStatus = {};
+
+/* ── Timer ── */
+let timerInterval = null;
+let timerSeconds  = 0;
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerSeconds = 0;
+  timerStarted = false;
+  renderTimer();
+}
+
+function resetPartRepeatCounters() {
+  repeatListenCount = 0;
+  Object.keys(repeatListenStats).forEach((key) => delete repeatListenStats[key]);
+}
+function startTimer() {
+  if (timerStarted) return;
+  timerStarted = true;
+  clearInterval(timerInterval);
+  renderTimer();
+  timerInterval = setInterval(() => { timerSeconds++; renderTimer(); }, 1000);
+}
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerStarted = false;
+}
+function renderTimer() {
+  const m = String(Math.floor(timerSeconds / 60)).padStart(2,'0');
+  const s = String(timerSeconds % 60).padStart(2,'0');
+  document.getElementById("gameTimer").innerHTML =
+    `<span class="timer-label">TIME</span>${m}:${s}`;
+}
+function formatTime(sec) {
+  return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+}
+
+/* ── Game data ── */
+const FALLBACK_DB = {
+  topics: [
+    { id:1, name:"Part 1", subtitle:"Introduction (Slides 1-3: Hook, SDG 4 definition, Taiwan context)" },
+    { id:2, name:"Part 2", subtitle:"Problem Identification (Slides 4-6: Key challenges, data)" },
+    { id:3, name:"Part 3", subtitle:"Achievements and Progress (Slides 7-9: What Taiwan has done)" },
+    { id:4, name:"Part 4", subtitle:"Solutions and STEM Integration (Slides 10-12)" },
+    { id:5, name:"Part 5", subtitle:"Implications and Future (Slides 13-16: Broader impacts)" },
+    { id:6, name:"Part 6", subtitle:"Conclusion and Call to Action (Slides 17-20)" },
+  ],
+  subtopics: {
+    1:[
+      {id:"1-1",title:"Challenge Taiwan's education fairness"},
+      {id:"1-2",title:"SDG 4 inclusive lifelong learning"},
+      {id:"1-3",title:"STEM drives Taiwan innovation"},
+    ],
+    2:[
+      {id:"2-1",title:"Low birth rate school closures"},
+      {id:"2-2",title:"Exam pressure kills STEM creativity"},
+      {id:"2-3",title:"Urban-rural resource inequality gap"},
+    ],
+    3:[
+      {id:"3-1",title:"12-year free education success"},
+      {id:"3-2",title:"Preschool subsidies help disadvantaged"},
+      {id:"3-3",title:"High enrollment beats global average"},
+    ],
+    4:[
+      {id:"4-1",title:"Government funds hands-on STEM"},
+      {id:"4-2",title:"Digital tools teach AI ethics"},
+      {id:"4-3",title:"Internships prepare green tech careers"},
+    ],
+    5:[
+      {id:"5-1",title:"STEM boosts economy climate solutions"},
+      {id:"5-2",title:"Gender gaps persist in engineering"},
+      {id:"5-3",title:"Ignore issues waste future talent"},
+      {id:"5-4",title:"Education builds resilient Taiwan"},
+    ],
+    6:[
+      {id:"6-1",title:"SDG 4 progress with problems"},
+      {id:"6-2",title:"Challenge high scores creativity lacks"},
+      {id:"6-3",title:"Advocate inclusive STEM for all"},
+      {id:"6-4",title:"Act together equitable future now"},
+    ]
+  },
+  answers: {
+    "1-1":{english:"Good morning. To start, let's look at a big question: is education in Taiwan truly fair for everyone? Today, we will discuss SDG 4, which is about Quality Education. Sometimes, reality is very different from what we see on paper. Let's explore this together."},
+    "1-2":{english:"First, what is SDG 4? It means everyone should have a chance to learn, whether they are rich or poor. In Taiwan's high-tech world, we must ask: Does our school system really teach us how to use technology in a responsible way?"},
+    "1-3":{english:"Next, let's talk about STEM. Taiwan spends a lot of money on science and math to help our country grow. However, fewer babies are born now. Because of this, we need new ways to make our schools better for the future."},
+    "2-1":{english:"Now, let's look at the first problem. The birth rate is dropping fast. In 1990, there were 300,000 babies, but now there are less than 140,000. This means some country schools must close. Is it still fair for students living far away?"},
+    "2-2":{english:"Another issue is exams. In science, students spend too much time preparing for tests. They memorize facts but forget how to be creative. Many students lose interest early. Does this really help us solve real problems like climate change?"},
+    "2-3":{english:"Beyond exams, there is a big gap between the city and the countryside. City schools have great labs, but rural schools have very little. Data shows a 30% difference in resources. Is our system trying to fix this or ignoring it?"},
+    "3-1":{english:"On the other hand, Taiwan has done some great things. We have 12 years of free education, and almost 99% of children finish primary school. This is a strong start, but we must ask: is the quality of learning truly good?"},
+    "3-2":{english:"Also, the government helps poor families pay for preschool. Now, 96% of these children can go to school at age five. This helps them learn basic skills early, so they can do better in science and math later in life."},
+    "3-3":{english:"Furthermore, more people graduate in Taiwan than in most countries. Teachers also get special training. However, we must check if students in different cities are all learning the same deep knowledge, or if they are just passing tests."},
+    "4-1":{english:"So, what is the solution? The government is now funding fun science projects. Instead of just reading books, students do hands-on work. They learn about coding and how to use AI safely from a very young age."},
+    "4-2":{english:"In addition, most schools now use computers and apps. This connects students to our famous computer chip industry. But it also teaches them how to use technology safely and honestly in their daily lives."},
+    "4-3":{english:"For example, some students work as interns in big tech companies. They learn about green energy and new inventions. These programs help students move from the classroom to real jobs that help the planet and our economy."},
+    "5-1":{english:"This matters because better science education helps Taiwan's economy. Our tech exports are worth 500 billion dollars every year! It also helps us find ways to protect the earth. Science gives us the power to fix global problems."},
+    "5-2":{english:"However, we still have challenges. For example, only 30% of engineering students are women. Many people still think science is for men. We must change these old ideas so that everyone feels welcome in the world of technology."},
+    "5-3":{english:"If we don't fix these gaps, we will lose many talented people. As college students, we should ask: Are our schools ready for new AI jobs? We need a system that changes as the world changes."},
+    "5-4":{english:"Ultimately, good education makes our society strong. But if we don't change, Taiwan might fall behind. Science education must improve so we can handle the problems of tomorrow and keep our country successful and innovative."},
+    "6-1":{english:"To wrap up, Taiwan has made a lot of progress with SDG 4. Science and technology are the keys to our success, but we still have many problems with fairness that we need to solve together."},
+    "6-2":{english:"We need to look deeper. High test scores are good, but being creative is more important. We need to change the system so that every student has a fair chance to learn and create new things."},
+    "6-3":{english:"Looking ahead, science and math should be for everyone, including groups that are often left out. We can ask for better lessons that show us how science works in the real world every single day."},
+    "6-4":{english:"Finally, thank you for listening. Let's take action! You can talk about school rules or help younger students. Together, we can make the future fair and full of new ideas. Let's start today!"},
+  }
+};
+
+let DB = FALLBACK_DB;
+
+function currentDifficultyCode() {
+  return sessionStorage.getItem("current_difficulty") || "A2";
+}
+
+function normalizeGameContent(payload) {
+  const topics = [];
+  const subtopics = {};
+  const answers = {};
+
+  (payload.parts || []).forEach((part) => {
+    const partNo = Number(part.part_no);
+    topics.push({
+      id: partNo,
+      partId: part.part_id,
+      name: `Part ${partNo}`,
+      subtitle: part.part_description
+    });
+
+    subtopics[partNo] = [];
+    (part.sub_topics || []).forEach((topic) => {
+      const subId = `${partNo}-${topic.sub_topic_no}`;
+      subtopics[partNo].push({
+        id: subId,
+        title: topic.sub_topic_description,
+        subTopicId: topic.sub_topic_id
+      });
+
+      if (topic.card && topic.card.card_text) {
+        answers[subId] = {
+          english: topic.card.card_text,
+          cardId: topic.card.card_id
+        };
+      }
+    });
+  });
+
+  return { topics, subtopics, answers };
+}
+
+function buildScriptReviewPayload() {
+  return DB.topics
+    .slice()
+    .sort((a, b) => Number(a.id) - Number(b.id))
+    .map((topic) => ({
+      part: topic.id,
+      title: topic.name,
+      subtitle: topic.subtitle,
+      cards: (DB.subtopics[topic.id] || []).map((subtopic) => ({
+        id: subtopic.id,
+        title: subtopic.title,
+        text: DB.answers[subtopic.id]?.english || ""
+      })).filter((card) => card.text)
+    }));
+}
+
+function storeScriptReviewPayload(mode = "normal") {
+  const payload = {
+    mode,
+    saved_at: new Date().toISOString(),
+    sdg: Number(sessionStorage.getItem("current_sdg") || "4"),
+    difficulty: currentDifficultyCode(),
+    parts: buildScriptReviewPayload()
+  };
+  sessionStorage.setItem("current_script_review", JSON.stringify(payload));
+}
+
+function goToFinishPage(mode = "normal") {
+  storeScriptReviewPayload(mode);
+  if (mode === "super") {
+    sessionStorage.setItem("finish_super_skip", "1");
+    sessionStorage.removeItem("current_session_id");
+  } else {
+    sessionStorage.removeItem("finish_super_skip");
+  }
+  window.location.href = "finish.html";
+}
+
+/* ── Toast ── */
+function showToast(msg, duration=2500) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), duration);
+}
+
+/* ── Initialize topic buttons ── */
+async function loadGameContent() {
+  const sdg = Number(sessionStorage.getItem("current_sdg") || "4");
+  const level = currentDifficultyCode();
+  sessionStorage.setItem("current_difficulty", level);
+
+  try {
+    const payload = await api.game.content(sdg, level);
+    const normalized = normalizeGameContent(payload);
+    const hasPlayableCards = Object.keys(normalized.answers).length > 0;
+    DB = hasPlayableCards ? normalized : FALLBACK_DB;
+    if (!hasPlayableCards) {
+      showToast("The content bank is incomplete, so demo cards are being used for now.", 3000);
+    }
+  } catch (error) {
+    console.warn(error);
+    DB = FALLBACK_DB;
+    showToast("Failed to load the content bank. Demo cards are being used for now.", 3000);
+  }
+}
+
+async function initTopics() {
+  await loadGameContent();
+  storeScriptReviewPayload("normal");
+  const box = document.getElementById("topicGrid");
+  box.innerHTML = "";
+  DB.topics.forEach(t => {
+    const div = document.createElement("div");
+    div.className = "topic";
+    div.id = `topic-btn-${t.id}`;
+    div.innerHTML = `<strong>${escapeHTML(t.name)}</strong><br><small>${escapeHTML(t.subtitle)}</small>`;
+    div.onclick = () => handleTopicClick(t.id, div);
+    box.appendChild(div);
+  });
+  const superFinishBtn = document.getElementById("superFinishBtn");
+  if (superFinishBtn && canUseSuperFinish) {
+    superFinishBtn.classList.add("show");
+    superFinishBtn.addEventListener("click", () => {
+      showToast("Super user route: opening finish page without listening.");
+      setTimeout(() => goToFinishPage("super"), 250);
+    });
+  }
+}
+initTopics();
+
+/* ── Topic selection ── */
+function handleTopicClick(id, el) {
+  if (partStatus[id] === 'completed') {
+    showToast("This part is already complete and cannot be replayed.");
+    return;
+  }
+  
+  if (currentTopic !== null && currentTopic !== id && partStatus[currentTopic] !== 'completed') {
+    showToast("Topic changed. The previous topic progress has been reset.");
+    stopTimer();
+  }
+  
+  loadTopic(id, el);
+}
+
+/* ── Load topic ── */
+async function loadTopic(id, el) {
+  window.speechSynthesis.cancel();
+  const sentBox = document.getElementById("sentenceBox");
+  sentBox.classList.remove("active");
+  sentBox.innerHTML = "";
+
+  // Create the backend session only after every part is complete.
+
+  // Reset the current part state.
+  errorCount      = 0;
+  resetPartRepeatCounters();
+  matchedCount    = 0;
+  currentCardData = null;
+  canDrag         = false;
+  currentTopic    = id;
+
+  document.getElementById("dealtCardHolder").innerHTML = "";
+  document.querySelectorAll(".topic").forEach(t => t.classList.remove("active"));
+  el.classList.add("active");
+
+  resetTimer();
+  repeatListenCount = 0;
+  Object.keys(repeatListenStats).forEach(k => delete repeatListenStats[k]);
+
+  const subs = DB.subtopics[id];
+  totalToMatch = subs.length;
+  updateProgress();
+  const box = document.getElementById("subBox");
+  box.innerHTML = "";
+  updateStatus("Dealing topic cards. Wait until all cards are on the table.");
+
+  subs.forEach((s, index) => {
+    setTimeout(() => {
+      const card = document.createElement("div");
+      card.className = "poker-card subtopic-poker dealing";
+      card.dataset.subId = s.id;
+      card.innerHTML = `
+        <div class="card-inner">
+          <div class="card-front">
+            <div class="match-card-face">
+              <div class="card-corner">Match</div>
+              <div class="card-title">${escapeHTML(s.title)}</div>
+              <div class="drop-hint">Drop or click here</div>
+            </div>
+          </div>
+          <div class="card-back">SDG</div>
+        </div>`;
+      card.ondragover  = e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (canDrag && currentCardData && !card.classList.contains('correct')) card.classList.add('drop-over');
+      };
+      card.ondragleave = () => card.classList.remove('drop-over');
+      card.ondrop      = e => {
+        e.preventDefault();
+        card.classList.remove('drop-over');
+        clearDropFeedback();
+        if (!canDrag || !currentCardData) return;
+        handleDrop(currentCardData, s.id, card);
+      };
+      card.onclick = () => {
+        if (card.classList.contains('correct')) return;
+        if (!currentCardData) {
+          updateStatus("Draw a sentence card from the deck first.");
+          return;
+        }
+        if (!canDrag) {
+          updateStatus("Listen to the sentence first. Then click a matching topic card.");
+          return;
+        }
+        clearDropFeedback();
+        handleDrop(currentCardData, s.id, card);
+      };
+      box.appendChild(card);
+      if (index === subs.length-1)
+        setTimeout(() => updateStatus("Cards are ready. Click the deck on the right to draw a sentence card."), 600);
+    }, index * 200);
+  });
+
+  // Shuffle the hand cards.
+  gameData = subs.map(s => ({ ...DB.answers[s.id], subId: s.id }));
+  gameData.sort(() => Math.random() - 0.5);
+}
+
+/* ── Deal hand cards ── */
+function dealNextCard() {
+  if (!currentTopic)   return updateStatus("Choose a Pecha Kucha part first.");
+  if (currentCardData) return updateStatus("Match the current sentence card before dealing another.");
+  if (gameData.length === 0) return updateStatus("This part is complete. Choose the next part.");
+
+  canDrag = false;
+  currentCardData = gameData.pop();
+  const holder = document.getElementById("dealtCardHolder");
+
+  const cardDiv = document.createElement("div");
+  cardDiv.className = "poker-card draggable";
+  cardDiv.innerHTML = `
+    <div class="card-inner">
+      <div class="card-front">
+        <div class="playable-card-face">
+          <div class="card-kicker">Sentence</div>
+          <div class="card-scroll-text">${escapeHTML(currentCardData.english)}</div>
+          <div class="drag-hint">Listen first</div>
+        </div>
+      </div>
+      <div class="card-back">SDG</div>
+    </div>
+    <div class="card-controls">
+      <button class="card-action-btn secondary listen-btn" type="button">Listen</button>
+      <button class="card-action-btn repeat-btn" type="button" disabled>Repeat</button>
+      <span class="repeat-count-chip">0 repeats</span>
+    </div>`;
+
+  cardDiv.ondragstart = e => {
+    if (!canDrag) { e.preventDefault(); return; }
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', currentCardData.subId);
+    cardDiv.classList.add('dragging');
+    document.body.classList.add('is-dragging-card');
+    markDropTargets();
+  };
+  cardDiv.ondragend = () => {
+    cardDiv.classList.remove('dragging');
+    clearDropFeedback();
+  };
+
+  const listenBtn = cardDiv.querySelector(".listen-btn");
+  const repeatBtn = cardDiv.querySelector(".repeat-btn");
+  const repeatChip = cardDiv.querySelector(".repeat-count-chip");
+
+  function playCard({ isRepeat = false } = {}) {
+    if (!currentCardData || isSpeaking) return;
+    const hasListened = cardDiv.dataset.hasListened === "true";
+    if (isRepeat && !hasListened) {
+      updateStatus("Listen once before using Repeat.");
+      return;
+    }
+    if (!isRepeat && hasListened) {
+      updateStatus("This card has already been read. Use Repeat to hear it again.");
+      return;
+    }
+
+    if (!cardDiv.classList.contains('flipped')) cardDiv.classList.add("flipped");
+    isSpeaking = true;
+    listenBtn.disabled = true;
+    repeatBtn.disabled = true;
+    canDrag = false;
+    updateStatus(isRepeat ? "Reading again..." : "Reading aloud. Listen for the main idea.");
+
+    if (isRepeat) {
+      repeatListenCount++;
+      const key = currentCardData.cardId || currentCardData.subId;
+      repeatListenStats[key] = (repeatListenStats[key] || 0) + 1;
+      overallRepeatListenStats[key] = (overallRepeatListenStats[key] || 0) + 1;
+      repeatChip.textContent = `${repeatListenStats[key]} repeat${repeatListenStats[key] > 1 ? 's' : ''}`;
+    }
+
+    speak(currentCardData.english, () => {
+      isSpeaking = false;
+      cardDiv.dataset.hasListened = "true";
+      startTimer(); // timer starts only after the first required reading is finished
+      canDrag = true;
+      cardDiv.draggable = true;
+      listenBtn.disabled = true;
+      repeatBtn.disabled = false;
+      const dragHint = cardDiv.querySelector('.drag-hint');
+      if (dragHint) dragHint.textContent = 'Drag me or click a match';
+      cardDiv.style.boxShadow = "0 0 22px gold";
+      updateStatus("Reading complete. Timer started. Drag this sentence to a topic card, or click the matching topic card.");
+    });
+  }
+
+  listenBtn.onclick = e => { e.stopPropagation(); playCard({ isRepeat:false }); };
+  repeatBtn.onclick = e => { e.stopPropagation(); playCard({ isRepeat:true }); };
+  cardDiv.onclick = () => {
+    if (cardDiv.dataset.hasListened === "true") {
+      updateStatus("This card has already been read. Use Repeat to hear it again.");
+      return;
+    }
+    playCard({ isRepeat:false });
+  };
+
+  holder.appendChild(cardDiv);
+  updateStatus("Click the hand card or Listen to hear the sentence. The timer starts after listening.");
+}
+
+
+function markDropTargets() {
+  document.querySelectorAll('.subtopic-poker:not(.correct)').forEach(card => card.classList.add('drop-ready'));
+}
+function clearDropFeedback() {
+  document.body.classList.remove('is-dragging-card');
+  document.querySelectorAll('.subtopic-poker').forEach(card => card.classList.remove('drop-ready', 'drop-over'));
+}
+
+/* ── Matching logic ── */
+async function handleDrop(cardData, targetSubId, targetEl) {
+  if (cardData.subId === targetSubId) {
+    // Correct match.
+    matchedCount++;
+    updateProgress();
+    targetEl.classList.add("correct");
+    const front = targetEl.querySelector('.card-front');
+    front.style.fontSize = "";
+    const matchedTitle = DB.subtopics[currentTopic].find(s => s.id === targetSubId).title;
+    front.innerHTML = `
+      <div class="correct-card-face">
+        <div class="card-corner">Correct</div>
+        <div class="card-title">${escapeHTML(matchedTitle)}</div>
+        <div class="correct-text">${escapeHTML(cardData.english)}</div>
+      </div>`;
+
+    document.getElementById("dealtCardHolder").innerHTML = "";
+    currentCardData = null;
+    canDrag = false;
+
+    if (matchedCount === totalToMatch) {
+      /* ── Part complete ── */
+      stopTimer();
+      const elapsed = timerSeconds;
+      const errors  = errorCount;
+      const completedTopicNo = currentTopic;
+      const backendPartId = DB.topics.find(t => t.id === currentTopic)?.partId || currentTopic;
+
+      // Mark this part as complete.
+      partStatus[completedTopicNo] = 'completed';
+      const btn = document.getElementById(`topic-btn-${completedTopicNo}`);
+      if (btn) { btn.classList.remove("active"); btn.classList.add("completed"); }
+      currentTopic = null;
+
+      const partRecord = {
+        part_no: completedTopicNo,
+        part_id: backendPartId,
+        errors,
+        elapsed_seconds: elapsed,
+        elapsed_text: formatTime(elapsed),
+        repeat_listen_count: repeatListenCount,
+        card_repeat_listens: { ...repeatListenStats }
+      };
+      completedPartRecords.push(partRecord);
+
+      updateStatus(`Part ${completedTopicNo} complete. Time: ${formatTime(elapsed)} | Errors: ${errors} | Repeats: ${repeatListenCount}`);
+      showToast(`Part ${completedTopicNo} complete. It will be saved after all 6 parts are done.`);
+      updateProgress();
+
+      // Save the full attempt after all parts are complete, then show results.
+      const doneCount = Object.values(partStatus).filter(v => v === 'completed').length;
+      if (doneCount === DB.topics.length) {
+        showToast("All parts complete. Saving this attempt...", 2200);
+        try {
+          const sessionId = await saveFullAttemptRecord();
+          console.log("Attempt record saved", completedPartRecords);
+        } catch (err) {
+          console.error("Failed to save attempt record:", err);
+          showToast("Failed to save this attempt. Please check the backend API.");
+          return;
+        }
+        setTimeout(() => { goToFinishPage("normal"); }, 1200);
+      }
+
+    } else {
+      updateStatus(`Correct. ${totalToMatch - matchedCount} sentence cards left. Click the deck again.`);
+    }
+
+  } else {
+    // Incorrect match.
+    errorCount++;
+    updateStatus(`Not a match. Try another topic card. Errors: ${errorCount}`);
+    targetEl.style.animation = "shake 0.4s";
+    setTimeout(() => { targetEl.style.animation = ""; }, 400);
+  }
+}
+
+/* ── Speech playback ── */
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+function speak(text, onEndCallback) {
+  window.speechSynthesis.cancel();
+  const box = document.getElementById("sentenceBox");
+  box.classList.add("active");
+  box.innerHTML = `<div class="sentence-text">${escapeHTML(text)}</div>`;
+
+  const u = new SpeechSynthesisUtterance(text);
+  if (cachedVoice) u.voice = cachedVoice;
+  u.lang = "en-US";
+  u.rate = 0.82;
+  u.pitch = 1;
+  activeUtterance = u;
+
+  u.onerror = event => {
+    console.warn("Speech synthesis error", event);
+    box.classList.remove("active");
+    activeUtterance = null;
+    if (onEndCallback) onEndCallback();
+  };
+
+  u.onend = () => {
+    setTimeout(() => {
+      box.classList.remove("active");
+      activeUtterance = null;
+      if (onEndCallback) onEndCallback();
+    }, 350);
+  };
+
+  speechSynthesis.speak(u);
+}
+
+async function saveFullAttemptRecord() {
+  const sdg = Number(sessionStorage.getItem("current_sdg") || "4");
+  const level = currentDifficultyCode();
+  const session = await api.game.startGame(user.username, sdg, level);
+  const sessionId = session.session_id;
+  sessionStorage.setItem("current_session_id", sessionId);
+
+  for (const part of completedPartRecords) {
+    await api.game.savePart(
+      sessionId,
+      part.part_id,
+      part.errors,
+      part.elapsed_seconds,
+      part.repeat_listen_count
+    );
+  }
+  await api.game.endGame(sessionId);
+  return sessionId;
+}
+
+function updateProgress() {
+  const number = document.getElementById("progressNumber");
+  const fill = document.getElementById("progressFill");
+  if (!number || !fill) return;
+  const total = totalToMatch || 0;
+  number.textContent = `${matchedCount} / ${total}`;
+  fill.style.width = total ? `${Math.round((matchedCount / total) * 100)}%` : "0%";
+}
+
+/* ── Utilities ── */
+function updateStatus(msg) {
+  document.getElementById("status").textContent = msg;
+}
+</script>
+</body>
+</html>

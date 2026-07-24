@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CardLearn SDGs - Result</title>
+<style>
+:root {
+  --bg: #07111f;
+  --panel: rgba(255,255,255,0.08);
+  --line: rgba(255,255,255,0.14);
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --gold: #fbbf24;
+  --green: #34d399;
+  --red: #fb7185;
+  --blue: #60a5fa;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 34px 18px 48px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(96,165,250,0.28), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(52,211,153,0.18), transparent 34%),
+    #07111f;
+}
+
+.shell {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.hero h1 {
+  margin: 0 0 8px;
+  font-size: clamp(34px, 5vw, 64px);
+}
+
+.hero p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.wizard-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.wizard-pill {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--muted);
+  background: rgba(255,255,255,0.05);
+  font-weight: 900;
+  text-align: center;
+}
+
+.wizard-pill.active {
+  color: #052e2b;
+  background: linear-gradient(135deg, var(--green), #2dd4bf);
+  border-color: transparent;
+}
+
+.card, .panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+}
+
+.card {
+  padding: 18px;
+  text-align: center;
+}
+
+.label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.value {
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--gold);
+}
+
+.value.green { color: var(--green); }
+.value.red { color: var(--red); }
+.value.blue { color: var(--blue); }
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.8fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.learning-stack {
+  display: grid;
+  gap: 16px;
+  margin: 18px 0;
+}
+
+.wizard-step.hidden {
+  display: none;
+}
+
+.step-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.panel {
+  padding: 18px;
+}
+
+.panel h2 {
+  margin: 0 0 14px;
+  font-size: 21px;
+}
+
+.part-list, .rank-list {
+  display: grid;
+  gap: 10px;
+}
+
+.row {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255,255,255,0.06);
+}
+
+.row-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.row-title {
+  font-weight: 900;
+}
+
+.metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.pill {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 9px;
+}
+
+.rank-block {
+  margin-bottom: 16px;
+}
+
+.rank-block h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: var(--blue);
+}
+
+.script-review {
+  display: grid;
+  gap: 12px;
+}
+
+.script-part {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.05);
+}
+
+.script-part summary {
+  cursor: pointer;
+  padding: 12px 14px;
+  color: #bfdbfe;
+  font-weight: 900;
+}
+
+.script-cards {
+  display: grid;
+  gap: 10px;
+  padding: 0 14px 14px;
+}
+
+.script-card {
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(15,23,42,0.58);
+}
+
+.script-card strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--green);
+}
+
+.script-card p {
+  margin: 0;
+  line-height: 1.65;
+  color: #e2e8f0;
+}
+
+.cloze-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.question-card {
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255,255,255,0.05);
+}
+
+.question-card label {
+  display: block;
+  margin-bottom: 8px;
+  color: #e2e8f0;
+  line-height: 1.55;
+}
+
+.question-card input {
+  width: min(360px, 100%);
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 12px;
+  color: var(--text);
+  background: rgba(2,6,23,0.48);
+  font: inherit;
+}
+
+.answer-state {
+  margin-top: 8px;
+  min-height: 20px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.answer-state.correct { color: var(--green); }
+.answer-state.incorrect { color: var(--red); }
+
+.recording-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.timer-display {
+  font-size: clamp(34px, 7vw, 72px);
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: 0;
+}
+
+.recorder-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.recording-panel audio {
+  width: 100%;
+}
+
+.applause-stage {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 18px;
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.applause-stage h2 {
+  margin: 0 0 6px;
+  font-size: clamp(34px, 6vw, 74px);
+}
+
+.clap {
+  position: absolute;
+  top: 100%;
+  width: 12px;
+  height: 18px;
+  border-radius: 999px;
+  opacity: 0;
+  background: var(--gold);
+  animation: clap-rise 2.4s ease-out infinite;
+}
+
+@keyframes clap-rise {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translateY(-230px) rotate(360deg); opacity: 0; }
+}
+
+.note {
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 13px;
+}
+
+.rank-row {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.rank-row.me {
+  background: rgba(52,211,153,0.18);
+  outline: 1px solid rgba(52,211,153,0.55);
+}
+
+.actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 16px;
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.btn-primary {
+  border: 0;
+  color: #052e2b;
+  background: linear-gradient(135deg, var(--green), #2dd4bf);
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 24px;
+}
+
+@media (max-width: 860px) {
+  .summary, .grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <section class="hero">
+    <h1>Challenge Complete</h1>
+    <p id="heroSub">Loading your results...</p>
+  </section>
+
+  <section class="wizard-steps" aria-label="finish steps">
+    <div id="stepPillReview" class="wizard-pill active">1. Review & Record</div>
+    <div id="stepPillCloze" class="wizard-pill">2. Word Check</div>
+    <div id="stepPillLeaderboard" class="wizard-pill">3. Ranking</div>
+  </section>
+
+  <section id="reviewStep" class="learning-stack wizard-step">
+    <div class="panel">
+      <h2>Review: Full Pecha Kucha Script</h2>
+      <div id="scriptReview" class="script-review"><div class="empty">Loading script...</div></div>
+    </div>
+
+    <div class="panel recording-panel">
+      <h2>Read Aloud Practice</h2>
+      <div id="recordingTimer" class="timer-display">00:00</div>
+      <div class="recorder-actions">
+        <button id="startRecordingBtn" class="btn btn-primary" type="button">Start Recording</button>
+        <button id="stopRecordingBtn" class="btn" type="button" disabled>Stop Recording</button>
+        <button id="downloadRecordingBtn" class="btn" type="button" disabled>Download Recording</button>
+      </div>
+      <audio id="recordingPlayback" controls hidden></audio>
+      <div id="recordingStatus" class="note">Read the full script once. The system will record and time your reading. Future database and AI speech scoring hooks are reserved here.</div>
+    </div>
+
+    <div class="step-actions">
+      <button id="goClozeBtn" class="btn btn-primary" type="button">Next: Word Check</button>
+    </div>
+  </section>
+
+  <section id="clozeStep" class="learning-stack wizard-step hidden">
+    <div class="panel">
+      <h2>Self Check: 5-Word Cloze</h2>
+      <div id="clozeContainer" class="cloze-grid"><div class="empty">Loading questions...</div></div>
+      <div class="actions">
+        <button id="checkClozeBtn" class="btn btn-primary" type="button">Check Answers</button>
+        <button id="downloadClozeBtn" class="btn" type="button" disabled>Download HTML Result</button>
+      </div>
+    </div>
+
+    <div class="step-actions">
+      <button id="backReviewBtn" class="btn" type="button">Back to Recording</button>
+      <button id="goLeaderboardBtn" class="btn btn-primary" type="button">Show Ranking</button>
+    </div>
+  </section>
+
+  <section id="leaderboardStep" class="wizard-step hidden">
+    <div class="panel applause-stage" id="applauseStage">
+      <div>
+        <h2>Great Work!</h2>
+        <p class="note">Applause for finishing your review, recording, and word check.</p>
+      </div>
+    </div>
+
+    <section class="summary">
+      <div class="card"><div class="label">Time</div><div id="totalTime" class="value">--:--</div></div>
+      <div class="card"><div class="label">Errors</div><div id="totalErrors" class="value red">--</div></div>
+      <div class="card"><div class="label">Repeats</div><div id="totalRepeats" class="value blue">--</div></div>
+      <div class="card"><div class="label">Parts Completed</div><div id="totalParts" class="value green">--</div></div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>Your Attempt</h2>
+        <div id="partsContainer" class="part-list"><div class="empty">Loading...</div></div>
+      </div>
+
+      <aside class="panel">
+        <h2>Anonymous Ranking by Part</h2>
+        <div id="leaderboardContainer"><div class="empty">Loading...</div></div>
+      </aside>
+    </section>
+  </section>
+
+  <div class="actions">
+    <button class="btn" onclick="window.location.href='member_index.html'">Play Again</button>
+    <button class="btn btn-primary" onclick="window.location.href='/'">Back Home</button>
+  </div>
+</main>
+
+<script src="/static/config.js"></script>
+<script src="/static/js/api.js"></script>
+<script>
+const user = auth.requireLogin()?.user;
+
+function formatTime(sec) {
+  const value = Number(sec || 0);
+  const m = String(Math.floor(value / 60)).padStart(2, "0");
+  const s = String(value % 60).padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+function partLabel(partId) {
+  return `Part ${partId}`;
+}
+
+function safeText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
+
+function difficultyLabel(code) {
+  return code || "-";
+}
+
+const DEFAULT_SCRIPT_PARTS = [
+  {
+    part: 1,
+    title: "Part 1",
+    subtitle: "Introduction",
+    cards: [
+      { title: "Challenge Taiwan's education fairness", text: "Good morning. To start, let's look at a big question: is education in Taiwan truly fair for everyone? Today, we will discuss SDG 4, which is about Quality Education. Sometimes, reality is very different from what we see on paper. Let's explore this together." },
+      { title: "SDG 4 inclusive lifelong learning", text: "First, what is SDG 4? It means everyone should have a chance to learn, whether they are rich or poor. In Taiwan's high-tech world, we must ask: Does our school system really teach us how to use technology in a responsible way?" },
+      { title: "STEM drives Taiwan innovation", text: "Next, let's talk about STEM. Taiwan spends a lot of money on science and math to help our country grow. However, fewer babies are born now. Because of this, we need new ways to make our schools better for the future." }
+    ]
+  },
+  {
+    part: 2,
+    title: "Part 2",
+    subtitle: "Problem Identification",
+    cards: [
+      { title: "Low birth rate school closures", text: "Now, let's look at the first problem. The birth rate is dropping fast. In 1990, there were 300,000 babies, but now there are less than 140,000. This means some country schools must close. Is it still fair for students living far away?" },
+      { title: "Exam pressure kills STEM creativity", text: "Another issue is exams. In science, students spend too much time preparing for tests. They memorize facts but forget how to be creative. Many students lose interest early. Does this really help us solve real problems like climate change?" },
+      { title: "Urban-rural resource inequality gap", text: "Beyond exams, there is a big gap between the city and the countryside. City schools have great labs, but rural schools have very little. Data shows a 30% difference in resources. Is our system trying to fix this or ignoring it?" }
+    ]
+  },
+  {
+    part: 3,
+    title: "Part 3",
+    subtitle: "Achievements and Progress",
+    cards: [
+      { title: "12-year free education success", text: "On the other hand, Taiwan has done some great things. We have 12 years of free education, and almost 99% of children finish primary school. This is a strong start, but we must ask: is the quality of learning truly good?" },
+      { title: "Preschool subsidies help disadvantaged", text: "Also, the government helps poor families pay for preschool. Now, 96% of these children can go to school at age five. This helps them learn basic skills early, so they can do better in science and math later in life." },
+      { title: "High enrollment beats global average", text: "Furthermore, more people graduate in Taiwan than in most countries. Teachers also get special training. However, we must check if students in different cities are all learning the same deep knowledge, or if they are just passing tests." }
+    ]
+  },
+  {
+    part: 4,
+    title: "Part 4",
+    subtitle: "Solutions and STEM Integration",
+    cards: [
+      { title: "Government funds hands-on STEM", text: "So, what is the solution? The government is now funding fun science projects. Instead of just reading books, students do hands-on work. They learn about coding and how to use AI safely from a very young age." },
+      { title: "Digital tools teach AI ethics", text: "In addition, most schools now use computers and apps. This connects students to our famous computer chip industry. But it also teaches them how to use technology safely and honestly in their daily lives." },
+      { title: "Internships prepare green tech careers", text: "For example, some students work as interns in big tech companies. They learn about green energy and new inventions. These programs help students move from the classroom to real jobs that help the planet and our economy." }
+    ]
+  },
+  {
+    part: 5,
+    title: "Part 5",
+    subtitle: "Implications and Future",
+    cards: [
+      { title: "STEM boosts economy climate solutions", text: "This matters because better science education helps Taiwan's economy. Our tech exports are worth 500 billion dollars every year! It also helps us find ways to protect the earth. Science gives us the power to fix global problems." },
+      { title: "Gender gaps persist in engineering", text: "However, we still have challenges. For example, only 30% of engineering students are women. Many people still think science is for men. We must change these old ideas so that everyone feels welcome in the world of technology." },
+      { title: "Ignore issues waste future talent", text: "If we don't fix these gaps, we will lose many talented people. As college students, we should ask: Are our schools ready for new AI jobs? We need a system that changes as the world changes." },
+      { title: "Education builds resilient Taiwan", text: "Ultimately, good education makes our society strong. But if we don't change, Taiwan might fall behind. Science education must improve so we can handle the problems of tomorrow and keep our country successful and innovative." }
+    ]
+  },
+  {
+    part: 6,
+    title: "Part 6",
+    subtitle: "Conclusion and Call to Action",
+    cards: [
+      { title: "SDG 4 progress with problems", text: "To wrap up, Taiwan has made a lot of progress with SDG 4. Science and technology are the keys to our success, but we still have many problems with fairness that we need to solve together." },
+      { title: "Challenge high scores creativity lacks", text: "We need to look deeper. High test scores are good, but being creative is more important. We need to change the system so that every student has a fair chance to learn and create new things." },
+      { title: "Advocate inclusive STEM for all", text: "Looking ahead, science and math should be for everyone, including groups that are often left out. We can ask for better lessons that show us how science works in the real world every single day." },
+      { title: "Act together equitable future now", text: "Finally, thank you for listening. Let's take action! You can talk about school rules or help younger students. Together, we can make the future fair and full of new ideas. Let's start today!" }
+    ]
+  }
+];
+
+function loadScriptPayload() {
+  try {
+    const stored = JSON.parse(sessionStorage.getItem("current_script_review") || "null");
+    if (stored?.parts?.length) return stored;
+  } catch (error) {
+    console.warn("Unable to parse saved script review.", error);
+  }
+  return {
+    mode: "fallback",
+    saved_at: new Date().toISOString(),
+    sdg: Number(sessionStorage.getItem("current_sdg") || "4"),
+    difficulty: sessionStorage.getItem("current_difficulty") || "A2",
+    parts: DEFAULT_SCRIPT_PARTS
+  };
+}
+
+function normalizeDatabaseScript(payload, sdg, difficulty) {
+  const parts = (payload.parts || []).map((part) => ({
+    part: Number(part.part_no),
+    title: `Part ${part.part_no}`,
+    subtitle: part.part_description,
+    cards: (part.sub_topics || []).map((topic) => ({
+      id: `${part.part_no}-${topic.sub_topic_no}`,
+      title: topic.sub_topic_description,
+      text: topic.card?.card_text || ""
+    })).filter((card) => card.text)
+  })).filter((part) => part.cards.length);
+
+  return {
+    mode: "database",
+    saved_at: new Date().toISOString(),
+    sdg,
+    difficulty,
+    parts
+  };
+}
+
+function scriptSettings() {
+  const stored = loadScriptPayload();
+  const sdg = Number(sessionStorage.getItem("current_sdg") || stored.sdg || "4");
+  const difficulty = sessionStorage.getItem("current_difficulty") || stored.difficulty || "A2";
+  return { sdg, difficulty };
+}
+
+async function loadScriptPayloadFromDatabase() {
+  const { sdg, difficulty } = scriptSettings();
+  try {
+    const payload = await api.game.content(sdg, difficulty);
+    const normalized = normalizeDatabaseScript(payload, sdg, difficulty);
+    if (normalized.parts.length) {
+      sessionStorage.setItem("current_script_review", JSON.stringify(normalized));
+      return normalized;
+    }
+  } catch (error) {
+    console.warn("Unable to load review script from database.", error);
+  }
+  return loadScriptPayload();
+}
+
+let scriptPayload = loadScriptPayload();
+let clozeQuestions = [];
+let clozeResults = null;
+let recorder = null;
+let recorderStream = null;
+let recordedChunks = [];
+let recordingBlob = null;
+let recordingUrl = "";
+let recordingSeconds = 0;
+let recordingInterval = null;
+
+function flattenScriptCards() {
+  return (scriptPayload.parts || []).flatMap((part) =>
+    (part.cards || []).map((card) => ({
+      part: part.part,
+      title: card.title,
+      text: card.text
+    }))
+  );
+}
+
+function renderScriptReview() {
+  const parts = scriptPayload.parts || [];
+  document.getElementById("scriptReview").innerHTML = parts.length
+    ? parts.map((part, index) => `
+      <details class="script-part" ${index === 0 ? "open" : ""}>
+        <summary>${safeText(part.title || partLabel(part.part))}${part.subtitle ? ` - ${safeText(part.subtitle)}` : ""}</summary>
+        <div class="script-cards">
+          ${(part.cards || []).map((card, cardIndex) => `
+            <div class="script-card">
+              <strong>${safeText(card.title || `Card ${cardIndex + 1}`)}</strong>
+              <p>${safeText(card.text)}</p>
+            </div>
+          `).join("")}
+        </div>
+      </details>
+    `).join("")
+    : `<div class="empty">No script content found.</div>`;
+}
+
+function makeBlankedSentence(text, answer) {
+  const pattern = new RegExp(`\\b${answer.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+  return safeText(text).replace(pattern, `<strong>_____</strong>`);
+}
+
+function buildClozeQuestions() {
+  const candidateWords = [
+    "education", "technology", "creativity", "resources", "future",
+    "fairness", "science", "system", "students", "problems"
+  ];
+  const stopWords = new Set([
+    "about", "after", "again", "because", "before", "being", "between",
+    "could", "every", "first", "their", "there", "these", "those",
+    "today", "together", "which", "while", "would", "should"
+  ]);
+  const cards = flattenScriptCards();
+  const selected = [];
+
+  function addQuestionForWord(word) {
+    if (selected.length >= 5) return;
+    const card = cards.find((item) => new RegExp(`\\b${word}\\b`, "i").test(item.text));
+    if (card && !selected.some((item) => item.answer.toLowerCase() === word)) {
+      selected.push({
+        part: card.part,
+        title: card.title,
+        text: card.text,
+        answer: word
+      });
+    }
+  }
+
+  candidateWords.forEach(addQuestionForWord);
+
+  cards.forEach((card) => {
+    if (selected.length >= 5) return;
+    const words = card.text.match(/\b[A-Za-z]{5,}\b/g) || [];
+    const word = words.find((item) => {
+      const normalized = item.toLowerCase();
+      return !stopWords.has(normalized) && !selected.some((selectedItem) => selectedItem.answer.toLowerCase() === normalized);
+    });
+    if (word) addQuestionForWord(word.toLowerCase());
+  });
+
+  return selected;
+}
+
+function renderCloze() {
+  clozeQuestions = buildClozeQuestions();
+  document.getElementById("clozeContainer").innerHTML = clozeQuestions.length
+    ? clozeQuestions.map((question, index) => `
+      <div class="question-card">
+        <label for="cloze-${index}">
+          <strong>Q${index + 1}. ${safeText(partLabel(question.part))}</strong><br>
+          ${makeBlankedSentence(question.text, question.answer)}
+        </label>
+        <input id="cloze-${index}" type="text" autocomplete="off" data-cloze-index="${index}">
+        <div id="cloze-state-${index}" class="answer-state"></div>
+      </div>
+    `).join("")
+    : `<div class="empty">No cloze questions could be generated.</div>`;
+}
+
+function checkClozeAnswers() {
+  clozeResults = clozeQuestions.map((question, index) => {
+    const input = document.getElementById(`cloze-${index}`);
+    const userAnswer = (input?.value || "").trim();
+    const correct = userAnswer.toLowerCase() === question.answer.toLowerCase();
+    const state = document.getElementById(`cloze-state-${index}`);
+    if (state) {
+      state.className = `answer-state ${correct ? "correct" : "incorrect"}`;
+      state.textContent = correct ? "Correct" : `Self-check answer: ${question.answer}`;
+    }
+    return { ...question, userAnswer, correct };
+  });
+  document.getElementById("downloadClozeBtn").disabled = false;
+}
+
+function buildClozeResultHtml() {
+  const rows = (clozeResults || []).map((result, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${safeText(partLabel(result.part))}</td>
+      <td>${safeText(result.answer)}</td>
+      <td>${safeText(result.userAnswer || "(blank)")}</td>
+      <td>${result.correct ? "Correct" : "Review"}</td>
+    </tr>
+  `).join("");
+  const score = (clozeResults || []).filter((item) => item.correct).length;
+  const total = (clozeResults || []).length;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pecha Kucha Cloze Result</title>
+<style>
+body{font-family:Arial,sans-serif;line-height:1.6;margin:32px;color:#111827}
+table{border-collapse:collapse;width:100%;margin-top:16px}
+th,td{border:1px solid #d1d5db;padding:8px;text-align:left}
+th{background:#f3f4f6}
+.script{margin-top:24px}
+.part{margin-bottom:18px}
+</style>
+</head>
+<body>
+<h1>Pecha Kucha Cloze Result</h1>
+<p>Student: ${safeText(user.username || user.name || user.email || "Student")}</p>
+<p>Score: ${score} / ${total}</p>
+<p>Reading recording time: ${formatTime(recordingSeconds)}</p>
+<table>
+<thead><tr><th>#</th><th>Part</th><th>Answer</th><th>Your Answer</th><th>Result</th></tr></thead>
+<tbody>${rows}</tbody>
+</table>
+<div class="script">
+<h2>Full Script Review</h2>
+${(scriptPayload.parts || []).map((part) => `
+  <div class="part">
+    <h3>${safeText(part.title || partLabel(part.part))}</h3>
+    ${(part.cards || []).map((card) => `<p><strong>${safeText(card.title || "")}</strong><br>${safeText(card.text)}</p>`).join("")}
+  </div>
+`).join("")}
+</div>
+</body>
+</html>`;
+}
+
+function downloadClozeResult() {
+  if (!clozeResults) checkClozeAnswers();
+  const blob = new Blob([buildClozeResultHtml()], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `pecha-kucha-cloze-result-${Date.now()}.html`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function renderRecordingTimer() {
+  document.getElementById("recordingTimer").textContent = formatTime(recordingSeconds);
+}
+
+function showStep(stepName) {
+  const steps = {
+    review: document.getElementById("reviewStep"),
+    cloze: document.getElementById("clozeStep"),
+    leaderboard: document.getElementById("leaderboardStep")
+  };
+  const pills = {
+    review: document.getElementById("stepPillReview"),
+    cloze: document.getElementById("stepPillCloze"),
+    leaderboard: document.getElementById("stepPillLeaderboard")
+  };
+
+  Object.entries(steps).forEach(([key, el]) => {
+    el.classList.toggle("hidden", key !== stepName);
+  });
+  Object.entries(pills).forEach(([key, el]) => {
+    el.classList.toggle("active", key === stepName);
+  });
+
+  if (stepName === "leaderboard") {
+    startApplauseAnimation();
+  }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function startApplauseAnimation() {
+  const stage = document.getElementById("applauseStage");
+  if (!stage || stage.dataset.ready === "true") return;
+  stage.dataset.ready = "true";
+
+  for (let i = 0; i < 34; i++) {
+    const clap = document.createElement("span");
+    clap.className = "clap";
+    clap.style.left = `${4 + Math.random() * 92}%`;
+    clap.style.background = ["#fbbf24", "#34d399", "#60a5fa", "#fb7185"][i % 4];
+    clap.style.animationDelay = `${Math.random() * 1.8}s`;
+    clap.style.animationDuration = `${1.8 + Math.random() * 1.4}s`;
+    stage.appendChild(clap);
+  }
+}
+
+function prepareRecordingPayload() {
+  return {
+    duration_seconds: recordingSeconds,
+    script_saved_at: scriptPayload.saved_at,
+    reserved_for: "future database storage and AI speech scoring"
+  };
+}
+
+async function startRecording() {
+  if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+    document.getElementById("recordingStatus").textContent = "Recording is not supported in this browser.";
+    return;
+  }
+
+  try {
+    recorderStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recordedChunks = [];
+    recordingBlob = null;
+    document.getElementById("downloadRecordingBtn").disabled = true;
+    recorder = new MediaRecorder(recorderStream);
+    recorder.ondataavailable = (event) => {
+      if (event.data.size > 0) recordedChunks.push(event.data);
+    };
+    recorder.onstop = () => {
+      clearInterval(recordingInterval);
+      recorderStream.getTracks().forEach((track) => track.stop());
+      if (recordingUrl) URL.revokeObjectURL(recordingUrl);
+      recordingBlob = new Blob(recordedChunks, { type: recorder.mimeType || "audio/webm" });
+      recordingUrl = URL.createObjectURL(recordingBlob);
+      const playback = document.getElementById("recordingPlayback");
+      playback.src = recordingUrl;
+      playback.hidden = false;
+      document.getElementById("downloadRecordingBtn").disabled = false;
+      console.info("Reserved recording payload", prepareRecordingPayload());
+      document.getElementById("recordingStatus").textContent = `Recording complete. Time: ${formatTime(recordingSeconds)}.`;
+    };
+
+    recordingSeconds = 0;
+    renderRecordingTimer();
+    recorder.start();
+    recordingInterval = setInterval(() => {
+      recordingSeconds++;
+      renderRecordingTimer();
+    }, 1000);
+
+    document.getElementById("startRecordingBtn").disabled = true;
+    document.getElementById("stopRecordingBtn").disabled = false;
+    document.getElementById("recordingStatus").textContent = "Recording... read the full script from the review section.";
+  } catch (error) {
+    document.getElementById("recordingStatus").textContent = error.message || "Unable to start recording.";
+  }
+}
+
+function stopRecording() {
+  if (recorder && recorder.state !== "inactive") {
+    recorder.stop();
+  }
+  document.getElementById("startRecordingBtn").disabled = false;
+  document.getElementById("stopRecordingBtn").disabled = true;
+}
+
+function downloadRecording() {
+  if (!recordingBlob || !recordingUrl) return;
+  const extension = recordingBlob.type.includes("mp4") ? "m4a" : "webm";
+  const link = document.createElement("a");
+  link.href = recordingUrl;
+  link.download = `pecha-kucha-reading-${Date.now()}.${extension}`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
+async function loadMyResults() {
+  const sessionId = sessionStorage.getItem("current_session_id");
+  const isSuperSkip = sessionStorage.getItem("finish_super_skip") === "1";
+  if (!sessionId) {
+    document.getElementById("heroSub").textContent = isSuperSkip
+      ? "Super review mode: game listening was skipped."
+      : "No game session was found.";
+    document.getElementById("totalTime").textContent = "--:--";
+    document.getElementById("totalErrors").textContent = "--";
+    document.getElementById("totalRepeats").textContent = "--";
+    document.getElementById("totalParts").textContent = "0 / 6";
+    document.getElementById("partsContainer").innerHTML = isSuperSkip
+      ? `<div class="empty">Super user opened the finish page without saving a game attempt.</div>`
+      : `<div class="empty">Please start again from the game entry page.</div>`;
+    document.getElementById("leaderboardContainer").innerHTML = `<div class="empty">No ranking data.</div>`;
+    return;
+  }
+
+  try {
+    const data = await api.game.getResults(sessionId);
+    renderResults(data);
+    sessionStorage.removeItem("current_session_id");
+  } catch (error) {
+    document.getElementById("heroSub").textContent = "Failed to load results.";
+    document.getElementById("partsContainer").innerHTML = `<div class="empty">${safeText(error.message)}</div>`;
+  }
+}
+
+async function initializeFinishPage() {
+  document.getElementById("checkClozeBtn").addEventListener("click", checkClozeAnswers);
+  document.getElementById("downloadClozeBtn").addEventListener("click", downloadClozeResult);
+  document.getElementById("startRecordingBtn").addEventListener("click", startRecording);
+  document.getElementById("stopRecordingBtn").addEventListener("click", stopRecording);
+  document.getElementById("downloadRecordingBtn").addEventListener("click", downloadRecording);
+  document.getElementById("goClozeBtn").addEventListener("click", () => showStep("cloze"));
+  document.getElementById("backReviewBtn").addEventListener("click", () => showStep("review"));
+  document.getElementById("goLeaderboardBtn").addEventListener("click", () => showStep("leaderboard"));
+
+  scriptPayload = await loadScriptPayloadFromDatabase();
+  renderScriptReview();
+  renderCloze();
+  renderRecordingTimer();
+  showStep("review");
+  await loadMyResults();
+}
+
+function renderResults(data) {
+  const parts = data.parts || [];
+  const session = data.session || {};
+  const totalErrors = data.total_errors || 0;
+  const totalRepeats = data.total_repeat_listens || 0;
+  const totalDuration = data.total_duration || 0;
+
+  document.getElementById("heroSub").textContent =
+    `${user.username || user.name} / SDG ${session.sdg_level} / ${difficultyLabel(session.difficulty_code)}`;
+  document.getElementById("totalTime").textContent = formatTime(totalDuration);
+  document.getElementById("totalErrors").textContent = totalErrors;
+  document.getElementById("totalRepeats").textContent = totalRepeats;
+  document.getElementById("totalParts").textContent = `${parts.length} / 6`;
+
+  document.getElementById("partsContainer").innerHTML = parts.length
+    ? parts.map((part) => `
+      <div class="row">
+        <div class="row-head">
+          <div class="row-title">${safeText(partLabel(part.part_id))}</div>
+          <div>${formatTime(part.duration)}</div>
+        </div>
+        <div class="metrics">
+          <span class="pill">Errors ${safeText(part.errors)}</span>
+          <span class="pill">Repeats ${safeText(part.repeat_listens)}</span>
+          <span class="pill">Completed ${new Date(part.completed_at).toLocaleString()}</span>
+        </div>
+      </div>
+    `).join("")
+    : `<div class="empty">No part records yet.</div>`;
+
+  renderLeaderboard(data.leaderboard || {});
+}
+
+function renderLeaderboard(leaderboard) {
+  const keys = Object.keys(leaderboard).sort((a, b) => Number(a) - Number(b));
+  document.getElementById("leaderboardContainer").innerHTML = keys.length
+    ? keys.map((partId) => {
+      const rows = leaderboard[partId].slice(0, 5).map((row) => `
+        <div class="rank-row ${row.is_current_user ? "me" : ""}">
+          <strong>#${safeText(row.rank)}</strong>
+          <span>${safeText(row.display_name)}</span>
+          <span>Errors ${safeText(row.errors)} / Repeats ${safeText(row.repeat_listens)} / ${formatTime(row.duration)}</span>
+        </div>
+      `).join("");
+      return `<div class="rank-block"><h3>${safeText(partLabel(partId))}</h3><div class="rank-list">${rows}</div></div>`;
+    }).join("")
+    : `<div class="empty">Not enough ranking data yet.</div>`;
+}
+
+initializeFinishPage();
+</script>
+</body>
+</html>

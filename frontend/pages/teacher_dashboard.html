@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CardLearn SDGs Teacher Dashboard</title>
+<style>
+:root {
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #64748b;
+  --line: #dbe3ef;
+  --primary: #2563eb;
+  --primary-soft: #dbeafe;
+  --green: #16a34a;
+  --amber: #f59e0b;
+  --red: #dc2626;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+button, input, textarea, select { font: inherit; }
+
+.navbar {
+  min-height: 68px;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.teacher-meta {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.top-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.btn {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 14px;
+  background: white;
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.btn:hover { border-color: #93c5fd; }
+
+.btn-primary {
+  color: white;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-green {
+  color: white;
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.container {
+  width: min(1240px, calc(100% - 32px));
+  margin: 24px auto 48px;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.module-card {
+  min-height: 108px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  background: var(--card);
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(15,23,42,0.04);
+}
+
+.module-card.active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.module-card h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.module-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 13px;
+}
+
+.game-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.game-tab {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.game-tab.active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 10px 28px rgba(15,23,42,0.04);
+}
+
+.panel h2, .panel h3 {
+  margin: 0 0 12px;
+}
+
+.workflow {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.import-panel {
+  grid-column: 1 / -1;
+}
+
+.stack {
+  display: grid;
+  gap: 14px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field.full { grid-column: 1 / -1; }
+
+label {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+input, textarea, select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: white;
+  color: var(--text);
+}
+
+textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+
+.difficulty-grid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.difficulty-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #f8fafc;
+}
+
+.difficulty-card label {
+  color: var(--primary);
+}
+
+.tree {
+  display: grid;
+  gap: 12px;
+}
+
+.tree-sdg {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.tree-sdg > header {
+  padding: 12px 14px;
+  background: #eef4ff;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tree-part {
+  margin: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fbfdff;
+}
+
+.tree-part h4 {
+  margin: 0 0 8px;
+}
+
+.topic-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.topic-item {
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 10px;
+  background: white;
+}
+
+.topic-item strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.badge.done {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.delete-btn {
+  min-height: 28px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 0 9px;
+  background: #fff1f2;
+  color: var(--red);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.delete-btn:disabled,
+.role-select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.inline-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 110px minmax(0,1fr) 64px;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.bar-track {
+  height: 10px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), var(--green));
+}
+
+.record-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.record-card.has-risk {
+  border-color: #fecaca;
+}
+
+.record-card > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 12px;
+}
+
+.record-card > summary::-webkit-details-marker {
+  display: none;
+}
+
+.record-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 12px 12px;
+}
+
+.metric-box {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 8px;
+}
+
+.metric-box span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.metric-box strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 16px;
+}
+
+.part-table {
+  width: calc(100% - 24px);
+  margin: 0 12px 12px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.part-table th,
+.part-table td {
+  padding: 8px;
+  border-top: 1px solid var(--line);
+  text-align: left;
+}
+
+.part-table th {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.user-table-wrap {
+  overflow-x: auto;
+}
+
+.user-table {
+  width: 100%;
+  margin: 0;
+}
+
+.role-select {
+  min-width: 110px;
+  padding: 7px 9px;
+}
+
+.user-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.risk-row {
+  background: #fee2e2;
+}
+
+.risk-row td {
+  border-top-color: #fecaca;
+}
+
+.risk-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #fee2e2;
+  color: #991b1b;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.chart-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+}
+
+.chart-card h4 {
+  margin: 0 0 10px;
+}
+
+.empty {
+  color: var(--muted);
+  padding: 20px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.notice {
+  grid-column: 1 / -1;
+  min-height: 34px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 13px;
+  display: none;
+}
+
+.notice.show {
+  display: block;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  min-width: min(420px, calc(100% - 32px));
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #0f172a;
+  color: white;
+  transform: translate(-50%, 16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (max-width: 980px) {
+  .workflow,
+  .module-grid,
+  .form-grid,
+  .difficulty-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div>
+    <div class="logo">CardLearn SDGs Teacher Dashboard</div>
+    <div id="teacherName" class="teacher-meta">Checking permission...</div>
+  </div>
+  <div class="top-actions">
+    <button class="btn" onclick="window.location.href='/pages/member_index.html'">Back to Game Entry</button>
+    <button class="btn" onclick="auth.logout()">Log Out</button>
+  </div>
+</nav>
+
+<main class="container">
+  <section class="module-grid">
+    <button class="module-card active" type="button" data-module="sdgs_card_game">
+      <h2>sdgs_card_game</h2>
+      <p>Manage the SDGs Card Game content bank, parts, subtopics, attempt records, and statistics.</p>
+    </button>
+    <button class="module-card" type="button" data-module="future_games">
+      <h2>Other Games</h2>
+      <p>Future listening, reading, and mission-based activities can have separate settings here.</p>
+    </button>
+    <button class="module-card" type="button" data-module="users">
+      <h2>User Management</h2>
+      <p>View registered accounts, adjust student, teacher, and admin roles, and remove unused accounts.</p>
+    </button>
+  </section>
+
+  <section id="sdgsCardGameModule">
+    <section class="panel">
+      <h2>SDGs Card Game</h2>
+      <p style="color:var(--muted);margin-bottom:14px;">This area is for SDGs Card Game settings. Future games can be added as separate entries above.</p>
+      <div class="game-tabs">
+        <button class="game-tab active" type="button" data-game-tab="cards">Card Bank</button>
+        <button class="game-tab" type="button" data-game-tab="reports">Attempts & Stats</button>
+      </div>
+    </section>
+
+  <section id="cardsModule" class="workflow">
+    <section class="panel import-panel">
+      <h2>Import Question Bank Excel</h2>
+      <p style="color:var(--muted);margin-bottom:14px;">Upload the shared SDGs Pecha Kucha workbook. Sheets named like SDG 4 / SDG 5 / SDG 13 will be imported into the card bank.</p>
+      <form id="excelImportForm" class="form-grid">
+        <div id="excelImportNotice" class="notice"></div>
+        <div class="field full">
+          <label>Excel File (.xlsx)</label>
+          <input id="excelImportFile" name="file" type="file" accept=".xlsx" required>
+        </div>
+        <div class="field full">
+          <button id="excelImportBtn" class="btn btn-primary" type="submit">Import Excel</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel import-panel">
+      <div class="inline-actions" style="margin-bottom:10px;">
+        <h2 style="margin:0;">Mini Material JSON</h2>
+        <button id="jsonTemplateBtn" class="btn" type="button">Download Template</button>
+      </div>
+      <p style="color:var(--muted);margin-bottom:14px;">Upload one JSON file for one SDG and one level. It will be imported into the same card bank used by the game and review page.</p>
+      <form id="jsonImportForm" class="form-grid">
+        <div id="jsonImportNotice" class="notice"></div>
+        <div class="field full">
+          <label>Material JSON File (.json)</label>
+          <input id="jsonImportFile" name="file" type="file" accept=".json" required>
+        </div>
+        <div class="field full">
+          <button id="jsonImportBtn" class="btn btn-primary" type="submit">Import JSON</button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="stack">
+      <section class="panel">
+        <h2>1. Add / Update SDG</h2>
+        <form id="sdgForm" class="form-grid">
+          <div id="sdgNotice" class="notice"></div>
+          <div class="field">
+            <label>SDG Number</label>
+            <input name="sdg_level" type="number" placeholder="4" required>
+          </div>
+          <div class="field">
+            <label>English Name</label>
+            <input name="title" placeholder="Quality Education" required>
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select name="active">
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Display Name / Description</label>
+            <textarea name="description" placeholder="Quality Education"></textarea>
+          </div>
+          <div class="field full">
+            <button class="btn btn-primary" type="submit">Save SDG</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>2. Add / Update Part</h2>
+        <form id="partForm" class="form-grid">
+          <div id="partNotice" class="notice"></div>
+          <div class="field">
+            <label>Parent SDG</label>
+            <select name="sdg_level" id="partSdgSelect"></select>
+          </div>
+          <div class="field">
+            <label>Part Number</label>
+            <input name="part_no" type="number" min="1" max="6" placeholder="1" required>
+          </div>
+          <div class="field full">
+            <label>Part Description</label>
+            <textarea name="part_description" placeholder="Introduction / Problem Identification / Solutions..." required></textarea>
+          </div>
+          <div class="field full">
+            <button class="btn btn-primary" type="submit">Save Part</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>3. Add Subtopic and Level Cards</h2>
+        <form id="topicCardForm" class="form-grid">
+          <div id="topicNotice" class="notice"></div>
+          <div class="field">
+            <label>Parent Part</label>
+            <select name="part_id" id="topicPartSelect"></select>
+          </div>
+          <div class="field">
+            <label>Subtopic Number</label>
+            <input name="sub_topic_no" type="number" placeholder="1" required>
+          </div>
+          <div class="field full">
+            <label>Subtopic Description</label>
+            <textarea name="sub_topic_description" placeholder="The target subtopic students should match the card to" required></textarea>
+          </div>
+
+          <div class="difficulty-grid">
+            <div class="difficulty-card">
+              <label>A2 Sentence Card</label>
+              <textarea name="card_A2" placeholder="A2 level sentence"></textarea>
+            </div>
+            <div class="difficulty-card">
+              <label>A1 Sentence Card</label>
+              <textarea name="card_A1" placeholder="A1 level sentence"></textarea>
+            </div>
+            <div class="difficulty-card">
+              <label>B1 Sentence Card</label>
+              <textarea name="card_B1" placeholder="B1 level sentence"></textarea>
+            </div>
+          </div>
+
+          <div class="field full">
+            <button class="btn btn-green" type="submit">Save Subtopic and Cards</button>
+          </div>
+        </form>
+      </section>
+    </aside>
+
+    <section class="panel">
+      <h2>Current Content Structure</h2>
+      <p style="color:var(--muted);margin-bottom:14px;">The structure is SDG -> Part -> Subtopic -> sentence cards by level. Green labels mean that level already has a card.</p>
+      <div id="contentTree" class="tree"></div>
+    </section>
+  </section>
+
+  <section id="reportsModule" class="panel" hidden>
+    <h2>SDGs Card Game Records</h2>
+    <p style="color:var(--muted);margin-bottom:14px;">Teachers can review student attempts and average errors, repeats, and time by SDG, level, and part.</p>
+    <div id="recordOverview" class="module-grid"></div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.8fr);gap:16px;align-items:start;">
+      <div>
+        <h3>Student Attempts</h3>
+        <div id="sessionRecords" class="tree"></div>
+      </div>
+      <div>
+        <h3>Statistics</h3>
+        <div id="statsChart" class="tree"></div>
+      </div>
+    </div>
+  </section>
+  </section>
+
+  <section id="usersModule" class="panel" hidden>
+    <h2>User Management</h2>
+    <p style="color:var(--muted);margin-bottom:14px;">Manage registered users. Role changes immediately affect page access and dashboard permissions.</p>
+    <div id="userOverview" class="module-grid"></div>
+    <div class="user-table-wrap">
+      <table class="part-table user-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Email Verified</th>
+            <th>Game Records</th>
+            <th>Last Game</th>
+            <th>Registered At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="userRows">
+          <tr><td colspan="9">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="placeholderModule" class="panel" hidden>
+    <h2 id="placeholderTitle">Coming soon</h2>
+    <p style="color:var(--muted);">This area is reserved for future dashboard features outside the card bank.</p>
+  </section>
+</main>
+
+<div id="toast" class="toast"></div>
+
+<script src="/static/config.js"></script>
+<script src="/static/js/api.js"></script>
+<script>
+const difficultyCodes = ["A2", "A1", "B1"];
+const difficultyLabels = { A2: "A2", A1: "A1", B1: "B1" };
+let content = { sdgs: [], difficulties: [], parts: [] };
+let gameRecords = { sessions: [], part_stats: [], overview: {} };
+let registeredUsers = { users: [], overview: {} };
+let currentTeacher = null;
+
+function $(id) {
+  return document.getElementById(id);
+}
+
+function showToast(message) {
+  const toast = $("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove("show"), 1900);
+}
+
+function difficultyLabel(code) {
+  return difficultyLabels[code] || code || "-";
+}
+
+function formObject(form) {
+  return Object.fromEntries(new FormData(form).entries());
+}
+
+function boolValue(value) {
+  return value === "true";
+}
+
+const materialJsonTemplate = {
+  schema_version: 1,
+  sdg: {
+    level: 4,
+    title: "Quality Education",
+    description: "Quality Education"
+  },
+  difficulty: {
+    code: "A2",
+    label: "A2"
+  },
+  parts: [
+    {
+      part_no: 1,
+      title: "Introduction",
+      description: "Introduction",
+      sub_topics: [
+        {
+          sub_topic_no: 1,
+          title: "Challenge Taiwan's education fairness",
+          card_text: "Good morning. To start, let's look at a big question: is education in Taiwan truly fair for everyone?"
+        }
+      ]
+    },
+    {
+      part_no: 2,
+      title: "Problem Identification",
+      description: "Problem Identification",
+      sub_topics: [
+        {
+          sub_topic_no: 1,
+          title: "Low birth rate school closures",
+          card_text: "Now, let's look at the first problem. The birth rate is dropping fast, and some country schools must close."
+        }
+      ]
+    }
+  ]
+};
+
+function downloadMaterialJsonTemplate() {
+  const blob = new Blob([`${JSON.stringify(materialJsonTemplate, null, 2)}\n`], {
+    type: "application/json;charset=utf-8"
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "sdg-material-template.json";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function verifyTeacher() {
+  auth.requireLogin();
+  const user = await api.auth.me();
+  if (!["teacher", "admin"].includes(user.role)) {
+    alert("This account does not have teacher dashboard access.");
+    window.location.href = "/pages/member_index.html";
+    return false;
+  }
+  currentTeacher = user;
+  $("teacherName").textContent = `${user.name || user.email} (${user.role})`;
+  return true;
+}
+
+function setModule(moduleName) {
+  document.querySelectorAll("[data-module]").forEach((card) => {
+    card.classList.toggle("active", card.dataset.module === moduleName);
+  });
+
+  const isGameModule = moduleName === "sdgs_card_game";
+  const isUsersModule = moduleName === "users";
+  $("sdgsCardGameModule").hidden = !isGameModule;
+  $("usersModule").hidden = !isUsersModule;
+  $("placeholderModule").hidden = isGameModule || isUsersModule;
+
+  if (isUsersModule) {
+    loadUsers();
+  } else if (!isGameModule) {
+    $("placeholderTitle").textContent = "Other Games";
+  }
+}
+
+function setGameTab(tabName) {
+  document.querySelectorAll("[data-game-tab]").forEach((tab) => {
+    tab.classList.toggle("active", tab.dataset.gameTab === tabName);
+  });
+
+  $("cardsModule").hidden = tabName !== "cards";
+  $("reportsModule").hidden = tabName !== "reports";
+  if (tabName === "reports") loadGameRecords();
+}
+
+function renderSelects() {
+  const sdgOptions = content.sdgs.map((sdg) =>
+    `<option value="${safeText(sdg.sdg_level)}">SDG ${safeText(sdg.sdg_level)} ${safeText(sdg.description || sdg.title)}</option>`
+  ).join("");
+  $("partSdgSelect").innerHTML = sdgOptions;
+
+  const partOptions = content.parts.map((part) =>
+    `<option value="${safeText(part.part_id)}">SDG ${safeText(part.sdg_level)} / Part ${safeText(part.part_no)} - ${safeText(part.part_description)}</option>`
+  ).join("");
+  $("topicPartSelect").innerHTML = partOptions;
+}
+
+function renderTree() {
+  if (!content.sdgs.length) {
+    $("contentTree").innerHTML = `<div class="empty">No SDGs have been created yet.</div>`;
+    return;
+  }
+
+  $("contentTree").innerHTML = content.sdgs.map((sdg) => {
+    const parts = content.parts.filter((part) => Number(part.sdg_level) === Number(sdg.sdg_level));
+    const partsHtml = parts.length ? parts.map((part) => {
+      const topics = part.sub_topics || [];
+      const topicsHtml = topics.length ? topics.map((topic) => {
+        const cards = topic.cards || [];
+        const badges = difficultyCodes.map((code) => {
+          const hasCard = cards.some((card) => card.difficulty_code === code && card.card_text);
+          const card = cards.find((item) => item.difficulty_code === code && item.card_text);
+          return card
+            ? `<span class="badge done">${safeText(difficultyLabels[code] || code)} <button class="delete-btn" type="button" data-delete-card="${safeText(card.card_id)}">Delete</button></span>`
+            : `<span class="badge">${safeText(difficultyLabels[code] || code)}</span>`;
+        }).join("");
+
+        return `
+          <div class="topic-item">
+            <div class="inline-actions">
+              <strong>${safeText(part.part_no)}.${safeText(topic.sub_topic_no)} ${safeText(topic.sub_topic_description)}</strong>
+              <button class="delete-btn" type="button" data-delete-topic="${safeText(topic.sub_topic_id)}">Delete Subtopic</button>
+            </div>
+            <div class="card-badges">${badges}</div>
+          </div>
+        `;
+      }).join("") : `<div class="empty">This part has no subtopics yet.</div>`;
+
+      return `
+        <div class="tree-part">
+          <div class="inline-actions">
+            <h4>Part ${safeText(part.part_no)}</h4>
+            <button class="delete-btn" type="button" data-delete-part="${safeText(part.part_id)}">Delete Part</button>
+          </div>
+          <p style="color:var(--muted);margin:0;">${safeText(part.part_description)}</p>
+          <div class="topic-list">${topicsHtml}</div>
+        </div>
+      `;
+    }).join("") : `<div class="empty" style="margin:12px;">This SDG has no parts yet.</div>`;
+
+    return `
+      <article class="tree-sdg">
+        <header>
+          <strong>SDG ${safeText(sdg.sdg_level)} ${safeText(sdg.description || sdg.title)}</strong>
+          <div class="inline-actions">
+            <span style="color:var(--muted);">${parts.length} / 6 Parts</span>
+            <button class="delete-btn" type="button" data-delete-sdg="${safeText(sdg.sdg_level)}">Delete SDG</button>
+          </div>
+        </header>
+        ${partsHtml}
+      </article>
+    `;
+  }).join("");
+
+  bindDeleteButtons();
+}
+
+function setNotice(id, message) {
+  const notice = $(id);
+  notice.textContent = message || "";
+  notice.classList.toggle("show", Boolean(message));
+}
+
+function updateDuplicateHints() {
+  const sdgForm = $("sdgForm");
+  const sdgLevel = Number(sdgForm.sdg_level.value);
+  const existingSdg = content.sdgs.find((sdg) => Number(sdg.sdg_level) === sdgLevel);
+  setNotice("sdgNotice", existingSdg ? `SDG ${sdgLevel} already exists. Saving will update the existing data.` : "");
+
+  if (existingSdg && document.activeElement === sdgForm.sdg_level) {
+    sdgForm.title.value = existingSdg.title || "";
+    sdgForm.description.value = existingSdg.description || "";
+    sdgForm.active.value = existingSdg.active === 0 ? "false" : "true";
+  }
+
+  const partForm = $("partForm");
+  const partSdg = Number(partForm.sdg_level.value);
+  const partNo = Number(partForm.part_no.value);
+  const existingPart = content.parts.find(
+    (part) => Number(part.sdg_level) === partSdg && Number(part.part_no) === partNo
+  );
+  const partOutOfRange = partNo && (partNo < 1 || partNo > 6);
+  setNotice(
+    "partNotice",
+    partOutOfRange
+      ? "Each SDG only supports Part 1 through Part 6. Enter a number from 1 to 6."
+      : existingPart
+        ? `Part ${partNo} for SDG ${partSdg} already exists. Saving will update the part description.`
+        : ""
+  );
+
+  if (existingPart && document.activeElement === partForm.part_no) {
+    partForm.part_description.value = existingPart.part_description || "";
+  }
+
+  const topicForm = $("topicCardForm");
+  const topicPartId = Number(topicForm.part_id.value);
+  const topicNo = Number(topicForm.sub_topic_no.value);
+  const part = content.parts.find((item) => Number(item.part_id) === topicPartId);
+  const existingTopic = part?.sub_topics?.find((topic) => Number(topic.sub_topic_no) === topicNo);
+  setNotice("topicNotice", existingTopic ? `Subtopic ${topicNo} already exists for this part. Saving will update the subtopic and cards.` : "");
+
+  if (existingTopic && document.activeElement === topicForm.sub_topic_no) {
+    topicForm.sub_topic_description.value = existingTopic.sub_topic_description || "";
+    const cards = existingTopic.cards || [];
+    topicForm.card_A2.value = cards.find((card) => card.difficulty_code === "A2")?.card_text || "";
+    topicForm.card_A1.value = cards.find((card) => card.difficulty_code === "A1")?.card_text || "";
+    topicForm.card_B1.value = cards.find((card) => card.difficulty_code === "B1")?.card_text || "";
+  }
+}
+
+async function loadContent() {
+  content = await api.teacher.content();
+  renderSelects();
+  renderTree();
+  updateDuplicateHints();
+}
+
+function formatTime(seconds) {
+  const value = Number(seconds || 0);
+  const m = String(Math.floor(value / 60)).padStart(2, "0");
+  const s = String(Math.floor(value % 60)).padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+function formatDateTime(value) {
+  return value ? new Date(value).toLocaleString() : "-";
+}
+
+function safeText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
+
+function statPercent(value, maxValue) {
+  if (!maxValue) return 0;
+  return Math.max(4, Math.round((Number(value || 0) / maxValue) * 100));
+}
+
+function roleOptions(selectedRole, canManageAdmin) {
+  const roles = [
+    ["student", "Student"],
+    ["teacher", "Teacher"],
+    ["admin", "Admin"]
+  ];
+  return roles.map(([value, label]) => `
+    <option value="${value}" ${selectedRole === value ? "selected" : ""} ${value === "admin" && !canManageAdmin ? "disabled" : ""}>
+      ${label}
+    </option>
+  `).join("");
+}
+
+function renderUsers() {
+  const overview = registeredUsers.overview || {};
+  const users = registeredUsers.users || [];
+  const currentRole = currentTeacher?.role || "";
+
+  $("userOverview").innerHTML = `
+    <div class="module-card"><h2>${safeText(overview.total_users || 0)}</h2><p>Registered Accounts</p></div>
+    <div class="module-card"><h2>${safeText(overview.students || 0)}</h2><p>Students</p></div>
+    <div class="module-card"><h2>${safeText(overview.teachers || 0)}</h2><p>Teachers</p></div>
+    <div class="module-card"><h2>${safeText(overview.admins || 0)}</h2><p>Admins</p></div>
+  `;
+
+  $("userRows").innerHTML = users.length
+    ? users.map((user) => {
+      const isSelf = Number(user.id) === Number(currentTeacher?.id);
+      const targetIsAdmin = user.role === "admin";
+      const canManageAdmin = currentRole === "admin";
+      const roleLocked = isSelf || (targetIsAdmin && !canManageAdmin);
+      const deleteLocked = isSelf || (targetIsAdmin && !canManageAdmin);
+      return `
+        <tr>
+          <td>${safeText(user.id)}</td>
+          <td>${safeText(user.name)}</td>
+          <td>${safeText(user.email)}</td>
+          <td>
+            <select class="role-select" data-role-user="${safeText(user.id)}" ${roleLocked ? "disabled" : ""}>
+              ${roleOptions(user.role, canManageAdmin)}
+            </select>
+          </td>
+          <td>${Number(user.email_verified) === 1 ? "Verified" : "Not Verified"}</td>
+          <td>${safeText(user.completed_sessions || 0)} / ${safeText(user.total_sessions || 0)}</td>
+          <td>${formatDateTime(user.last_game_at)}</td>
+          <td>${formatDateTime(user.created_at)}</td>
+          <td>
+            <div class="user-actions">
+              <button class="delete-btn" type="button" data-delete-user="${safeText(user.id)}" ${deleteLocked ? "disabled" : ""}>Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("")
+    : `<tr><td colspan="9">No registered users yet.</td></tr>`;
+
+  bindUserControls();
+}
+
+async function loadUsers() {
+  try {
+    registeredUsers = await api.teacher.users();
+    renderUsers();
+  } catch (error) {
+    $("userRows").innerHTML = `<tr><td colspan="9">${safeText(error.message)}</td></tr>`;
+  }
+}
+
+function bindUserControls() {
+  document.querySelectorAll("[data-role-user]").forEach((select) => {
+    select.addEventListener("change", async () => {
+      await api.teacher.updateUserRole(select.dataset.roleUser, select.value);
+      showToast("User role updated.");
+      await loadUsers();
+    });
+  });
+
+  document.querySelectorAll("[data-delete-user]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const userId = button.dataset.deleteUser;
+      const user = (registeredUsers.users || []).find((item) => String(item.id) === String(userId));
+      const label = user ? `${user.name || user.email}` : `#${userId}`;
+      if (!confirm(`Delete user ${label}? This will also delete this user's game records.`)) return;
+      await api.teacher.deleteUser(userId);
+      showToast("User deleted.");
+      await loadUsers();
+    });
+  });
+}
+
+function renderGameRecords() {
+  const overview = gameRecords.overview || {};
+  $("recordOverview").innerHTML = `
+    <div class="module-card"><h2>${overview.total_sessions || 0}</h2><p>Total Attempts</p></div>
+    <div class="module-card"><h2>${overview.completed_sessions || 0}</h2><p>Completed Attempts</p></div>
+    <div class="module-card"><h2>${overview.total_students || 0}</h2><p>Students</p></div>
+    <div class="module-card"><h2>${overview.suspected_guess_parts || 0}</h2><p>Possible Guessing Parts</p></div>
+  `;
+
+  $("sessionRecords").innerHTML = gameRecords.sessions.length
+    ? gameRecords.sessions.map((item) => {
+      const partRows = (item.parts || []).map((part) => `
+        <tr class="${part.suspected_guess ? "risk-row" : ""}">
+          <td>Part ${safeText(part.part_no || part.part_id)}</td>
+          <td>${safeText(part.part_description || "")}</td>
+          <td>${safeText(part.errors)}${part.suspected_guess ? ` <span class="risk-label">Possible Guessing</span>` : ""}</td>
+          <td>${safeText(part.repeat_listens)}</td>
+          <td>${formatTime(part.duration)}</td>
+          <td>${safeText(part.card_count || 0)}</td>
+          <td>${formatDateTime(part.completed_at)}</td>
+        </tr>
+      `).join("");
+      const hasRisk = (item.parts || []).some((part) => part.suspected_guess);
+
+      return `
+        <details class="record-card ${hasRisk ? "has-risk" : ""}">
+          <summary>
+            <div class="inline-actions">
+              <strong>${safeText(item.username)}</strong>
+              <span class="badge done">completed</span>
+              <span class="badge">SDG ${safeText(item.sdg_level)}</span>
+              <span class="badge">${safeText(difficultyLabel(item.difficulty_code))}</span>
+              <span class="badge">Attempt ${safeText(item.attempt_no || 1)}</span>
+              ${hasRisk ? `<span class="risk-label">Includes Possible Guessing</span>` : ""}
+              <button class="delete-btn" type="button" data-delete-game-record="${safeText(item.session_id)}">Delete Record</button>
+            </div>
+            <p style="color:var(--muted);margin:6px 0 0;">Started ${formatDateTime(item.started_at)} / Ended ${formatDateTime(item.ended_at)}</p>
+          </summary>
+          <div class="record-meta">
+            <div class="metric-box"><span>Completed Parts</span><strong>${safeText(item.completed_parts)}/6</strong></div>
+            <div class="metric-box"><span>Total Errors</span><strong>${safeText(item.total_errors)}</strong></div>
+            <div class="metric-box"><span>Total Repeats</span><strong>${safeText(item.total_repeat_listens)}</strong></div>
+            <div class="metric-box"><span>Total Time</span><strong>${formatTime(item.total_duration)}</strong></div>
+          </div>
+          <table class="part-table">
+            <thead>
+              <tr>
+                <th>Part</th>
+                <th>Part Description</th>
+                <th>Errors</th>
+                <th>Repeats</th>
+                <th>Time</th>
+                <th>Card Count</th>
+                <th>Completed At</th>
+              </tr>
+            </thead>
+            <tbody>${partRows || `<tr><td colspan="7">No part details yet.</td></tr>`}</tbody>
+          </table>
+        </details>
+      `;
+    }).join("")
+    : `<div class="empty">No student attempts yet.</div>`;
+
+  const stats = gameRecords.part_stats || [];
+  const maxErrors = Math.max(...stats.map((item) => Number(item.avg_errors || 0)), 1);
+  const maxRepeats = Math.max(...stats.map((item) => Number(item.avg_repeat_listens || 0)), 1);
+  const maxDuration = Math.max(...stats.map((item) => Number(item.avg_duration || 0)), 1);
+  $("statsChart").innerHTML = gameRecords.part_stats.length
+    ? stats.map((item) => {
+      const errorWidth = statPercent(item.avg_errors, maxErrors);
+      const repeatWidth = statPercent(item.avg_repeat_listens, maxRepeats);
+      const durationWidth = statPercent(item.avg_duration, maxDuration);
+      return `
+        <div class="chart-card">
+          <h4>SDG ${safeText(item.sdg_level)} / ${safeText(difficultyLabel(item.difficulty_code))} / Part ${safeText(item.part_no || item.part_id)}</h4>
+          <div class="bar-row">
+            <span>Average Errors</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${errorWidth}%"></div></div>
+            <span>${safeText(item.avg_errors)}</span>
+          </div>
+          <div class="bar-row">
+            <span>Average Repeats</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${repeatWidth}%"></div></div>
+            <span>${safeText(item.avg_repeat_listens)}</span>
+          </div>
+          <div class="bar-row">
+            <span>Average Time</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${durationWidth}%"></div></div>
+            <span>${formatTime(item.avg_duration)}</span>
+          </div>
+          <p style="color:var(--muted);margin:8px 0 0;">Attempts ${safeText(item.attempts)}</p>
+        </div>
+      `;
+    }).join("")
+    : `<div class="empty">No statistics yet.</div>`;
+  bindRecordDeleteButtons();
+}
+
+async function loadGameRecords() {
+  try {
+    gameRecords = await api.teacher.gameRecords();
+    renderGameRecords();
+  } catch (error) {
+    $("sessionRecords").innerHTML = `<div class="empty">${safeText(error.message)}</div>`;
+  }
+}
+
+function bindRecordDeleteButtons() {
+  document.querySelectorAll("[data-delete-game-record]").forEach((button) => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const sessionId = button.dataset.deleteGameRecord;
+      if (!confirm(`Delete attempt record #${sessionId}? This will delete every part detail for that attempt.`)) return;
+      await api.teacher.deleteGameRecord(sessionId);
+      showToast("Attempt record deleted.");
+      await loadGameRecords();
+    });
+  });
+}
+
+function bindModules() {
+  document.querySelectorAll("[data-module]").forEach((card) => {
+    card.addEventListener("click", () => setModule(card.dataset.module));
+  });
+}
+
+function bindGameTabs() {
+  document.querySelectorAll("[data-game-tab]").forEach((tab) => {
+    tab.addEventListener("click", () => setGameTab(tab.dataset.gameTab));
+  });
+}
+
+function bindDeleteButtons() {
+  document.querySelectorAll("[data-delete-sdg]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const sdgLevel = button.dataset.deleteSdg;
+      if (!confirm(`Delete SDG ${sdgLevel}? This will delete every part, subtopic, and sentence card under it.`)) return;
+      await api.teacher.deleteSdg(sdgLevel);
+      showToast("SDG deleted.");
+      await loadContent();
+    });
+  });
+
+  document.querySelectorAll("[data-delete-part]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      if (!confirm("Delete this part? This will delete every subtopic and sentence card under it.")) return;
+      await api.teacher.deletePart(button.dataset.deletePart);
+      showToast("Part deleted.");
+      await loadContent();
+    });
+  });
+
+  document.querySelectorAll("[data-delete-topic]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      if (!confirm("Delete this subtopic? This will delete its sentence cards for every level.")) return;
+      await api.teacher.deleteSubTopic(button.dataset.deleteTopic);
+      showToast("Subtopic deleted.");
+      await loadContent();
+    });
+  });
+
+  document.querySelectorAll("[data-delete-card]").forEach((button) => {
+    button.addEventListener("click", async (event) => {
+      event.stopPropagation();
+      if (!confirm("Delete this level's sentence card?")) return;
+      await api.teacher.deleteCard(button.dataset.deleteCard);
+      showToast("Sentence card deleted.");
+      await loadContent();
+    });
+  });
+}
+
+function bindForms() {
+  ["sdgForm", "partForm", "topicCardForm"].forEach((formId) => {
+    $(formId).addEventListener("input", updateDuplicateHints);
+    $(formId).addEventListener("change", updateDuplicateHints);
+  });
+
+  $("jsonTemplateBtn").addEventListener("click", downloadMaterialJsonTemplate);
+
+  $("excelImportForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const fileInput = $("excelImportFile");
+    const file = fileInput.files?.[0];
+    if (!file) {
+      setNotice("excelImportNotice", "Choose an .xlsx file first.");
+      return;
+    }
+
+    const button = $("excelImportBtn");
+    button.disabled = true;
+    button.textContent = "Importing...";
+    setNotice("excelImportNotice", "Uploading and importing the workbook...");
+
+    try {
+      const result = await api.teacher.importExcel(file);
+      const summary = result.summary || {};
+      setNotice(
+        "excelImportNotice",
+        `Imported ${summary.sdgs || 0} SDGs, ${summary.parts || 0} parts, ${summary.sub_topics || 0} subtopics, and ${summary.cards || 0} sentence cards.`
+      );
+      showToast("Excel imported.");
+      event.currentTarget.reset();
+      await loadContent();
+    } catch (error) {
+      setNotice("excelImportNotice", error.message || "Excel import failed.");
+      showToast(error.message || "Excel import failed.");
+    } finally {
+      button.disabled = false;
+      button.textContent = "Import Excel";
+    }
+  });
+
+  $("jsonImportForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const fileInput = $("jsonImportFile");
+    const file = fileInput.files?.[0];
+    if (!file) {
+      setNotice("jsonImportNotice", "Choose a .json file first.");
+      return;
+    }
+
+    const button = $("jsonImportBtn");
+    button.disabled = true;
+    button.textContent = "Importing...";
+    setNotice("jsonImportNotice", "Uploading and importing the material JSON...");
+
+    try {
+      const result = await api.teacher.importJson(file);
+      const summary = result.summary || {};
+      setNotice(
+        "jsonImportNotice",
+        `Imported ${summary.sdgs || 0} SDGs, ${summary.parts || 0} parts, ${summary.sub_topics || 0} subtopics, and ${summary.cards || 0} sentence cards.`
+      );
+      showToast("JSON imported.");
+      event.currentTarget.reset();
+      await loadContent();
+    } catch (error) {
+      setNotice("jsonImportNotice", error.message || "JSON import failed.");
+      showToast(error.message || "JSON import failed.");
+    } finally {
+      button.disabled = false;
+      button.textContent = "Import JSON";
+    }
+  });
+
+  $("sdgForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = formObject(event.currentTarget);
+    await api.teacher.saveSdg({
+      sdg_level: Number(data.sdg_level),
+      title: data.title,
+      description: data.description,
+      active: boolValue(data.active)
+    });
+    showToast("SDG saved.");
+    event.currentTarget.reset();
+    await loadContent();
+  });
+
+  $("partForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = formObject(event.currentTarget);
+    const partNo = Number(data.part_no);
+    if (partNo < 1 || partNo > 6) {
+      showToast("Part number must be between 1 and 6.");
+      return;
+    }
+    await api.teacher.savePart({
+      sdg_level: Number(data.sdg_level),
+      part_no: partNo,
+      part_description: data.part_description
+    });
+    showToast("Part saved.");
+    event.currentTarget.reset();
+    await loadContent();
+  });
+
+  $("topicCardForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = formObject(event.currentTarget);
+
+    const topic = await api.teacher.saveSubTopic({
+      part_id: Number(data.part_id),
+      sub_topic_no: Number(data.sub_topic_no),
+      sub_topic_description: data.sub_topic_description
+    });
+
+    const cardInputs = [
+      ["A2", data.card_A2],
+      ["A1", data.card_A1],
+      ["B1", data.card_B1]
+    ];
+
+    for (const [difficultyCode, cardText] of cardInputs) {
+      if (!cardText || !cardText.trim()) continue;
+      await api.teacher.saveCard({
+        sub_topic_id: topic.sub_topic_id,
+        difficulty_code: difficultyCode,
+        card_text: cardText,
+        active: true
+      });
+    }
+
+    showToast("Subtopic and sentence cards saved.");
+    event.currentTarget.reset();
+    await loadContent();
+  });
+}
+
+async function init() {
+  try {
+    const ok = await verifyTeacher();
+    if (!ok) return;
+    bindModules();
+    bindGameTabs();
+    bindForms();
+    await loadContent();
+    setModule("sdgs_card_game");
+    setGameTab("cards");
+  } catch (error) {
+    alert(error.message || "Failed to load the teacher dashboard.");
+    window.location.href = "/pages/member_index.html";
+  }
+}
+
+init();
+</script>
+</body>
+</html>

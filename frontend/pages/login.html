@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — CardLearn SDGs</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0f172a;
+      color: white;
+      overflow: hidden;
+    }
+
+    /* ===== Animated Background ===== */
+    .bg {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(99,102,241,0.45), transparent 30%),
+        radial-gradient(circle at 80% 30%, rgba(168,85,247,0.45), transparent 32%),
+        radial-gradient(circle at 50% 85%, rgba(34,197,94,0.25), transparent 35%),
+        linear-gradient(135deg, #020617, #111827, #1e1b4b);
+      z-index: -3;
+    }
+
+    .orb {
+      position: fixed;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      filter: blur(30px);
+      opacity: 0.45;
+      z-index: -2;
+      animation: floatOrb 8s ease-in-out infinite alternate;
+    }
+
+    .orb.one {
+      background: #6366f1;
+      top: 10%;
+      left: 12%;
+    }
+
+    .orb.two {
+      background: #a855f7;
+      right: 10%;
+      bottom: 12%;
+      animation-delay: 1.2s;
+    }
+
+    @keyframes floatOrb {
+      from {
+        transform: translateY(0) scale(1);
+      }
+      to {
+        transform: translateY(-35px) scale(1.12);
+      }
+    }
+
+    /* ===== Back Home ===== */
+    .topbar {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 10;
+    }
+
+    .topbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 13px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.14);
+      transition: 0.25s;
+    }
+
+    .topbar a:hover {
+      background: rgba(255,255,255,0.18);
+      transform: translateX(-3px);
+      display: inline-block;
+    }
+
+    /* ===== Login Card ===== */
+    .login-wrap {
+      width: 92%;
+      max-width: 430px;
+      perspective: 1000px;
+    }
+
+    .card {
+      width: 100%;
+      padding: 42px 38px;
+      border-radius: 26px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(22px);
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow:
+        0 30px 90px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+      transform-style: preserve-3d;
+      animation: cardIn 0.7s ease both;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.12),
+        transparent
+      );
+      transform: translateX(-100%);
+      animation: shine 4s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes shine {
+      0%, 65% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(28px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .logo {
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      margin-bottom: 18px;
+      box-shadow: 0 18px 35px rgba(99,102,241,0.4);
+      animation: bounceLogo 2.4s ease-in-out infinite;
+    }
+
+    @keyframes bounceLogo {
+      0%, 100% {
+        transform: translateY(0) rotate(-3deg);
+      }
+      50% {
+        transform: translateY(-7px) rotate(3deg);
+      }
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 27px;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      opacity: 0.72;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .tip {
+      display: flex;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.25);
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.82);
+    }
+
+    .tip span {
+      font-size: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 17px;
+      position: relative;
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      opacity: 0.86;
+      margin-bottom: 7px;
+    }
+
+    .hint {
+      font-size: 12px;
+      opacity: 0.55;
+    }
+
+    .input-box {
+      position: relative;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 44px 13px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(2,6,23,0.48);
+      color: white;
+      outline: none;
+      font-size: 14px;
+      transition: 0.25s;
+    }
+
+    input::placeholder {
+      color: rgba(255,255,255,0.38);
+    }
+
+    input:focus {
+      border-color: #818cf8;
+      box-shadow:
+        0 0 0 3px rgba(99,102,241,0.22),
+        0 12px 28px rgba(0,0,0,0.25);
+      background: rgba(2,6,23,0.65);
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.55;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .input-ok {
+      border-color: rgba(34,197,94,0.7);
+    }
+
+    .input-error {
+      border-color: rgba(248,113,113,0.8);
+    }
+
+    .field-msg {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #fca5a5;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 16px;
+      margin-top: 8px;
+      font-weight: 800;
+      cursor: pointer;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      color: white;
+      transition: 0.25s;
+      box-shadow: 0 18px 35px rgba(99,102,241,0.35);
+      font-size: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 24px 45px rgba(168,85,247,0.42);
+    }
+
+    button:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .loader {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: white;
+      border-radius: 50%;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .msg {
+      margin-bottom: 16px;
+      font-size: 13px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      animation: pop 0.25s ease both;
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .err {
+      background: rgba(239,68,68,0.16);
+      border: 1px solid rgba(248,113,113,0.28);
+      color: #fecaca;
+    }
+
+    .ok {
+      background: rgba(34,197,94,0.16);
+      border: 1px solid rgba(74,222,128,0.28);
+      color: #bbf7d0;
+    }
+
+    .link {
+      margin-top: 18px;
+      font-size: 13px;
+      text-align: center;
+      opacity: 0.82;
+    }
+
+    .link a {
+      color: #c084fc;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .link a:hover {
+      text-decoration: underline;
+    }
+
+    .progress {
+      height: 4px;
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .progress-inner {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(135deg, #6366f1, #a855f7, #22c55e);
+      transition: 0.25s;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 34px 26px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+<div class="orb one"></div>
+<div class="orb two"></div>
+
+<!-- Back Home -->
+<div class="topbar">
+  <a href="../">← Back Home</a>
+</div>
+
+<div id="app" class="login-wrap">
+  <div class="card" @mousemove="tiltCard" @mouseleave="resetTilt" ref="card">
+
+    <div class="logo">🃏</div>
+
+    <h1>CardLearn SDGs</h1>
+    <div class="subtitle">
+      Welcome back! Log in to start your Sustainable Development Goals learning journey.
+    </div>
+
+    <div class="tip">
+      <span>✨</span>
+      <div>
+        After logging in, you can enter your member dashboard, view your learning records, and start card challenges.
+      </div>
+    </div>
+
+    <div class="progress">
+      <div class="progress-inner" :style="{ width: progress + '%' }"></div>
+    </div>
+
+    <div v-if="msg.text" :class="['msg', msg.type === 'err' ? 'err' : 'ok']">
+      {{ msg.text }}
+    </div>
+
+    <div class="form-group">
+      <label>
+        Email
+        <span class="hint" v-if="form.email">Entered</span>
+      </label>
+
+      <div class="input-box">
+        <input
+          v-model.trim="form.email"
+          :class="emailClass"
+          type="email"
+          placeholder="Enter your email"
+          autocomplete="email"
+          @input="clearMsg"
+        />
+        <span class="input-icon">👤</span>
+      </div>
+
+      <div v-if="errors.email" class="field-msg">
+        {{ errors.email }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>
+        Password
+        <span class="hint" v-if="form.password">
+          {{ form.password.length }} characters
+        </span>
+      </label>
+
+      <div class="input-box">
+        <input
+          v-model="form.password"
+          :class="passwordClass"
+          :type="showPassword ? 'text' : 'password'"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+          @keyup.enter="login"
+          @input="clearMsg"
+        />
+        <span class="input-icon" @click="showPassword = !showPassword">
+          {{ showPassword ? '🙈' : '👁️' }}
+        </span>
+      </div>
+
+      <div v-if="errors.password" class="field-msg">
+        {{ errors.password }}
+      </div>
+    </div>
+
+    <button @click="login" :disabled="loading || !canSubmit">
+      <span v-if="loading">
+        <span class="loader"></span>Logging in...
+      </span>
+      <span v-else>
+        🚀 Log In and Start Learning
+      </span>
+    </button>
+
+    <div class="link">
+      Don’t have an account? <a href="register.html">Create one</a>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="/static/config.js"></script>
+<script src="/static/js/api.js"></script>
+
+<script>
+Vue.createApp({
+  data() {
+    return {
+      form: {
+        email: '',
+        password: ''
+      },
+      msg: { text: '', type: '' },
+      loading: false,
+      showPassword: false,
+      errors: {
+        email: '',
+        password: ''
+      }
+    };
+  },
+
+  computed: {
+    progress() {
+      let value = 0;
+      if (this.form.email) value += 50;
+      if (this.form.password) value += 50;
+      return value;
+    },
+
+    canSubmit() {
+      return this.form.email && this.form.password;
+    },
+
+    emailClass() {
+      if (!this.form.email) return '';
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email) ? 'input-ok' : 'input-error';
+    },
+
+    passwordClass() {
+      if (!this.form.password) return '';
+      return this.form.password.length >= 6 ? 'input-ok' : 'input-error';
+    }
+  },
+
+  methods: {
+    clearMsg() {
+      this.msg = { text: '', type: '' };
+      this.errors.email = '';
+      this.errors.password = '';
+    },
+
+    validate() {
+      let valid = true;
+
+      this.errors.email = '';
+      this.errors.password = '';
+
+      if (!this.form.email) {
+        this.errors.email = 'Please enter your email.';
+        valid = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)) {
+        this.errors.email = 'Please enter a valid email address.';
+        valid = false;
+      }
+
+      if (!this.form.password) {
+        this.errors.password = 'Please enter your password.';
+        valid = false;
+      } else if (this.form.password.length < 6) {
+        this.errors.password = 'Password must be at least 6 characters.';
+        valid = false;
+      }
+
+      return valid;
+    },
+
+    async login() {
+      if (!this.validate()) {
+        this.msg = {
+          text: "Please check your email and password.",
+          type: "err"
+        };
+        return;
+      }
+
+      this.loading = true;
+
+      try {
+        const res = await api.auth.login(
+          this.form.email,
+          this.form.password
+        );
+
+        this.msg = {
+          text: "Login successful! Redirecting to your dashboard...",
+          type: "ok"
+        };
+
+        setTimeout(() => {
+          const params = new URLSearchParams(window.location.search);
+          window.location.href = params.get("next") || "member_index.html";
+        }, 800);
+
+      } catch (e) {
+        this.msg = {
+          text: e.message || "Login failed. Please try again later.",
+          type: "err"
+        };
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    tiltCard(e) {
+      const card = this.$refs.card;
+      const rect = card.getBoundingClientRect();
+
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = ((y - centerY) / centerY) * -4;
+      const rotateY = ((x - centerX) / centerX) * 4;
+
+      card.style.transform = `
+        rotateX(${rotateX}deg)
+        rotateY(${rotateY}deg)
+        translateY(-2px)
+      `;
+    },
+
+    resetTilt() {
+      const card = this.$refs.card;
+      card.style.transform = 'rotateX(0deg) rotateY(0deg) translateY(0)';
+    }
+  }
+}).mount("#app");
+
+if (auth.getSession()) {
+  const params = new URLSearchParams(window.location.search);
+  window.location.href = params.get("next") || "member_index.html";
+}
+</script>
+
+</body>
+</html>

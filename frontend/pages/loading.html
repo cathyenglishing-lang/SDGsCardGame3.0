@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CardLearn SDGs Loading Room</title>
+
+  <style>
+    :root {
+      --bg: #050816;
+      --text: #f8fafc;
+      --muted: rgba(248, 250, 252, 0.68);
+      --panel: rgba(15, 23, 42, 0.68);
+      --line: rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    body {
+      height: 100vh;
+    }
+
+    #three-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 1;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 10%, rgba(56, 189, 248, 0.13), transparent 28%),
+        radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.10), transparent 30%),
+        linear-gradient(180deg, rgba(5, 8, 22, 0.08), rgba(5, 8, 22, 0.45));
+    }
+
+    .hero {
+      position: fixed;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 7vw;
+      transition: opacity 0.3s ease;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #93c5fd;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .title {
+      margin: 0;
+      max-width: 820px;
+      font-size: clamp(3rem, 8vw, 6.2rem);
+      line-height: 0.92;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin-top: 1.35rem;
+      max-width: 620px;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    .info-panel {
+      position: fixed;
+      left: 24px;
+      bottom: 24px;
+      z-index: 4;
+      width: min(360px, calc(100vw - 48px));
+      background: var(--panel);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.38);
+    }
+
+    .step {
+      font-size: 0.78rem;
+      color: #93c5fd;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .status {
+      font-size: 1.12rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #22c55e, #38bdf8, #a855f7);
+      box-shadow: 0 0 20px rgba(56,189,248,0.4);
+    }
+
+    .hint {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: rgba(248,250,252,0.58);
+      line-height: 1.6;
+    }
+
+    #screen-enter {
+      position: fixed;
+      z-index: 15;
+      transform: translate(-50%, -50%);
+      padding: 14px 26px;
+      border: none;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 18px 50px rgba(37,99,235,0.35);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    #screen-enter.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #screen-enter:hover {
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+
+    /* ===== SDG orbit ===== */
+    .sdg-orbit {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 540px;
+      height: 540px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 12;
+      opacity: 1;
+      transition: opacity 0.28s ease, transform 0.28s ease;
+    }
+
+    .sdg-orbit.hidden {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.92);
+    }
+
+    .sdg-item {
+      position: absolute;
+      width: 126px;
+      min-height: 56px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.3;
+      font-weight: 700;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.28);
+      border: 1px solid rgba(255,255,255,0.14);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sdg-item .sdg-no {
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .sdg-item .sdg-text {
+      flex: 1;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+
+
+    /* ===== Clickable computer screen UI ===== */
+    #screen-enter {
+      display: none !important;
+    }
+
+    .computer-ui {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      z-index: 18;
+      width: min(1024px, calc(100vw - 36px));
+      height: min(620px, calc(100vh - 36px));
+      transform: translate(-50%, -50%) scale(1);
+      transform-origin: center center;
+      border-radius: 8px;
+      overflow: hidden;
+      color: white;
+      background: rgba(2, 6, 23, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow:
+        0 0 36px rgba(56, 189, 248, 0.38),
+        inset 0 0 30px rgba(56, 189, 248, 0.08);
+      opacity: 1;
+      pointer-events: auto;
+      transition: opacity 0.36s ease, transform 0.36s ease;
+      cursor: auto;
+    }
+
+    .computer-ui.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -50%) scale(0.88);
+    }
+
+    .computer-topbar {
+      height: 28px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 12px;
+      background: rgba(15, 23, 42, 0.94);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .dot.red { background: #ef4444; }
+    .dot.yellow { background: #facc15; }
+    .dot.green { background: #22c55e; }
+
+    .window-close {
+      border: 0;
+      padding: 0;
+      width: 13px;
+      height: 13px;
+      color: rgba(127, 29, 29, 0.92);
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 13px;
+      text-align: center;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.18s ease, filter 0.18s ease;
+    }
+
+    .window-close:hover {
+      transform: scale(1.18);
+      filter: brightness(1.15);
+    }
+
+    .window-close:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.85);
+      outline-offset: 2px;
+    }
+
+    .computer-title {
+      margin-left: 8px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.72);
+      letter-spacing: 0;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .screen-cursor {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 5;
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-3px, -2px);
+      transition: opacity 0.14s ease;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
+      display: none;
+    }
+
+    .screen-cursor::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      border-left: 10px solid white;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      transform: rotate(22deg);
+    }
+
+    .computer-ui.cursor-active .screen-cursor {
+      opacity: 1;
+    }
+
+    .computer-content {
+      height: calc(100% - 28px);
+      padding: 14px;
+      background:
+        linear-gradient(135deg, #06111f, #10243a);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mini-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #22c55e, #38bdf8);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .guideline-title {
+      margin: 0;
+      color: #f8fafc;
+      font-size: clamp(1.55rem, 3vw, 2.4rem);
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .entry-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.72);
+    }
+
+    .entry-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .computer-content h3 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.15;
+    }
+
+    .computer-content p {
+      margin: 5px 0 0;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.68);
+      line-height: 1.35;
+    }
+
+    .mini-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .mini-grid button {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .mini-grid button:hover,
+    .mini-grid button.is-active {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: rgba(56, 189, 248, 0.82);
+      transform: translateY(-2px);
+    }
+
+    .mini-grid button:disabled {
+      cursor: not-allowed;
+      opacity: 0.42;
+      transform: none;
+    }
+
+    .mini-grid button:disabled:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.14);
+      transform: none;
+    }
+
+    .mini-grid button.primary {
+      background: linear-gradient(135deg, #22c55e, #2563eb);
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    .mini-grid button.primary:disabled {
+      background: rgba(255, 255, 255, 0.10);
+    }
+
+    .prompt-board {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding: clamp(18px, 2.3vw, 28px);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(255, 251, 235, 0.98), rgba(240, 253, 250, 0.98));
+      color: #1f2937;
+      border: 1px solid rgba(251, 146, 60, 0.45);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.66),
+        0 18px 42px rgba(2, 6, 23, 0.28);
+      font-size: clamp(14px, 1.35vw, 17px);
+      line-height: 1.58;
+      font-weight: 500;
+      scrollbar-color: rgba(15, 118, 110, 0.55) rgba(255, 255, 255, 0.55);
+    }
+
+    .prompt-hero {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(15, 118, 110, 0.18);
+    }
+
+    .prompt-kicker {
+      width: fit-content;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: #0f766e;
+      background: rgba(20, 184, 166, 0.14);
+      font-size: 0.72em;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .prompt-title {
+      margin: 0;
+      color: #111827;
+      font-size: clamp(1.35rem, 2.5vw, 2.15rem);
+      line-height: 1.12;
+      font-weight: 900;
+    }
+
+    .prompt-lead {
+      margin: 0;
+      max-width: 820px;
+      color: #374151;
+      font-size: 1em;
+      line-height: 1.65;
+    }
+
+    .prompt-section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 22px 0 8px;
+      color: #0f172a;
+      font-size: 1.08em;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+
+    .prompt-section-title::before {
+      content: "";
+      width: 8px;
+      height: 28px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #f97316, #14b8a6);
+      flex: 0 0 auto;
+    }
+
+    .zone-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .zone-card {
+      padding: 10px 12px;
+      border: 1px solid rgba(15, 118, 110, 0.14);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.58);
+    }
+
+    .zone-card strong {
+      display: block;
+      color: #9f1239;
+      font-weight: 900;
+    }
+
+    .reflection-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .reflection-item {
+      padding-left: 28px;
+      position: relative;
+      color: #374151;
+    }
+
+    .reflection-item::before {
+      content: ">";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: #0f766e;
+      font-weight: 900;
+    }
+
+    .mini-guide-title {
+      margin: 0 0 8px;
+      color: #0f172a;
+      font-size: 1em;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .prompt-board p {
+      margin: 0 0 20px;
+      color: #374151;
+      font-size: inherit;
+      line-height: inherit;
+    }
+
+    .prompt-board p:last-child {
+      margin-bottom: 0;
+    }
+
+    .prompt-board .prompt-section {
+      margin: 22px 0 0;
+    }
+
+    .prompt-board .prompt-section:first-child {
+      margin-top: 0;
+    }
+
+    .prompt-board strong {
+      font-weight: 900;
+      color: #111827;
+    }
+
+    .prompt-board ol {
+      margin: 0;
+      padding-left: 22px;
+    }
+
+    .prompt-board li {
+      margin: 7px 0;
+      color: #374151;
+      font-size: 0.95em;
+      line-height: 1.35;
+    }
+
+    .mini-status {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.68);
+      line-height: 1.3;
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        justify-content: flex-start;
+        padding: 6rem 1.2rem 0;
+      }
+
+      .title {
+        font-size: clamp(2.7rem, 13vw, 4.5rem);
+      }
+
+      .info-panel {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        width: auto;
+      }
+
+      .sdg-orbit {
+        width: 390px;
+        height: 390px;
+      }
+
+      .sdg-item {
+        width: 96px;
+        min-height: 48px;
+        padding: 6px 8px;
+      }
+
+      .sdg-item .sdg-no {
+        width: 22px;
+        height: 22px;
+        font-size: 10px;
+      }
+
+      .sdg-item .sdg-text {
+        font-size: 10px;
+      }
+
+      .computer-ui {
+        width: calc(100vw - 24px);
+        height: calc(100vh - 24px);
+      }
+
+      .computer-content {
+        padding: 11px;
+      }
+
+      .computer-content h3 {
+        font-size: 16px;
+      }
+
+      .computer-content p,
+      .mini-status {
+        font-size: 10px;
+      }
+
+      .mini-grid button {
+        padding: 8px 5px;
+        font-size: 10px;
+      }
+
+      .entry-header {
+        display: grid;
+      }
+
+      .entry-actions {
+        justify-content: flex-start;
+        margin-top: 8px;
+      }
+
+      .zone-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="three-canvas"></canvas>
+  <div class="overlay"></div>
+
+  <div class="hero" id="hero">
+    <div class="eyebrow">CardLearn SDGs</div>
+    <h1 class="title">Boot the Pecha Kucha Equality Gap mission.</h1>
+    <div class="subtitle">
+      The mission computer will load automatically. When the briefing window opens, read the guide and enter the card challenge.
+    </div>
+  </div>
+
+  <div class="info-panel">
+    <div class="step" id="stepLabel">Step 01 / 04</div>
+    <div class="status" id="statusText">Entering study room...</div>
+    <div class="bar">
+      <div class="bar-fill" id="barFill"></div>
+    </div>
+    <div class="hint">
+      No scrolling needed. The mission computer is loading the entrance window.
+    </div>
+  </div>
+
+  <button id="screen-enter" aria-hidden="true">Enter Game</button>
+
+  <div id="computer-ui" class="computer-ui hidden" aria-label="Interactive computer screen">
+    <div class="screen-cursor" id="screenCursor"></div>
+    <div class="computer-topbar">
+      <button type="button" class="dot red window-close" id="windowCloseBtn" aria-label="Back to difficulty selection" title="Back to difficulty selection">x</button>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+      <span class="computer-title">Pecha Kucha Entry Window</span>
+    </div>
+    <div class="computer-content">
+      <div class="entry-header">
+        <h3 class="guideline-title">Guideline</h3>
+        <div class="entry-actions">
+          <div class="mini-grid">
+            <button type="button" data-action="pecha" class="is-active">Pecha Kucha Guide</button>
+            <button type="button" data-action="how" disabled>Game Guide</button>
+            <button type="button" data-action="game" class="primary" disabled>Start Game</button>
+          </div>
+        </div>
+      </div>
+      <div class="prompt-board" id="miniGuide" aria-live="polite">
+        <section class="prompt-hero">
+          <div class="prompt-kicker">Pecha Kucha Guide</div>
+          <h4 class="prompt-title">What is PechaKucha?</h4>
+          <p class="prompt-lead">
+            <strong>PechaKucha</strong> (Japanese for "chit-chat") is a highly visual presentation format where you show exactly
+            <strong>20 slides for 20 seconds each</strong>, advancing automatically for a total of
+            <strong>6 minutes and 40 seconds</strong>.
+          </p>
+        </section>
+
+        <section>
+          <h4 class="prompt-section-title">The Core Concept: "20x20"</h4>
+          <div class="zone-list">
+            <div class="zone-card"><strong>20 Slides</strong>The deck is strictly limited to 20 images.</div>
+            <div class="zone-card"><strong>20 Seconds</strong>Each slide stays on screen for exactly 20 seconds.</div>
+            <div class="zone-card"><strong>6:40 Total</strong>The entire presentation takes exactly 6 minutes and 40 seconds.</div>
+          </div>
+        </section>
+
+        <section>
+          <h4 class="prompt-section-title">Key Characteristics</h4>
+          <div class="reflection-list">
+            <div class="reflection-item">
+              <strong>Automated Pacing:</strong>
+              The timer is built into the software. You cannot pause, rewind, or skip ahead, forcing a relentless forward momentum.
+            </div>
+            <div class="reflection-item">
+              <strong>Visual Dominance:</strong>
+              Slides rely on powerful imagery rather than bullet points, charts, or text blocks.
+            </div>
+            <div class="reflection-item">
+              <strong>Storytelling Focus:</strong>
+              The format shifts the presentation away from a dry lecture and into a fluid, rehearsed narrative performance.
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h4 class="prompt-section-title">Why People Use It</h4>
+          <p>
+            Created by Tokyo architects in 2003, it was designed to force speakers to get straight to the point and prevent
+            <strong>"Death by PowerPoint."</strong> It ensures that events move quickly, keeping audiences engaged across multiple
+            topics in a single evening.
+          </p>
+        </section>
+      </div>
+      <div class="mini-status" id="miniStatus">Read to the end of Pecha Kucha Guide to unlock Game Guide.</div>
+    </div>
+  </div>
+
+  <div id="sdg-orbit" class="sdg-orbit hidden"></div>
+
+  <!-- Uncomment this block if login verification is needed here. -->
+  <!--
+  <script src="/static/config.js"></script>
+  <script src="/static/js/api.js"></script>
+  <script>
+    if (window.auth && typeof auth.requireLogin === "function") {
+      auth.requireLogin();
+    }
+  </script>
+  -->
+
+  <script type="module">
+    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js";
+
+    const canvas = document.getElementById("three-canvas");
+    const hero = document.getElementById("hero");
+    const stepLabel = document.getElementById("stepLabel");
+    const statusText = document.getElementById("statusText");
+    const barFill = document.getElementById("barFill");
+    const enterBtn = document.getElementById("screen-enter");
+    const sdgOrbit = document.getElementById("sdg-orbit");
+    const computerUI = document.getElementById("computer-ui");
+    const windowCloseBtn = document.getElementById("windowCloseBtn");
+    const miniStatus = document.getElementById("miniStatus");
+    const miniGuide = document.getElementById("miniGuide");
+    const screenCursor = document.getElementById("screenCursor");
+
+    // Change this path if your difficulty selection page uses a different file name.
+    const DIFFICULTY_PAGE_URL = "member_index.html";
+
+    const sdgGoals = [
+    { no: "01", title: "No Poverty", color: "#E5243B" },
+    { no: "02", title: "Zero Hunger", color: "#DDA63A" },
+    { no: "03", title: "Good Health", color: "#4C9F38" },
+    { no: "04", title: "Quality Education", color: "#C5192D" },
+    { no: "05", title: "Gender Equality", color: "#FF3A21" },
+    { no: "06", title: "Clean Water", color: "#26BDE2" },
+    { no: "07", title: "Clean Energy", color: "#FCC30B" },
+    { no: "08", title: "Decent Work", color: "#A21942" },
+    { no: "09", title: "Innovation", color: "#FD6925" },
+    { no: "10", title: "Reduced Inequalities", color: "#DD1367" },
+    { no: "11", title: "Sustainable Cities", color: "#FD9D24" },
+    { no: "12", title: "Responsible Consumption", color: "#BF8B2E" },
+    { no: "13", title: "Climate Action", color: "#3F7E44" },
+    { no: "14", title: "Life Below Water", color: "#0A97D9" },
+    { no: "15", title: "Life on Land", color: "#56C02B" },
+    { no: "16", title: "Peace and Justice", color: "#00689D" },
+    { no: "17", title: "Partnerships", color: "#19486A" }
+    ];
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x050816, 14, 38);
+
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      100
+    );
+    camera.position.set(0, 4.7, 14.5);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    /* =========================
+       Lights
+    ========================= */
+    const ambient = new THREE.AmbientLight(0xffffff, 0.85);
+    scene.add(ambient);
+
+    const keyLight = new THREE.PointLight(0x7dd3fc, 24, 45);
+    keyLight.position.set(4, 8, 5);
+    scene.add(keyLight);
+
+    const fillLight = new THREE.PointLight(0xa855f7, 16, 28);
+    fillLight.position.set(-6, 5, -2);
+    scene.add(fillLight);
+
+    const deskGlow = new THREE.PointLight(0x22c55e, 10, 18);
+    deskGlow.position.set(0, 3, 3);
+    scene.add(deskGlow);
+
+    /* =========================
+       Helpers / textures
+    ========================= */
+    function makeWoodMaterial() {
+      const c = document.createElement("canvas");
+      c.width = 512;
+      c.height = 512;
+      const ctx = c.getContext("2d");
+
+      ctx.fillStyle = "#6a4c34";
+      ctx.fillRect(0, 0, c.width, c.height);
+
+      for (let i = 0; i < 180; i++) {
+        const y = Math.random() * c.height;
+        const h = 1 + Math.random() * 4;
+        const alpha = 0.04 + Math.random() * 0.08;
+        ctx.fillStyle = `rgba(45, 28, 17, ${alpha})`;
+        ctx.fillRect(0, y, c.width, h);
+      }
+
+      for (let i = 0; i < 60; i++) {
+        const x = Math.random() * c.width;
+        const alpha = 0.03 + Math.random() * 0.04;
+        ctx.fillStyle = `rgba(160, 120, 90, ${alpha})`;
+        ctx.fillRect(x, 0, 3, c.height);
+      }
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(2, 1);
+      return new THREE.MeshStandardMaterial({
+        map: tex,
+        roughness: 0.88,
+        metalness: 0.04
+      });
+    }
+
+    function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+      if (w <= 0) return;
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
+    }
+
+    function makeEarthTexture() {
+      const c = document.createElement("canvas");
+      c.width = 1024;
+      c.height = 512;
+      const ctx = c.getContext("2d");
+
+      ctx.fillStyle = "#1d4ed8";
+      ctx.fillRect(0, 0, c.width, c.height);
+
+      ctx.fillStyle = "#65a30d";
+      const landShapes = [
+        [120,120,140,80], [220,160,110,90], [360,100,130,110],
+        [510,140,140,100], [700,120,160,120], [830,200,120,90],
+        [180,300,180,90], [420,310,120,70], [620,290,180,100]
+      ];
+
+      landShapes.forEach(([x, y, w, h], idx) => {
+        ctx.beginPath();
+        ctx.ellipse(
+          x,
+          y,
+          w,
+          h,
+          (idx % 3) * 0.2,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      });
+
+      ctx.fillStyle = "rgba(255,255,255,0.10)";
+      for (let i = 0; i < 28; i++) {
+        ctx.beginPath();
+        ctx.ellipse(
+          Math.random() * c.width,
+          Math.random() * c.height,
+          40 + Math.random() * 80,
+          12 + Math.random() * 24,
+          Math.random() * Math.PI,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      }
+
+      return new THREE.CanvasTexture(c);
+    }
+
+    const woodMat = makeWoodMaterial();
+
+    /* =========================
+       Room
+    ========================= */
+    const room = new THREE.Group();
+    scene.add(room);
+
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(32, 32),
+      new THREE.MeshStandardMaterial({
+        color: 0x0f172a,
+        roughness: 0.96,
+        metalness: 0.03
+      })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    room.add(floor);
+
+    const backWall = new THREE.Mesh(
+      new THREE.PlaneGeometry(32, 16),
+      new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 1 })
+    );
+    backWall.position.set(0, 8, -9);
+    room.add(backWall);
+
+    const leftWall = new THREE.Mesh(
+      new THREE.PlaneGeometry(32, 16),
+      new THREE.MeshStandardMaterial({ color: 0x0b1220, roughness: 1 })
+    );
+    leftWall.rotation.y = Math.PI / 2;
+    leftWall.position.set(-16, 8, 0);
+    room.add(leftWall);
+
+    const rightWall = new THREE.Mesh(
+      new THREE.PlaneGeometry(32, 16),
+      new THREE.MeshStandardMaterial({ color: 0x0b1220, roughness: 1 })
+    );
+    rightWall.rotation.y = -Math.PI / 2;
+    rightWall.position.set(16, 8, 0);
+    room.add(rightWall);
+
+    for (let i = 0; i < 6; i++) {
+      const deco = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.35, 3.8),
+        new THREE.MeshBasicMaterial({
+          color: i % 2 === 0 ? 0x38bdf8 : 0xa855f7,
+          transparent: true,
+          opacity: 0.22
+        })
+      );
+      deco.position.set(-6 + i * 2.4, 6.5, -8.9);
+      room.add(deco);
+    }
+
+    /* =========================
+       Desk
+    ========================= */
+    const desk = new THREE.Group();
+    scene.add(desk);
+
+    const deskTop = new THREE.Mesh(
+      new THREE.BoxGeometry(8.6, 0.28, 3.6),
+      woodMat
+    );
+    deskTop.position.set(0, 2.2, 0.3);
+    desk.add(deskTop);
+
+    const legGeo = new THREE.BoxGeometry(0.22, 2.2, 0.22);
+    const legMat = new THREE.MeshStandardMaterial({
+      color: 0x2b3445,
+      roughness: 0.75
+    });
+
+    [
+      [-3.95, 1.1, -1.1],
+      [ 3.95, 1.1, -1.1],
+      [-3.95, 1.1,  1.7],
+      [ 3.95, 1.1,  1.7]
+    ].forEach(([x, y, z]) => {
+      const leg = new THREE.Mesh(legGeo, legMat);
+      leg.position.set(x, y, z);
+      desk.add(leg);
+    });
+
+    /* =========================
+       Computer
+    ========================= */
+    const computer = new THREE.Group();
+    computer.position.set(0, 2.33, -0.15);
+    scene.add(computer);
+
+    const standNeck = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.13, 1.0, 20),
+      new THREE.MeshStandardMaterial({
+        color: 0x6b7280,
+        metalness: 0.7,
+        roughness: 0.32
+      })
+    );
+    standNeck.position.set(0, 0.42, -0.2);
+    computer.add(standNeck);
+
+    const standBase = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.72, 0.78, 0.08, 28),
+      new THREE.MeshStandardMaterial({
+        color: 0x4b5563,
+        metalness: 0.5,
+        roughness: 0.42
+      })
+    );
+    standBase.position.set(0, -0.06, 0.25);
+    standBase.scale.set(1, 1, 0.56);
+    computer.add(standBase);
+
+    const monitorBack = new THREE.Mesh(
+      new THREE.BoxGeometry(4.35, 2.78, 0.20),
+      new THREE.MeshStandardMaterial({
+        color: 0x111827,
+        metalness: 0.38,
+        roughness: 0.28
+      })
+    );
+    monitorBack.position.set(0, 1.6, -0.38);
+    computer.add(monitorBack);
+
+    const bezel = new THREE.Mesh(
+      new THREE.BoxGeometry(3.98, 2.42, 0.08),
+      new THREE.MeshStandardMaterial({
+        color: 0x050816,
+        roughness: 0.35,
+        metalness: 0.25
+      })
+    );
+    bezel.position.set(0, 1.6, -0.24);
+    computer.add(bezel);
+
+    const uiCanvas = document.createElement("canvas");
+    uiCanvas.width = 1024;
+    uiCanvas.height = 640;
+    const uiCtx = uiCanvas.getContext("2d");
+    const uiTexture = new THREE.CanvasTexture(uiCanvas);
+
+    function drawScreenUI(progress) {
+      const w = uiCanvas.width;
+      const h = uiCanvas.height;
+
+      const grad = uiCtx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, "#07162a");
+      grad.addColorStop(1, "#0f2d46");
+      uiCtx.fillStyle = grad;
+      uiCtx.fillRect(0, 0, w, h);
+
+      const glow = uiCtx.createRadialGradient(w * 0.75, h * 0.25, 10, w * 0.75, h * 0.25, 220);
+      glow.addColorStop(0, "rgba(56,189,248,0.55)");
+      glow.addColorStop(1, "rgba(56,189,248,0)");
+      uiCtx.fillStyle = glow;
+      uiCtx.fillRect(0, 0, w, h);
+
+      uiCtx.fillStyle = "rgba(255,255,255,0.92)";
+      uiCtx.font = "bold 42px Arial, Helvetica, sans-serif";
+      uiCtx.fillText("Pecha Kucha Mission", 70, 86);
+
+      uiCtx.fillStyle = "rgba(255,255,255,0.72)";
+      uiCtx.font = "24px Arial, Helvetica, sans-serif";
+      uiCtx.fillText("Listen, match, then present.", 70, 132);
+
+      uiCtx.fillStyle = "rgba(255,255,255,0.14)";
+      roundRect(uiCtx, 70, 165, 350, 20, 10, true, false);
+
+      const fillWidth = 350 * progress;
+      const fillGrad = uiCtx.createLinearGradient(70, 0, 420, 0);
+      fillGrad.addColorStop(0, "#22c55e");
+      fillGrad.addColorStop(0.5, "#38bdf8");
+      fillGrad.addColorStop(1, "#a855f7");
+      uiCtx.fillStyle = fillGrad;
+      roundRect(uiCtx, 70, 165, fillWidth, 20, 10, true, false);
+
+      uiCtx.fillStyle = "rgba(255,255,255,0.82)";
+      uiCtx.font = "20px Arial, Helvetica, sans-serif";
+      uiCtx.fillText(`${Math.round(progress * 100)}% loaded`, 440, 182);
+
+      const sdgColors = [
+        "#E5243B", "#DDA63A", "#4C9F38", "#C5192D", "#FF3A21", "#26BDE2"
+      ];
+      const labels = ["01", "02", "03", "04", "05", "06"];
+      const actions = ["LISTEN", "MATCH", "ORDER", "REVIEW", "SPEAK", "ACT"];
+
+      for (let i = 0; i < 6; i++) {
+        const x = 70 + i * 145;
+        const y = 270;
+        uiCtx.fillStyle = sdgColors[i];
+        roundRect(uiCtx, x, y, 108, 150, 18, true, false);
+
+        uiCtx.fillStyle = "rgba(255,255,255,0.96)";
+        uiCtx.font = "bold 30px Arial, Helvetica, sans-serif";
+        uiCtx.fillText(labels[i], x + 18, y + 40);
+
+        uiCtx.font = "bold 18px Arial, Helvetica, sans-serif";
+        uiCtx.fillText(actions[i], x + 18, y + 74);
+
+        uiCtx.fillStyle = "rgba(255,255,255,0.88)";
+        uiCtx.font = "14px Arial, Helvetica, sans-serif";
+        uiCtx.fillText("Card", x + 18, y + 102);
+        uiCtx.fillText("Step", x + 18, y + 122);
+      }
+
+      uiTexture.needsUpdate = true;
+    }
+
+    drawScreenUI(0);
+
+    const screen = new THREE.Mesh(
+      new THREE.PlaneGeometry(3.72, 2.18),
+      new THREE.MeshBasicMaterial({
+        map: uiTexture
+      })
+    );
+    screen.position.set(0, 1.6, -0.18);
+    computer.add(screen);
+
+    const keyboard = new THREE.Mesh(
+      new THREE.BoxGeometry(2.95, 0.10, 1.05),
+      new THREE.MeshStandardMaterial({
+        color: 0x1f2937,
+        roughness: 0.58,
+        metalness: 0.12
+      })
+    );
+    keyboard.position.set(0, 0.05, 1.05);
+    computer.add(keyboard);
+
+    const keyGroup = new THREE.Group();
+    computer.add(keyGroup);
+
+    for (let r = 0; r < 4; r++) {
+      for (let c = 0; c < 11; c++) {
+        const key = new THREE.Mesh(
+          new THREE.BoxGeometry(0.16, 0.03, 0.16),
+          new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.7 })
+        );
+        key.position.set(-0.9 + c * 0.18, 0.12, 0.68 + r * 0.18);
+        keyGroup.add(key);
+      }
+    }
+
+    const mouseDevice = new THREE.Mesh(
+      new THREE.BoxGeometry(0.34, 0.09, 0.55),
+      new THREE.MeshStandardMaterial({
+        color: 0x111827,
+        roughness: 0.5
+      })
+    );
+    mouseDevice.position.set(2.0, 0.06, 0.95);
+    computer.add(mouseDevice);
+
+    /* =========================
+       Mug
+    ========================= */
+    const mug = new THREE.Group();
+    mug.position.set(-2.2, 0.14, 0.75);
+    desk.add(mug);
+
+    const mugBody = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.22, 0.18, 0.38, 24),
+      new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        roughness: 0.42
+      })
+    );
+    mugBody.position.y = 0.2;
+    mug.add(mugBody);
+
+    const mugCoffee = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.17, 0.17, 0.02, 24),
+      new THREE.MeshStandardMaterial({
+        color: 0x4b2e1f,
+        roughness: 0.95
+      })
+    );
+    mugCoffee.position.y = 0.37;
+    mug.add(mugCoffee);
+
+    const mugHandle = new THREE.Mesh(
+      new THREE.TorusGeometry(0.1, 0.02, 12, 24, Math.PI * 1.6),
+      new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        roughness: 0.4
+      })
+    );
+    mugHandle.rotation.z = Math.PI / 2;
+    mugHandle.position.set(0.2, 0.2, 0);
+    mug.add(mugHandle);
+
+    /* =========================
+       Lamp
+    ========================= */
+    const lamp = new THREE.Group();
+    lamp.position.set(3.0, 0.16, -0.75);
+    desk.add(lamp);
+
+    const lampBase = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.24, 0.28, 0.05, 20),
+      new THREE.MeshStandardMaterial({ color: 0x4b5563, metalness: 0.5, roughness: 0.35 })
+    );
+    lampBase.position.y = 0.03;
+    lamp.add(lampBase);
+
+    const lampPole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.04, 0.75, 16),
+      new THREE.MeshStandardMaterial({ color: 0x9ca3af, metalness: 0.7, roughness: 0.28 })
+    );
+    lampPole.position.y = 0.4;
+    lamp.add(lampPole);
+
+    const lampHead = new THREE.Mesh(
+      new THREE.ConeGeometry(0.20, 0.32, 20),
+      new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.6, roughness: 0.28 })
+    );
+    lampHead.position.set(0.14, 0.78, 0);
+    lampHead.rotation.z = -0.9;
+    lamp.add(lampHead);
+
+    const lampBulb = new THREE.PointLight(0xfff7cc, 6, 5);
+    lampBulb.position.set(0.02, 0.70, 0.12);
+    lamp.add(lampBulb);
+
+    /* =========================
+       Desk cards
+    ========================= */
+    const deskCards = new THREE.Group();
+    desk.add(deskCards);
+
+    function createDeskCard(color, x, z, rotY, rotZ = 0) {
+      const g = new THREE.Group();
+
+      const body = new THREE.Mesh(
+        new THREE.BoxGeometry(0.52, 0.03, 0.74),
+        new THREE.MeshStandardMaterial({
+          color,
+          roughness: 0.58
+        })
+      );
+      g.add(body);
+
+      const label = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.38, 0.18),
+        new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.92
+        })
+      );
+      label.position.set(0, 0.017, 0.11);
+      label.rotation.x = -Math.PI / 2;
+      g.add(label);
+
+      g.position.set(x, 0.03, z);
+      g.rotation.y = rotY;
+      g.rotation.z = rotZ;
+      return g;
+    }
+
+    deskCards.add(createDeskCard(0xE5243B, -1.8, 0.95, 0.15, 0.02));
+    deskCards.add(createDeskCard(0xDDA63A, -1.05, 1.15, -0.22, -0.02));
+    deskCards.add(createDeskCard(0x4C9F38, -0.35, 0.85, 0.12, 0.01));
+    deskCards.add(createDeskCard(0x26BDE2, 1.35, 1.10, -0.18, -0.015));
+    deskCards.add(createDeskCard(0xFD6925, 2.1, 0.78, 0.23, 0.02));
+
+    /* =========================
+       Globe
+    ========================= */
+    const globeGroup = new THREE.Group();
+
+    // globeGroup.position.set(2.35, 0.18, 0.55);
+    scene.add(globeGroup);
+    globeGroup.position.set(3.05, 2.34, 0.35);
+    const earthTexture = makeEarthTexture();
+
+    const globeSphere = new THREE.Mesh(
+      new THREE.SphereGeometry(0.48, 48, 48),
+      new THREE.MeshStandardMaterial({
+        map: earthTexture,
+        roughness: 0.95,
+        metalness: 0.02
+      })
+    );
+    globeSphere.position.y = 0.68;
+    globeGroup.add(globeSphere);
+
+    const globeAxis = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.015, 0.015, 1.25, 16),
+      new THREE.MeshStandardMaterial({
+        color: 0xcbd5e1,
+        metalness: 0.65,
+        roughness: 0.3
+      })
+    );
+    globeAxis.rotation.z = 0.42;
+    globeAxis.position.set(0, 0.68, 0);
+    globeGroup.add(globeAxis);
+
+    const globeRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.62, 0.015, 16, 80),
+      new THREE.MeshStandardMaterial({
+        color: 0x94a3b8,
+        metalness: 0.45,
+        roughness: 0.38
+      })
+    );
+    globeRing.rotation.y = Math.PI / 2;
+    globeRing.rotation.z = 0.42;
+    globeRing.position.set(0, 0.68, 0);
+    globeGroup.add(globeRing);
+
+    const globeBase = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.18, 0.24, 0.14, 24),
+      new THREE.MeshStandardMaterial({
+        color: 0x475569,
+        metalness: 0.4,
+        roughness: 0.42
+      })
+    );
+    globeBase.position.y = 0.08;
+    globeGroup.add(globeBase);
+
+    /* =========================
+       Floating cards & particles
+    ========================= */
+    const floatCards = new THREE.Group();
+    scene.add(floatCards);
+
+    const sdgFloatColors = [
+      0xE5243B, 0xDDA63A, 0x4C9F38, 0xC5192D, 0xFF3A21,
+      0x26BDE2, 0xFCC30B, 0xA21942, 0xFD6925
+    ];
+
+    for (let i = 0; i < 16; i++) {
+      const card = new THREE.Mesh(
+        new THREE.BoxGeometry(0.34, 0.5, 0.02),
+        new THREE.MeshStandardMaterial({
+          color: sdgFloatColors[i % sdgFloatColors.length],
+          roughness: 0.45,
+          metalness: 0.05
+        })
+      );
+      card.position.set(
+        (Math.random() - 0.5) * 12,
+        2.8 + Math.random() * 4.5,
+        -3 - Math.random() * 6
+      );
+      card.rotation.set(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
+      );
+      floatCards.add(card);
+    }
+
+    const particleCount = 520;
+    const particleGeo = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      positions[i] = (Math.random() - 0.5) * 26;
+      positions[i + 1] = Math.random() * 12;
+      positions[i + 2] = (Math.random() - 0.5) * 24;
+    }
+
+    particleGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+    const particles = new THREE.Points(
+      particleGeo,
+      new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.028,
+        transparent: true,
+        opacity: 0.62
+      })
+    );
+    scene.add(particles);
+
+    /* =========================
+       HTML position anchors
+    ========================= */
+    const screenAnchor = new THREE.Object3D();
+    screenAnchor.position.set(0, 1.58, -0.12);
+    computer.add(screenAnchor);
+
+    /* =========================
+       SDG orbit UI
+    ========================= */
+    function createSdgOrbitItems() {
+      sdgOrbit.innerHTML = "";
+
+      const isMobile = window.innerWidth < 768;
+      const center = isMobile ? 195 : 270;
+      const outerRadius = isMobile ? 150 : 210;
+      const innerRadius = isMobile ? 95 : 145;
+
+      sdgGoals.forEach((goal, i) => {
+        const item = document.createElement("div");
+        item.className = "sdg-item";
+        item.style.background = goal.color;
+
+        const isOuter = i < 10;
+        const radius = isOuter ? outerRadius : innerRadius;
+        const angle = isOuter
+          ? (-Math.PI / 2) + (i / 10) * Math.PI * 2
+          : (-Math.PI / 2) + ((i - 10) / 7) * Math.PI * 2;
+
+        const x = center + Math.cos(angle) * radius;
+        const y = center + Math.sin(angle) * radius;
+
+        item.style.left = `${x}px`;
+        item.style.top = `${y}px`;
+        item.style.transform = "translate(-50%, -50%)";
+
+        item.innerHTML = `
+          <div class="sdg-no">${goal.no}</div>
+          <div class="sdg-text">${goal.title}</div>
+        `;
+
+        sdgOrbit.appendChild(item);
+      });
+    }
+
+    createSdgOrbitItems();
+
+    /* =========================
+       Interaction
+    ========================= */
+    const raycaster = new THREE.Raycaster();
+    const pointerNDC = new THREE.Vector2();
+    let isHoveringGlobe = false;
+
+    window.addEventListener("mousemove", (event) => {
+      pointerNDC.x = (event.clientX / window.innerWidth) * 2 - 1;
+      pointerNDC.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    function updateButtonPosition(show) {
+      const v = new THREE.Vector3();
+      screenAnchor.getWorldPosition(v);
+      v.project(camera);
+
+      const x = (v.x * 0.5 + 0.5) * window.innerWidth;
+      const y = (-v.y * 0.5 + 0.5) * window.innerHeight;
+
+      enterBtn.style.left = `${x}px`;
+      enterBtn.style.top = `${y}px`;
+
+      if (show) enterBtn.classList.add("show");
+      else enterBtn.classList.remove("show");
+    }
+
+    function updateComputerUIPosition(show) {
+      const p = getProgress();
+      const scale = show ? 1 : 0.88 + p * 0.08;
+
+      computerUI.style.left = "50%";
+      computerUI.style.top = "50%";
+      computerUI.style.transform = `translate(-50%, -50%) scale(${scale})`;
+
+      if (show) computerUI.classList.remove("hidden");
+      else computerUI.classList.add("hidden");
+    }
+
+    function updateSdgOrbitPosition() {
+      const globeCenter = new THREE.Vector3();
+      globeSphere.getWorldPosition(globeCenter);
+      globeCenter.project(camera);
+
+      const x = (globeCenter.x * 0.5 + 0.5) * window.innerWidth;
+      const y = (-globeCenter.y * 0.5 + 0.5) * window.innerHeight;
+
+      sdgOrbit.style.left = `${x}px`;
+      sdgOrbit.style.top = `${y}px`;
+    }
+
+    function checkGlobeHover() {
+      raycaster.setFromCamera(pointerNDC, camera);
+      const hits = raycaster.intersectObject(globeSphere, true);
+
+      if (hits.length > 0) {
+        isHoveringGlobe = true;
+        sdgOrbit.classList.remove("hidden");
+      } else {
+        isHoveringGlobe = false;
+        sdgOrbit.classList.add("hidden");
+      }
+    }
+
+    /* =========================
+       Auto boot logic
+    ========================= */
+    const steps = [
+      "Booting mission computer...",
+      "Loading Pecha Kucha guide...",
+      "Synchronizing Equality Gap zones...",
+      "Briefing window ready"
+    ];
+
+    let bootProgress = 0;
+    let bootComplete = false;
+    let bootStartedAt = null;
+    const BOOT_DURATION = 4300;
+
+    function getProgress() {
+      return bootProgress;
+    }
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function updateSceneByProgress() {
+      const p = getProgress();
+
+      barFill.style.width = `${Math.round(p * 100)}%`;
+
+      const idx = Math.min(steps.length - 1, Math.floor(p * steps.length));
+      stepLabel.textContent = `Step ${String(idx + 1).padStart(2, "0")} / 04`;
+      statusText.textContent = steps[idx];
+
+      hero.style.opacity = String(lerp(1, 0.03, p));
+
+      camera.position.x = lerp(0, 0, p);
+      camera.position.y = lerp(4.7, 3.08, p);
+      camera.position.z = lerp(14.5, 2.25, p);
+      camera.lookAt(0, lerp(2.2, 3.55, p), -0.2);
+
+      drawScreenUI(p);
+
+      keyLight.intensity = lerp(24, 34, p);
+      deskGlow.intensity = lerp(10, 16, p);
+
+      const showComputerUI = bootComplete;
+      updateComputerUIPosition(showComputerUI);
+      updateButtonPosition(false);
+      updateSdgOrbitPosition();
+    }
+
+    function runBoot(timestamp) {
+      if (bootStartedAt === null) {
+        bootStartedAt = timestamp;
+      }
+
+      const rawProgress = Math.min((timestamp - bootStartedAt) / BOOT_DURATION, 1);
+      bootProgress = easeOutCubic(rawProgress);
+
+      if (rawProgress >= 1) {
+        bootProgress = 1;
+        bootComplete = true;
+        statusText.textContent = "Briefing window ready";
+        miniStatus.textContent = "Read to the end of Pecha Kucha Guide to unlock Game Guide.";
+        updateSceneByProgress();
+        requestAnimationFrame(checkGuideReadProgress);
+        return;
+      }
+
+      updateSceneByProgress();
+      requestAnimationFrame(runBoot);
+    }
+
+    enterBtn.addEventListener("click", () => {
+      enterBtn.textContent = "Entering...";
+      enterBtn.disabled = true;
+      setTimeout(() => {
+        window.location.href = "game_s.html";
+      }, 350);
+    });
+
+    computerUI.addEventListener("mousemove", (event) => {
+      const rect = computerUI.getBoundingClientRect();
+      screenCursor.style.left = `${event.clientX - rect.left}px`;
+      screenCursor.style.top = `${event.clientY - rect.top}px`;
+    });
+
+    computerUI.addEventListener("mouseenter", () => {
+      computerUI.classList.add("cursor-active");
+    });
+
+    computerUI.addEventListener("mouseleave", () => {
+      computerUI.classList.remove("cursor-active");
+    });
+
+    windowCloseBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      windowCloseBtn.disabled = true;
+      miniStatus.textContent = "Returning to difficulty selection...";
+      statusText.textContent = "Returning to difficulty selection...";
+
+      setTimeout(() => {
+        window.location.href = DIFFICULTY_PAGE_URL;
+      }, 250);
+    });
+
+    const pechaGuideHTML = miniGuide.innerHTML;
+    const guideContent = {
+      pecha: {
+        status: "Read to the end of Pecha Kucha Guide to unlock Game Guide.",
+        html: pechaGuideHTML
+      },
+      how: {
+        status: "Read to the end of Game Guide to unlock Start Game.",
+        html: `
+        <section class="game-guide-content">
+          <section class="prompt-hero">
+            <div class="prompt-kicker">Game Guide</div>
+            <h4 class="prompt-title">🧩 拼圖遊戲：建構你的 SDG Pecha Kucha 演講！</h4>
+            <p class="prompt-lead">
+              透過這個互動式拼圖，你將掌握成功進行 
+              <strong>SDG Pecha Kucha</strong> 簡報的核心邏輯。
+            </p>
+          </section>
+
+          <section>
+            <h4 class="prompt-section-title">第一步：掌握演講架構 (Master the Framework)</h4>
+            <p>
+              首先，請熟悉 SDG Pecha Kucha 的六大核心脈絡：
+            </p>
+
+            <div class="zone-list">
+              <div class="zone-card"><strong>Part 1｜引言</strong>Introduction</div>
+              <div class="zone-card"><strong>Part 2｜問題指認</strong>Problem Identification</div>
+              <div class="zone-card"><strong>Part 3｜成果與進展</strong>Achievements &amp; Progress</div>
+              <div class="zone-card"><strong>Part 4｜解決方案</strong>Solutions</div>
+              <div class="zone-card"><strong>Part 5｜影響與未來挑戰</strong>Implications &amp; Future Challenges</div>
+              <div class="zone-card"><strong>Part 6｜結語與行動呼籲</strong>Conclusion &amp; Call to Action</div>
+            </div>
+          </section>
+
+          <section>
+            <h4 class="prompt-section-title">第二步：20 秒限時挑戰 (The 20-Second Challenge)</h4>
+            <p>
+              你會收到 20 段獨立的「20 秒講稿」。你的任務是：
+            </p>
+
+            <div class="reflection-list">
+              <div class="reflection-item">
+                <strong>精準判斷：</strong>
+                根據內容關鍵字，辨識該片段屬於哪一個部分。
+              </div>
+              <div class="reflection-item">
+                <strong>邏輯拼湊：</strong>
+                將片段歸位，完整還原整場 6 分 40 秒的演說。
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h4 class="prompt-section-title">第三步：回饋與深思 (Review &amp; Reflect)</h4>
+            <p>
+              完成拼圖後，請對照正確答案並進一步思考：
+            </p>
+
+            <div class="reflection-list">
+              <div class="reflection-item">
+                為什麼這段話具備該階段的特徵？
+              </div>
+              <div class="reflection-item">
+                優秀的簡報如何透過轉折與銜接建構嚴謹的說服力？
+              </div>
+            </div>
+          </section>
+        </section>
+        `
+      }
+    };
+
+    const guideReadState = {
+      pecha: false,
+      how: false
+    };
+    let activeGuide = "pecha";
+
+    function getGuideButton(action) {
+      return computerUI.querySelector(`[data-action="${action}"]`);
+    }
+
+    function updateGuideLocks() {
+      const pechaButton = getGuideButton("pecha");
+      const howButton = getGuideButton("how");
+      const gameButton = getGuideButton("game");
+
+      pechaButton.disabled = false;
+      howButton.disabled = !guideReadState.pecha;
+      gameButton.disabled = !(guideReadState.pecha && guideReadState.how);
+    }
+
+    function markGuideRead(action) {
+      if (!guideReadState[action]) {
+        guideReadState[action] = true;
+      }
+
+      updateGuideLocks();
+
+      if (action === "pecha" && !guideReadState.how) {
+        miniStatus.textContent = "Pecha Kucha Guide complete. Open Game Guide next.";
+        statusText.textContent = "Pecha Kucha Guide complete.";
+      } else if (action === "pecha" && guideReadState.how) {
+        miniStatus.textContent = "Both guides complete. Start Game is unlocked.";
+        statusText.textContent = "Start Game unlocked.";
+      } else if (action === "how") {
+        miniStatus.textContent = "Game Guide complete. Start Game is unlocked.";
+        statusText.textContent = "Start Game unlocked.";
+      }
+    }
+
+    function checkGuideReadProgress() {
+      const isAtEnd = miniGuide.scrollTop + miniGuide.clientHeight >= miniGuide.scrollHeight - 8;
+      if (isAtEnd) {
+        markGuideRead(activeGuide);
+      }
+    }
+
+    function setMiniGuide(action) {
+      const content = guideContent[action];
+      if (!content) return;
+      activeGuide = action;
+      miniGuide.innerHTML = content.html;
+      miniGuide.scrollTop = 0;
+      miniStatus.textContent = content.status;
+      statusText.textContent = content.status;
+      computerUI.querySelectorAll(".mini-grid button").forEach(btn => {
+        btn.classList.toggle("is-active", btn.dataset.action === action);
+      });
+      updateGuideLocks();
+      if (guideReadState[action]) {
+        markGuideRead(action);
+      }
+      requestAnimationFrame(checkGuideReadProgress);
+    }
+
+    updateGuideLocks();
+    miniGuide.addEventListener("scroll", checkGuideReadProgress);
+
+    computerUI.addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+      if (button.disabled) return;
+
+      const action = button.dataset.action;
+
+      if (action === "game") {
+        button.textContent = "Entering...";
+        button.disabled = true;
+        miniStatus.textContent = "Launching the learning session...";
+        statusText.textContent = "Launching game...";
+
+        setTimeout(() => {
+          window.location.href = "game_s.html";
+        }, 350);
+        return;
+      }
+
+      setMiniGuide(action);
+    });
+
+    /* =========================
+       Animation loop
+    ========================= */
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const t = performance.now() * 0.001;
+
+      particles.rotation.y = t * 0.03;
+      floatCards.rotation.y = t * 0.12;
+
+      floatCards.children.forEach((c, i) => {
+        c.rotation.x += 0.002 + i * 0.00002;
+        c.rotation.y += 0.003;
+        c.position.y += Math.sin(t * 1.5 + i) * 0.0008;
+      });
+
+      lampBulb.intensity = 5.5 + Math.sin(t * 3) * 0.3;
+      computer.position.y = 2.33 + Math.sin(t * 1.2) * 0.02;
+
+      globeSphere.rotation.y += 0.003;
+      if (isHoveringGlobe) {
+        globeGroup.rotation.y += 0.006;
+      }
+
+      checkGlobeHover();
+      updateSdgOrbitPosition();
+
+      renderer.render(scene, camera);
+      updateComputerUIPosition(bootComplete);
+      updateButtonPosition(false);
+    }
+
+    animate();
+    updateSceneByProgress();
+    requestAnimationFrame(runBoot);
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      createSdgOrbitItems();
+      updateSceneByProgress();
+    });
+  </script>
+</body>
+</html>

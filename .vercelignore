@@ -1,0 +1,10 @@
+# Vercel deploys only the static frontend.
+# The FastAPI backend is deployed separately on Railway.
+backend/
+sql/
+requirements.txt
+runtime.txt
+Procfile
+railway.json
+dev/
+*.docx
