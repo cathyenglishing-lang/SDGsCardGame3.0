@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IYNT Science Debate Masterclass & Interactive Trainer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        },
+                        emerald: {
+                            500: '#10b981',
+                            600: '#059669',
+                        },
+                        amber: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        sky: {
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+        ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.5); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.8); }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease-in-out;
+        }
+        .glass-card:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .slot-tag {
+            background-color: rgba(99, 102, 241, 0.2);
+            border: 1px dashed rgba(165, 180, 252, 0.6);
+            color: #c7d2fe;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-full flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Top Header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80 px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-brand-500/20">
+                    <i class="fa-solid fa-atom text-white text-xl animate-spin-slow"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">
+                        IYNT Science Debate Masterclass <span class="text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 font-mono font-normal border border-brand-500/30">2020-2026</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">IYNT Academic Debate & Research Preparation Platform 國際青年自然科學家辯論競賽培訓系統</p>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <nav class="flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800 overflow-x-auto">
+                <button onclick="switchTab('simulator')" id="nav-simulator" class="tab-btn active px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all bg-brand-600 text-white shadow whitespace-nowrap">
+                    <i class="fa-solid fa-gamepad"></i> <span>Rules & Simulator 賽制與模擬</span>
+                </button>
+                <button onclick="switchTab('workbench')" id="nav-workbench" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 flex items-center gap-1.5 transition-all whitespace-nowrap">
+                    <i class="fa-solid fa-flask text-emerald-400"></i> <span>Research Workbench 賽題工作台</span>
+                </button>
+                <button onclick="switchTab('science')" id="nav-science" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 flex items-center gap-1.5 transition-all whitespace-nowrap">
+                    <i class="fa-solid fa-brain text-amber-400"></i> <span>Inquiry Thinking 探究思考框架</span>
+                </button>
+                <button onclick="switchTab('scaffolding')" id="nav-scaffolding" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 flex items-center gap-1.5 transition-all whitespace-nowrap">
+                    <i class="fa-solid fa-layer-group text-sky-400"></i> <span>English Scaffolding 口語表達</span>
+                </button>
+                <button onclick="switchTab('slides')" id="nav-slides" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 flex items-center gap-1.5 transition-all whitespace-nowrap">
+                    <i class="fa-solid fa-file-powerpoint text-indigo-400"></i> <span>Slide Guidelines 簡報發表準則</span>
+                </button>
+                <button onclick="switchTab('problems')" id="nav-problems" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 flex items-center gap-1.5 transition-all whitespace-nowrap">
+                    <i class="fa-solid fa-database text-brand-300"></i> <span>Problem Vault 歷年題目庫</span>
+                </button>
+                <button onclick="switchTab('calculator')" id="nav-calculator" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 flex items-center gap-1.5 transition-all whitespace-nowrap">
+                    <i class="fa-solid fa-calculator text-emerald-300"></i> <span>Timer & Calculator 計分與計時</span>
+                </button>
+                <button onclick="switchTab('ai')" id="nav-ai" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 flex items-center gap-1.5 transition-all whitespace-nowrap">
+                    <i class="fa-solid fa-robot text-emerald-400"></i> <span>AI Coach 教練對練</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Main Workspace Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+
+        <!-- TAB 1: RULES & SCIENCE FIGHT SIMULATOR -->
+        <section id="tab-simulator" class="tab-content space-y-6">
+            <!-- Header Banner -->
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/30 p-6 shadow-2xl">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-300 text-xs font-medium mb-2">
+                            <i class="fa-solid fa-gavel text-amber-400"></i> 1. IYNT Tournament Regulations & Game Rules 競賽規則與賽制簡介
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-extrabold text-white">Master the Science Fight 掌握三大競賽角色與攻防邏輯</h2>
+                        <p class="text-sm text-slate-300 mt-1 max-w-2xl">
+                            The IYNT Science Fight pits 3 teams against each other as <strong class="text-indigo-300">Reporter (主講)</strong>, <strong class="text-emerald-300">Opponent (反駁)</strong>, and <strong class="text-amber-300">Reviewer (評論)</strong>. Learn the rules, role limits, and play through interactive fight scenarios!
+                        </p>
+                    </div>
+                    <!-- Score & Progress Panel -->
+                    <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl flex items-center gap-6 min-w-[220px]">
+                        <div>
+                            <span class="text-xs text-slate-400 block uppercase font-mono tracking-wider">XP 競賽積分</span>
+                            <span id="game-xp" class="text-2xl font-black text-indigo-400 font-mono">0 pts</span>
+                        </div>
+                        <div class="border-l border-slate-800 pl-6">
+                            <span class="text-xs text-slate-400 block uppercase font-mono tracking-wider">Rank 階級</span>
+                            <span id="game-rank" class="text-sm font-bold text-emerald-400">Junior Naturalist 初階博物學者</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Official Rules Breakdown Accordion Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-panel p-5 rounded-xl border-l-4 border-l-brand-500 space-y-2">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-500/20 text-brand-300 uppercase font-mono">Rule 1: Rotation</span>
+                    <h3 class="text-base font-bold text-white">3-Team Fight Rotation (三隊輪替)</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        In Stage I, Team 1 reports, Team 2 opposes, Team 3 reviews. Teams rotate roles across Stage II and Stage III so every team acts in each role once.
+                    </p>
+                </div>
+
+                <div class="glass-panel p-5 rounded-xl border-l-4 border-l-amber-500 space-y-2">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 uppercase font-mono">Rule 2: Challenges</span>
+                    <h3 class="text-base font-bold text-white">Rejections & NR Penalty (拒答扣分)</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Teams can reject <strong>up to 3 problem challenges</strong> free of penalty. From the 4th rejection onward, the Reporter's grade multiplier $C$ is reduced ($0.9, 0.8, 0.7$).
+                    </p>
+                </div>
+
+                <div class="glass-panel p-5 rounded-xl border-l-4 border-l-emerald-500 space-y-2">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 uppercase font-mono">Rule 3: Individual Quotas</span>
+                    <h3 class="text-base font-bold text-white">Individual Role Limits (個人上限)</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        No student may present as Reporter, Opponent, or Reviewer more than <strong>twice</strong> during the entire selective Science Fights. Collaboration requires team distribution!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Role Selector & Game Mode Navigation -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="loadGameScenario('reporter')" class="glass-panel p-5 rounded-xl text-left border border-slate-800 hover:border-brand-500 group transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-brand-500/20 text-brand-300">ROLE 1 第一角色</span>
+                        <i class="fa-solid fa-person-chalkboard text-brand-400 text-xl group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white group-hover:text-brand-300">The Reporter 主講人</h3>
+                    <p class="text-xs text-slate-400 mt-1">Defend experimental methodology, mathematical models, and empirical data fit under fire. 防守實驗設計、數據精度與數學模型。</p>
+                </button>
+
+                <button onclick="loadGameScenario('opponent')" class="glass-panel p-5 rounded-xl text-left border border-slate-800 hover:border-emerald-500 group transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-300">ROLE 2 第二角色</span>
+                        <i class="fa-solid fa-bolt text-emerald-400 text-xl group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white group-hover:text-emerald-300">The Opponent 反駁方</h3>
+                    <p class="text-xs text-slate-400 mt-1">Identify presentation flaws, challenge uncalibrated controls, and lead high-level scientific debate. 找出簡報漏洞、質疑變數控制並主導學術討論。</p>
+                </button>
+
+                <button onclick="loadGameScenario('reviewer')" class="glass-panel p-5 rounded-xl text-left border border-slate-800 hover:border-amber-500 group transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-300">ROLE 3 第三角色</span>
+                        <i class="fa-solid fa-scale-balanced text-amber-400 text-xl group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white group-hover:text-amber-300">The Reviewer 評論員</h3>
+                    <p class="text-xs text-slate-400 mt-1">Synthesize arguments neutrally, evaluate both teams, and present key takeaways for the jury. 客觀總結兩方論點，為評審提煉競賽核心焦點。</p>
+                </button>
+            </div>
+
+            <!-- Active Game Arena Area -->
+            <div id="game-arena" class="glass-panel rounded-2xl p-6 border border-slate-800 space-y-6">
+                <!-- Loaded by JS -->
+            </div>
+        </section>
+
+        <!-- TAB 2: CURRENT PROBLEM RESEARCH WORKBENCH (2026 Focus) -->
+        <section id="tab-workbench" class="tab-content hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-medium mb-2">
+                            <i class="fa-solid fa-flask text-emerald-400"></i> 2. Tournament Research Workbench 本屆賽題研討與實驗規劃工作台
+                        </div>
+                        <h2 class="text-2xl font-bold text-white">Prepare Your Own Problem Solution & Argumentation Map (建立自己的實驗與論證)</h2>
+                        <p class="text-sm text-slate-300 mt-1">
+                            Select a problem, formulate hypotheses, list independent/dependent variables, sketch theoretical equations, and construct your debate defense matrix.
+                        </p>
+                    </div>
+                    <button onclick="saveWorkbenchProject()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Project Draft 儲存研究專案
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left: Problem Setup Controls -->
+                    <div class="space-y-4 glass-card p-5 rounded-xl border border-slate-800">
+                        <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider font-mono">A. Select Problem & Core Variables</h3>
+                        
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Select Tournament Problem 選定題目：</label>
+                            <select id="wb-select-problem" onchange="loadWorkbenchPreset()" class="w-full bg-slate-900 border border-slate-700 rounded-lg text-xs text-white p-2.5">
+                                <option value="p1">2026 Problem 1: Tbilisi Pendulum 第比利斯擺 (Physics)</option>
+                                <option value="p2">2026 Problem 2: Electroplating Quality 電鍍品質 (Chemistry)</option>
+                                <option value="p3">2026 Problem 3: Mold Growth Factors 黴菌生長 (Biology)</option>
+                                <option value="p4" selected>2025/2026 Problem 7: Stormglass 風暴瓶 (Chemistry/Physics)</option>
+                                <option value="custom">Custom Problem 自訂題目</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Independent Variable 操縱變數 ($X$):</label>
+                            <input type="text" id="wb-var-x" value="Cooling rate (°C/min) & alcohol ratio" class="w-full bg-slate-900 border border-slate-700 rounded-lg text-xs text-white p-2.5">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Dependent Variable 應變變數 ($Y$):</label>
+                            <input type="text" id="wb-var-y" value="Crystal length (mm), nucleation density (cm⁻²)" class="w-full bg-slate-900 border border-slate-700 rounded-lg text-xs text-white p-2.5">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Controlled Variables 控制變數 (List 3):</label>
+                            <input type="text" id="wb-var-ctrl" value="Solute saturation, ambient light, tube geometry" class="w-full bg-slate-900 border border-slate-700 rounded-lg text-xs text-white p-2.5">
+                        </div>
+                    </div>
+
+                    <!-- Middle & Right: Deep Investigation Lab Notebook -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="glass-card p-5 rounded-xl border border-slate-800 space-y-4">
+                            <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider font-mono">B. Scientific Framework & Theoretical Model</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 mb-1">Core Physical/Chemical Hypothesis 核心假設：</label>
+                                    <textarea id="wb-hypothesis" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg text-xs text-white p-2.5 font-sans" placeholder="State your underlying scientific cause-and-effect hypothesis..."></textarea>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 mb-1">Mathematical Model / Formula 理論公式：</label>
+                                    <textarea id="wb-formula" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg text-xs text-white p-2.5 font-mono" placeholder="e.g. Nucleation rate J = A * exp(-DeltaG* / (k_B * T))"></textarea>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">Experimental Apparatus & Sensor Calibration 實驗裝置與傳感器校準：</label>
+                                <textarea id="wb-rig" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg text-xs text-white p-2.5 font-sans" placeholder="Describe Peltier temperature chamber, digital microscope logging, and optical clarity sensors..."></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">Anticipated Opponent Attacks & Preempted Defense 預想對手切入點與防守預案：</label>
+                                <textarea id="wb-attacks" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg text-xs text-white p-2.5 font-sans" placeholder="e.g. Opponent may challenge whether atmospheric pressure changes crystal growth. Defense: We conducted vacuum chamber control tests demonstrating pressure has negligible effect compared to temperature."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: SCIENTIFIC INQUIRY THINKING FRAMEWORK -->
+        <section id="tab-science" class="tab-content hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-6">
+                <div class="border-b border-slate-800 pb-4">
+                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-medium mb-2">
+                        <i class="fa-solid fa-brain text-amber-400"></i> 3. Scientific Inquiry Thinking & Methodology可探究思考模式與實驗評估
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">How Scientists Solve Open-Ended Problems (探究思考四步法)</h2>
+                    <p class="text-sm text-slate-300 mt-1">
+                        IYNT problems are open-ended research tasks. Master the C-E-R framework, error isolation, and qualitative-to-quantitative transition models.
+                    </p>
+                </div>
+
+                <!-- 4 Step Inquiry Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="glass-card p-5 rounded-xl border-l-4 border-l-sky-500 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-sky-400 font-mono">STEP 1</span>
+                            <i class="fa-solid fa-magnifying-glass text-sky-400"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white">Qualitative Observation to Quantitative Parameterization</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Do not just observe "it gets bigger". Convert qualitative phenomena into dimensionless parameters (e.g., Reynolds number $Re$, aspect ratio $L/D$, normalized intensity $I/I_0$).
+                        </p>
+                    </div>
+
+                    <div class="glass-card p-5 rounded-xl border-l-4 border-l-emerald-500 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-emerald-400 font-mono">STEP 2</span>
+                            <i class="fa-solid fa-sliders text-emerald-400"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white">Single-Variable Isolation Matrix (單一變數控制矩陣)</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Ensure all secondary variables are strictly held constant. Use differential sensing or active cooling/heating loops to eliminate thermal drift and ambient humidity noise.
+                        </p>
+                    </div>
+
+                    <div class="glass-card p-5 rounded-xl border-l-4 border-l-brand-500 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-brand-300 font-mono">STEP 3</span>
+                            <i class="fa-solid fa-chart-line text-brand-300"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white">First-Principles Theoretical Modeling (第一性原理建模)</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Derive a physical or chemical formula starting from conservation laws (mass, energy, momentum) or thermodynamic equilibria rather than fitting arbitrary polynomial curves.
+                        </p>
+                    </div>
+
+                    <div class="glass-card p-5 rounded-xl border-l-4 border-l-amber-500 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-300 font-mono">STEP 4</span>
+                            <i class="fa-solid fa-calculator text-amber-300"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white">Error Analysis & Boundary Limits (誤差分析與邊界極限)</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Calculate systematic vs random errors. Always display standard deviation error bars ($\pm \sigma$) and report $R^2$ goodness-of-fit alongside asymptotic physical limits.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- C-E-R Defense Framework Callout -->
+                <div class="p-5 bg-slate-900/90 rounded-2xl border border-indigo-500/30 space-y-3">
+                    <h3 class="text-sm font-bold text-indigo-300 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved"></i> The C-E-R Jury Response Framework (評審問答 C-E-R 答辯法)
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                            <span class="font-bold text-sky-400 block mb-1">C - Claim (主張)</span>
+                            Give a direct, concise "Yes/No" or quantitative answer immediately without rambling.
+                        </div>
+                        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                            <span class="font-bold text-emerald-400 block mb-1">E - Evidence (數據證據)</span>
+                            Point directly to a specific slide or graph number: "As seen on Slide 14, Sensor Log B..."
+                        </div>
+                        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                            <span class="font-bold text-amber-400 block mb-1">R - Reasoning (理論推論)</span>
+                            Tie the empirical data back to your governing equation or chemical equilibrium law.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: ENGLISH SPEAKING SCAFFOLDING HUB -->
+        <section id="tab-scaffolding" class="tab-content hidden space-y-6">
+            <div class="glass-panel rounded-2xl p-6 border-l-4 border-l-sky-500 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-300 text-xs font-medium mb-2">
+                        <i class="fa-solid fa-microphone-lines text-sky-400"></i> 4. Academic Oral English Scaffolding 英語學術表達腳手架
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">Interactive Sentence Stems & Oral Signposts (雙語對照與語音示範)</h2>
+                    <p class="text-sm text-slate-300 mt-1">
+                        Use these structured templates to construct fluent, persuasive scientific arguments. Click <strong class="text-sky-300"><i class="fa-solid fa-volume-high"></i> Listen</strong> to hear native pronunciation powered by Gemini TTS!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Category Filter for Scaffolding -->
+            <div class="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
+                <button onclick="filterScaffolding('all')" class="scaffold-cat-btn active px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-600 text-white">All Categories 全部</button>
+                <button onclick="filterScaffolding('reporter')" class="scaffold-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-400 hover:text-white">Reporter Intro & Models 主講報告與模型</button>
+                <button onclick="filterScaffolding('data')" class="scaffold-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-400 hover:text-white">Data Overlay & Error Analysis 數據擬合與誤差</button>
+                <button onclick="filterScaffolding('opponent')" class="scaffold-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-400 hover:text-white">Diplomatic Opposition 禮貌質疑與攻防</button>
+                <button onclick="filterScaffolding('cer')" class="scaffold-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-400 hover:text-white">Jury Q&A (CER Defense) 評審問答 C-E-R</button>
+                <button onclick="filterScaffolding('reviewer')" class="scaffold-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-400 hover:text-white">Reviewer Synthesis 評論員總結歸納</button>
+            </div>
+
+            <!-- Scaffolding Cards Grid -->
+            <div id="scaffolding-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Injected by JavaScript -->
+            </div>
+        </section>
+
+        <!-- TAB 5: SCIENTIFIC PRESENTATION & SLIDE GUIDELINES -->
+        <section id="tab-slides" class="tab-content hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-6">
+                <div class="border-b border-slate-800 pb-4">
+                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-2">
+                        <i class="fa-solid fa-file-powerpoint text-indigo-400"></i> 5. Scientific Presentation Guidelines 科學簡報與發表準則
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">How to Structure a Winning 12-Minute Reporter Slide Deck (12分鐘主講簡報架構)</h2>
+                    <p class="text-sm text-slate-300 mt-1">
+                        Jurors award high scores to clean, quantitative slides. Follow this standard 15-slide architecture designed for international tournaments.
+                    </p>
+                </div>
+
+                <!-- Slide Architecture Blueprint Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="glass-card p-4 rounded-xl space-y-2 border-t-2 border-t-sky-400">
+                        <span class="text-[10px] font-mono text-sky-400 font-bold uppercase">Slides 1–3: Introduction</span>
+                        <h4 class="text-sm font-bold text-white">Title, Phenomena & Hook</h4>
+                        <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                            <li>Slide 1: Title, Team Name, Problem Statement</li>
+                            <li>Slide 2: High-speed video / qualitative phenomenon</li>
+                            <li>Slide 3: Research Questions & Parameters Defined</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card p-4 rounded-xl space-y-2 border-t-2 border-t-emerald-400">
+                        <span class="text-[10px] font-mono text-emerald-400 font-bold uppercase">Slides 4–7: Setup & Theory</span>
+                        <h4 class="text-sm font-bold text-white">Experimental Rig & Equations</h4>
+                        <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                            <li>Slide 4: Experimental Apparatus Schematic + Photo</li>
+                            <li>Slide 5: Sensor Calibration & Error Controls</li>
+                            <li>Slide 6–7: Theoretical Derivation from First Principles</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card p-4 rounded-xl space-y-2 border-t-2 border-t-brand-400">
+                        <span class="text-[10px] font-mono text-brand-300 font-bold uppercase">Slides 8–12: Data & Discussion</span>
+                        <h4 class="text-sm font-bold text-white">Theory vs Experiment Overlay</h4>
+                        <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                            <li>Slide 8–10: Data graphs with error bars & fitted curves</li>
+                            <li>Slide 11: Non-dimensional parameterization</li>
+                            <li>Slide 12: Discrepancies & Discrepancy Explanation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Slide Do's and Don'ts -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-emerald-950/30 rounded-xl border border-emerald-500/30 space-y-2">
+                        <h4 class="text-xs font-bold text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> High-Scoring Slide Practices (加分項)</h4>
+                        <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                            <li>Label all graph axes with explicit units (e.g. $T$ [°C], $v$ [m/s]).</li>
+                            <li>Include standard deviation error bars ($\pm \sigma$) on every data point.</li>
+                            <li>Place the theoretical formula directly above or beside the curve plot.</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-4 bg-red-950/30 rounded-xl border border-red-500/30 space-y-2">
+                        <h4 class="text-xs font-bold text-red-400 flex items-center gap-2"><i class="fa-solid fa-circle-xmark"></i> Common Slide Pitfalls (扣分扣項)</h4>
+                        <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                            <li>Overcrowding slides with dense paragraphs of unread text.</li>
+                            <li>Showing raw Excel spreadsheets instead of formatted vector plots.</li>
+                            <li>Hiding apparatus photos or failing to show scale bars on micrographs.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: IYNT ANNUAL PROBLEM VAULT (2020-2026) -->
+        <section id="tab-problems" class="tab-content hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl space-y-4 border border-slate-800">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-database text-brand-400"></i> IYNT Annual Problem Vault 歷年賽題庫 (2020 - 2026)
+                        </h2>
+                        <p class="text-sm text-slate-300 mt-1">
+                            Browse official Main, Invent Yourself, and Additional research tasks across physics, chemistry, biology, and natural science. (收錄物理、化學、生物及跨領域自然科學歷年競賽題目。)
+                        </p>
+                    </div>
+
+                    <!-- Filter Controls -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <select id="filter-year" onchange="filterProblems()" class="bg-slate-900 border border-slate-700 rounded-lg text-xs text-white px-3 py-2 font-mono">
+                            <option value="ALL">All Years 所有年份 (2020-2026)</option>
+                            <option value="2026">2026 (Tbilisi, Georgia)</option>
+                            <option value="2025">2025 (Bobek, Kazakhstan)</option>
+                            <option value="2024">2024 (Batumi, Georgia)</option>
+                            <option value="2023">2023 (Bobek, Kazakhstan)</option>
+                            <option value="2022">2022 (Tskneti, Georgia)</option>
+                            <option value="2021">2021 (Almaty, Kazakhstan)</option>
+                            <option value="2020">2020 (St. Petersburg)</option>
+                        </select>
+
+                        <select id="filter-field" onchange="filterProblems()" class="bg-slate-900 border border-slate-700 rounded-lg text-xs text-white px-3 py-2 font-mono">
+                            <option value="ALL">All Fields 所有學門</option>
+                            <option value="Physics">Physics 物理 / 力學</option>
+                            <option value="Chemistry">Chemistry 化學 / 材料</option>
+                            <option value="Biology">Biology 生物 / 生物物理</option>
+                            <option value="Invent Yourself">Invent Yourself 自行發明題</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-sm"></i>
+                    <input type="text" id="search-problem" oninput="filterProblems()" placeholder="Search problems by keyword 關鍵字搜尋 (e.g. stormglass, pendulum, electroplating, mold, knot...)" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all">
+                </div>
+            </div>
+
+            <!-- Problem Cards Container -->
+            <div id="problem-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- TAB 7: STAGE TIMER & OFFICIAL SCORE CALCULATOR -->
+        <section id="tab-calculator" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Clock Column -->
+                <div class="lg:col-span-2 glass-panel p-6 rounded-2xl border border-slate-800 space-y-6 text-center">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <span id="current-phase-name" class="text-base font-extrabold text-brand-300">Phase 1: Reporter Presentation (主講人簡報)</span>
+                        <span id="phase-badge" class="px-2.5 py-1 rounded-full bg-brand-500/20 text-brand-300 font-mono text-xs border border-brand-500/30">Science Fight 階段控制</span>
+                    </div>
+
+                    <!-- Digital Timer Display -->
+                    <div class="py-8 bg-slate-950/80 rounded-2xl border border-slate-800 shadow-inner">
+                        <div id="timer-display" class="font-mono text-6xl md:text-8xl font-black text-white tracking-widest drop-shadow-[0_0_20px_rgba(99,102,241,0.3)]">
+                            12:00
+                        </div>
+                        <p id="timer-instruction" class="text-xs text-slate-400 mt-2">Maximum time for Reporter to present solution (主講人報告限時 12 分鐘)</p>
+                    </div>
+
+                    <!-- Timer Controls -->
+                    <div class="flex items-center justify-center gap-3">
+                        <button onclick="startTimer()" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-play"></i> Start 開始
+                        </button>
+                        <button onclick="pauseTimer()" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-pause"></i> Pause 暫停
+                        </button>
+                        <button onclick="resetPhaseTimer()" class="px-6 py-2.5 bg-slate-900 border border-slate-700 hover:bg-slate-800 text-slate-300 font-bold text-xs rounded-xl transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-left"></i> Reset 重置
+                        </button>
+                    </div>
+
+                    <!-- Stage Sequence Buttons -->
+                    <div class="pt-4 border-t border-slate-800 flex flex-wrap justify-center gap-2">
+                        <button onclick="setPhase(12, '1. Reporter Presentation (主講人簡報)', 'Max 12 mins: Presentation of problem solution')" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs rounded-lg text-slate-300 font-medium">1. Report (12m)</button>
+                        <button onclick="setPhase(2, '2. Opponent Prep (反駁方準備)', '2 mins: Opponent prepares critique')" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs rounded-lg text-slate-300 font-medium">2. Opp Prep (2m)</button>
+                        <button onclick="setPhase(15, '3. Discussion Phase (學術討論與辯論)', '15 mins: Scientific discussion between Reporter & Opponent')" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs rounded-lg text-slate-300 font-medium">3. Debate (15m)</button>
+                        <button onclick="setPhase(2, '4. Reviewer Prep (評論員準備)', '2 mins: Reviewer prepares synthesis speech')" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs rounded-lg text-slate-300 font-medium">4. Rev Prep (2m)</button>
+                        <button onclick="setPhase(3, '5. Reviewer Speech (評論員總結發言)', '3 mins: Reviewer delivers summary speech')" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs rounded-lg text-slate-300 font-medium">5. Review (3m)</button>
+                        <button onclick="setPhase(2, '6. Reporter Remarks (主講人結語)', '2 mins: Concluding remarks by Reporter')" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs rounded-lg text-slate-300 font-medium">6. Remarks (2m)</button>
+                        <button onclick="setPhase(5, '7. Jury Q&A (評審提問與答辯)', '5 mins: Questions from Jurors to all teams')" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs rounded-lg text-slate-300 font-medium">7. Jury Q&A (5m)</button>
+                    </div>
+                </div>
+
+                <!-- Interactive Score & Penalty Calculator -->
+                <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-emerald-400"></i> Official Score Calculator (評審計分試算)
+                    </h3>
+                    
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-semibold text-slate-400 mb-1">Reporter Mean Grade $G_R$ (1–10):</label>
+                            <input type="number" id="calc-gr" value="8.0" min="1" max="10" step="0.5" onchange="calculateScores()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white font-mono">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-400 mb-1">Opponent Mean Grade $G_O$ (1–10):</label>
+                            <input type="number" id="calc-go" value="7.5" min="1" max="10" step="0.5" onchange="calculateScores()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white font-mono">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-400 mb-1">Reviewer Mean Grade $G_{Rev}$ (1–10):</label>
+                            <input type="number" id="calc-grev" value="8.5" min="1" max="10" step="0.5" onchange="calculateScores()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white font-mono">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-400 mb-1">Total Rejected Challenges (拒答次數):</label>
+                            <select id="calc-rejects" onchange="calculateScores()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white font-mono">
+                                <option value="0">0–3 Rejections (No Penalty Coefficient C = 3.0)</option>
+                                <option value="4">4 Rejections (C = 2.7 Penalty -10%)</option>
+                                <option value="5">5 Rejections (C = 2.4 Penalty -20%)</option>
+                                <option value="6">6 Rejections (C = 2.1 Penalty -30%)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Calculated Score Box -->
+                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-2 text-xs font-mono">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Reporter Points ($P_R = G_R \times C$):</span>
+                            <span id="score-pr" class="text-emerald-400 font-bold">24.0 pts</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Opponent Points ($P_O = G_O \times 2.0$):</span>
+                            <span id="score-po" class="text-sky-400 font-bold">15.0 pts</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Reviewer Points ($P_{Rev} = G_{Rev} \times 1.0$):</span>
+                            <span id="score-prev" class="text-amber-400 font-bold">8.5 pts</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 8: AI SCIENCE & DEBATE COACH + TTS SOUNDBOARD -->
+        <section id="tab-ai" class="tab-content hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-robot text-emerald-400"></i> AI Science Debate & Voice Coach (雙語 AI 教練與發音訓練)
+                        </h2>
+                        <p class="text-sm text-slate-300 mt-1">
+                            Powered by Gemini 3 Flash & Gemini 2.5 Flash TTS. Input your research topic to generate tailored attacks, jury questions, or practice speaking with native AI voice feedback!
+                        </p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Research Topic / Thesis Draft 輸入研究主題或報告大綱：</label>
+                        <textarea id="ai-input-prompt" rows="3" placeholder="e.g. We investigated Problem No. 7 (Stormglass). We dissolved camphor and salts in alcohol/water, and observed needle crystal growth under varying temperature gradients..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all font-mono"></textarea>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button onclick="generateAICoachFeedback('opponent')" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 transition-all">
+                            <i class="fa-solid fa-bolt"></i> Generate Opponent Attacks 生成反駁切入點
+                        </button>
+                        <button onclick="generateAICoachFeedback('jury')" class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs flex items-center gap-2 transition-all">
+                            <i class="fa-solid fa-clipboard-question"></i> Generate Jury Questions 生成評審模擬問題
+                        </button>
+                        <button onclick="generateAICoachFeedback('phrases')" class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center gap-2 transition-all">
+                            <i class="fa-solid fa-language"></i> Suggest Academic Phrases 推薦雙語辯論句型
+                        </button>
+                    </div>
+                </div>
+
+                <!-- AI Response Output Container -->
+                <div id="ai-output-container" class="hidden p-5 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="text-xs font-bold text-emerald-400 flex items-center gap-2">
+                            <i class="fa-solid fa-sparkles"></i> AI Debate Analysis Output AI 雙語分析結果
+                        </span>
+                        <span class="text-[10px] font-mono text-slate-500">gemini-3-flash-preview</span>
+                    </div>
+                    <div id="ai-output-text" class="text-xs text-slate-200 leading-relaxed font-sans space-y-2">
+                        <!-- Streamed/Inserted by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        let timerInterval = null;
+        let timerSeconds = 720;
+        let playerXP = 0;
+        let currentScenarioIndex = 0;
+        let currentRoleScenarios = [];
+        let activeAudio = null;
+
+        // Scaffolding Template Library
+        const scaffoldingData = [
+            {
+                category: "reporter",
+                title: "1. Opening Hook & Problem Citation (開場破題)",
+                template: "Good day, esteemed Jurors and fellow opponents. Today, Team <TeamName> presents our investigation into <ProblemTitle>. We aim to elucidate the underlying physical mechanism governing <Phenomenon>.",
+                chinese: "各位評審與反駁方好。今天我們將針對此賽題展開發表，旨在闡明主導此現象的核心物理機制。",
+                audioText: "Good day, esteemed Jurors and fellow opponents. Today, Team Taiwan presents our investigation into Problem Number 7, Stormglass. We aim to elucidate the underlying physical mechanism governing crystal growth."
+            },
+            {
+                category: "reporter",
+                title: "2. Variable Parameterization (定義操縱與應變變數)",
+                template: "To systematically analyze this phenomenon, we parameterize our system by treating <VarX> as our independent variable while measuring <VarY> under strictly controlled conditions.",
+                chinese: "為系統化分析此現象，我們將某變數作為操縱變數，並在嚴格控制環境下量測應變變數。",
+                audioText: "To systematically analyze this phenomenon, we parameterize our system by treating ambient temperature gradient as our independent variable while measuring crystal length under strictly controlled conditions."
+            },
+            {
+                category: "data",
+                title: "3. Theory vs Experiment Overlay (數據與理論對比擬合)",
+                template: "As illustrated in Figure <FigNum>, our empirical data points (represented with error bars of <ErrorMargin>) exhibit strong quantitative agreement with our theoretical curve, yielding an R-squared fit of <R2Score>.",
+                chinese: "如圖所示，帶有誤差棒的實驗數據點與我們的理論曲線展現出高度定量符合，擬合度達0.96。",
+                audioText: "As illustrated in Figure 4, our empirical data points with error bars of plus or minus 3 percent exhibit strong quantitative agreement with our theoretical curve, yielding an R-squared fit of 0.96."
+            },
+            {
+                category: "opponent",
+                title: "4. Diplomatic Challenge on Assumptions (禮貌質疑理論假設)",
+                template: "While we commend the Reporter for their comprehensive dataset, we must draw attention to the theoretical assumption of <Assumption>. In real experiments, <BoundaryFactor> cannot be neglected.",
+                chinese: "雖然我們讚賞主講人完整的數據，但必須指出其理論假設在真實實驗中忽視了特定邊界因素。",
+                audioText: "While we commend the Reporter for their comprehensive dataset, we must draw attention to the theoretical assumption of laminar flow. In real experiments, boundary layer turbulence cannot be neglected."
+            },
+            {
+                category: "opponent",
+                title: "5. Questioning Missing Controls (質疑控制變數盲點)",
+                template: "Could the Reporter clarify how <ControlVariable> was maintained constant throughout Trial <TrialNum>? Without explicit calibration, temperature fluctuations could confound the results.",
+                chinese: "請問主講人能否澄清在試驗中某控制變數是如何維持恆定的？若無校準，溫度波動將干擾結果。",
+                audioText: "Could the Reporter clarify how ambient humidity was maintained constant throughout Trial 3? Without explicit calibration, thermal fluctuations could confound the results."
+            },
+            {
+                category: "cer",
+                title: "6. C-E-R Answer Formula (評審提問三段式答辯)",
+                template: "[CLAIM] <DirectAnswer>. [EVIDENCE] As shown on Slide <SlideNum>, our optical sensor logs demonstrate <DataTrend>. [REASONING] This is attributed to <PhysicalMechanism>.",
+                chinese: "[主張] 正面直球回答。[證據] 引用簡報數據曲線。[推論] 簡潔解釋背後物理機制。",
+                audioText: "Directly speaking, yes. As shown on Slide 14, our thermal sensor logs demonstrate less than 0.2 degrees fluctuation. This is attributed to our active Peltier cooling loop."
+            },
+            {
+                category: "reviewer",
+                title: "7. Reviewer Debating Point Synthesis (評論員歸納辯論焦點)",
+                template: "The central points of contention in this fight revolved around <Topic1> and <Topic2>. While the Opponent correctly raised concerns regarding <Flaw>, the Reporter successfully defended <Strengths>.",
+                chinese: "本場比賽核心爭議焦點在於兩大議題。反駁方敏銳指出瑕疵，而主講人亦成功防守其理論強度。",
+                audioText: "The central points of contention in this fight revolved around sensor calibration and boundary turbulence. While the Opponent correctly raised concerns regarding turbulence, the Reporter successfully defended their quantitative fit."
+            }
+        ];
+
+        // Scenarios Data
+        const scenarios = {
+            reporter: [
+                {
+                    title: "Reporter Scenario 1: Unfavorable Theoretical Assumption (理論假設瑕疵質疑)",
+                    question: "An Opponent points out that your theoretical differential equation assumes laminar fluid flow, but your video measurement shows a Reynolds number > 4000. How do you respond?",
+                    options: [
+                        { text: "Acknowledge the boundary limit, state that turbulence effects were localized to edges, and present Slide 12 showing low overall RMS deviation (R² = 0.95).", correct: true, xp: 50, feedback: "Excellent C-E-R defense! You acknowledged the boundary limit, quantified the negligible error impact, and directed attention to an empirical graph slide." },
+                        { text: "Argue aggressively that Reynolds number does not apply in high school physics competitions.", correct: false, xp: 0, feedback: "Incorrect. Dismissing fundamental physical principles damages your scientific credibility with the jury." },
+                        { text: "Ignore the question completely and re-read your initial summary slide.", correct: false, xp: 0, feedback: "Avoidance strategy. Jurors heavily penalize non-responses during scientific scoring." }
+                    ]
+                }
+            ],
+            opponent: [
+                {
+                    title: "Opponent Scenario 1: Identifying Data Discrepancy (發現數據與理論偏離)",
+                    question: "You notice the Reporter's experimental error bars do not overlap with their continuous theoretical curve at high parameter values. What is your optimal attack line?",
+                    options: [
+                        { text: "Acknowledge their strong theoretical fit at low ranges, then ask why high-range data systematically deviates (suggesting unmodeled friction or higher-order losses).", correct: true, xp: 50, feedback: "Perfect diplomatic opposition! Balanced scientific praise with a sharp physical challenge on model extrapolation bounds." },
+                        { text: "Interrupt the Reporter to declare their entire 12-minute presentation invalid and mock their curve fitting.", correct: false, xp: 0, feedback: "Excessive hostility and personal attacks lower your Opponent grade from the jury panel." }
+                    ]
+                }
+            ],
+            reviewer: [
+                {
+                    title: "Reviewer Scenario 1: Synthesizing Debate Highlights (歸納爭議焦點)",
+                    question: "The Reporter and Opponent spent 8 minutes arguing over sensor calibration without reaching consensus. How do you structure your 3-minute Review speech?",
+                    options: [
+                        { text: "Summarize the core dispute over sensor precision, evaluate how it impacted dataset error margins, and re-center jury focus on the agreed physical mechanism.", correct: true, xp: 50, feedback: "Masterful Reviewer synthesis! You neutrally clarified the debate focal point without taking emotional traps." },
+                        { text: "Re-do the Reporter's presentation yourself from scratch and ignore the debate entirely.", correct: false, xp: 0, feedback: "Reviewers must evaluate the debate that actually occurred rather than present new unverified research." }
+                    ]
+                }
+            ]
+        };
+
+        const iyntProblems = [
+            {
+                year: "2026",
+                num: "Main 1",
+                title: "Tbilisi Pendulum 第比利斯擺",
+                field: "Physics",
+                desc: "A soft flexible string pendulum exhibits chaotic motion under periodic forced oscillations. Investigate conditions that give rise to chaotic trajectories versus stable harmonic motion.",
+                variables: ["Forcing frequency 驅動頻率", "String elasticity 擺線彈性", "Damping 阻尼係數"],
+                attackPoint: "Did they assume a rigid pendulum arm in their theoretical differential equation?"
+            },
+            {
+                year: "2026",
+                num: "Main 2",
+                title: "Electroplating Quality 電鍍品質",
+                field: "Chemistry",
+                desc: "Investigate how electrolyte composition, pH level, temperature, and current density affect the smoothness and adhesion of electroplated metal coatings.",
+                variables: ["Current density 電流密度", "Electrolyte pH 電解液pH值", "Temperature 溫度"],
+                attackPoint: "Did they calibrate ion concentration drift during long-duration plating runs?"
+            },
+            {
+                year: "2026",
+                num: "Main 3",
+                title: "Mold Growth Factors 黴菌生長",
+                field: "Biology",
+                desc: "Evaluate how temperature, ambient humidity, and specific light wavelengths affect fungal spore germination and mold colonization rate on organic bread substrates.",
+                variables: ["Relative humidity 相對濕度", "Light wavelength 光線波長", "Temperature 溫度"],
+                attackPoint: "Was relative humidity actively controlled inside sealed chambers or assumed ambient?"
+            },
+            {
+                year: "2025",
+                num: "Main 7",
+                title: "Stormglass 風暴瓶",
+                field: "Chemistry",
+                desc: "A stormglass contains camphor, potassium nitrate, ammonium chloride, water, and ethanol. Produce stormglasses with various recipes and study crystal formation under different thermal conditions.",
+                variables: ["Cooling rate 冷卻速率", "Alcohol/water ratio 醇水比"],
+                attackPoint: "Is crystal shape driven by atmospheric pressure or purely temperature gradients?"
+            }
+        ];
+
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-slate-900 border border-brand-500/50 text-slate-100 text-xs px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 pointer-events-auto transition-all animate-bounce';
+            toast.innerHTML = `<i class="fa-solid fa-circle-info text-brand-400"></i> ${msg}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-600', 'text-white', 'shadow');
+                btn.classList.add('text-slate-400');
+            });
+            
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) targetTab.classList.remove('hidden');
+            
+            const targetNav = document.getElementById('nav-' + tabId);
+            if (targetNav) {
+                targetNav.classList.add('bg-brand-600', 'text-white', 'shadow');
+                targetNav.classList.remove('text-slate-400');
+            }
+        }
+
+        function calculateScores() {
+            const gr = parseFloat(document.getElementById('calc-gr').value) || 0;
+            const go = parseFloat(document.getElementById('calc-go').value) || 0;
+            const grev = parseFloat(document.getElementById('calc-grev').value) || 0;
+            const rejects = parseInt(document.getElementById('calc-rejects').value, 10);
+
+            let multR = 3.0;
+            if (rejects === 4) multR = 2.7;
+            else if (rejects === 5) multR = 2.4;
+            else if (rejects >= 6) multR = 2.1;
+
+            const pr = (gr * multR).toFixed(1);
+            const po = (go * 2.0).toFixed(1);
+            const prev = (grev * 1.0).toFixed(1);
+
+            document.getElementById('score-pr').innerText = `${pr} pts (C=${multR})`;
+            document.getElementById('score-po').innerText = `${po} pts`;
+            document.getElementById('score-prev').innerText = `${prev} pts`;
+        }
+
+        function saveWorkbenchProject() {
+            showToast("Project draft saved to local memory!");
+        }
+
+        function loadWorkbenchPreset() {
+            const sel = document.getElementById('wb-select-problem').value;
+            if (sel === 'p1') {
+                document.getElementById('wb-var-x').value = "Forcing frequency f (Hz)";
+                document.getElementById('wb-var-y').value = "Trajectory chaos exponent & amplitude";
+                document.getElementById('wb-var-ctrl').value = "String length, bob mass";
+                document.getElementById('wb-hypothesis').value = "Nonlinear resonance produces chaotic motion when forcing frequency equals twice the natural frequency.";
+            } else if (sel === 'p2') {
+                document.getElementById('wb-var-x').value = "Current density J (A/dm²)";
+                document.getElementById('wb-var-y').value = "Plating thickness uniformity & roughness";
+                document.getElementById('wb-var-ctrl').value = "Electrolyte temp (25°C), pH = 4.0";
+                document.getElementById('wb-hypothesis').value = "Optimal current density produces uniform ion deposition without hydrogen gas pitting.";
+            } else if (sel === 'p4') {
+                document.getElementById('wb-var-x').value = "Cooling rate (°C/min) & alcohol ratio";
+                document.getElementById('wb-var-y').value = "Crystal length (mm), nucleation density";
+                document.getElementById('wb-var-ctrl').value = "Solute saturation, ambient light";
+                document.getElementById('wb-hypothesis').value = "Temperature gradient drives supersaturation leading to dendritic camphor nucleation.";
+            }
+            showToast("Loaded preset problem parameters!");
+        }
+
+        function renderScaffoldingCards(filter = 'all') {
+            const grid = document.getElementById('scaffolding-cards-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const list = filter === 'all' ? scaffoldingData : scaffoldingData.filter(s => s.category === filter);
+
+            list.forEach((s) => {
+                const card = document.createElement('div');
+                card.className = 'glass-card p-5 rounded-xl border border-slate-800 space-y-3';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                        <span class="text-xs font-bold text-sky-300 font-mono">${s.title}</span>
+                        <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400">${s.category}</span>
+                    </div>
+                    <div class="p-3 bg-slate-950/80 rounded-lg text-xs font-mono text-emerald-300 leading-relaxed border border-slate-900">
+                        ${s.template}
+                    </div>
+                    <p class="text-xs text-slate-400 font-sans">${s.chinese}</p>
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                        <button onclick="speakText('${s.audioText.replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-lg bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 text-xs font-bold transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-volume-high"></i> Listen (TTS)
+                        </button>
+                        <button onclick="copyToClipboard('${s.template.replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-copy"></i> Copy Stem
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterScaffolding(cat) {
+            document.querySelectorAll('.scaffold-cat-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-600', 'text-white', 'active');
+                btn.classList.add('bg-slate-900', 'text-slate-400');
+            });
+            event.target.classList.add('bg-brand-600', 'text-white', 'active');
+            event.target.classList.remove('bg-slate-900', 'text-slate-400');
+            renderScaffoldingCards(cat);
+        }
+
+        async function speakText(textToSpeak) {
+            showToast("Generating native speech with Gemini TTS...");
+            try {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{
+                        parts: [{ text: `Say clearly in a professional academic tone: ${textToSpeak}` }]
+                    }],
+                    generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: { voiceName: "Zephyr" }
+                            }
+                        }
+                    }
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const part = result?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType;
+
+                if (audioData && mimeType) {
+                    const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+                    const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000;
+                    
+                    const pcmBuffer = base64ToArrayBuffer(audioData);
+                    const pcm16 = new Int16Array(pcmBuffer);
+                    const wavBlob = pcmToWav(pcm16, sampleRate);
+                    const audioUrl = URL.createObjectURL(wavBlob);
+
+                    if (activeAudio) activeAudio.pause();
+                    activeAudio = new Audio(audioUrl);
+                    activeAudio.play();
+                    showToast("Playing spoken audio output.");
+                } else {
+                    showToast("Unable to generate audio from Gemini TTS.");
+                }
+            } catch (err) {
+                showToast("TTS service error. Please try again.");
+            }
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function pcmToWav(pcm16, sampleRate) {
+            const buffer = new ArrayBuffer(44 + pcm16.length * 2);
+            const view = new DataView(buffer);
+
+            const writeString = (view, offset, str) => {
+                for (let i = 0; i < str.length; i++) {
+                    view.setUint8(offset + i, str.charCodeAt(i));
+                }
+            };
+
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + pcm16.length * 2, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, pcm16.length * 2, true);
+
+            for (let i = 0; i < pcm16.length; i++) {
+                view.setInt16(44 + i * 2, pcm16[i], true);
+            }
+
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        function copyToClipboard(text) {
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            showToast("Copied to clipboard!");
+        }
+
+        function loadGameScenario(role) {
+            currentRoleScenarios = scenarios[role] || scenarios.reporter;
+            currentScenarioIndex = 0;
+            renderScenario();
+        }
+
+        function renderScenario() {
+            const arena = document.getElementById('game-arena');
+            if (!arena) return;
+
+            if (currentScenarioIndex >= currentRoleScenarios.length) {
+                arena.innerHTML = `
+                    <div class="text-center py-8 space-y-4">
+                        <i class="fa-solid fa-trophy text-amber-400 text-5xl animate-bounce"></i>
+                        <h3 class="text-xl font-bold text-white">Scenario Training Complete! 角色關卡完成！</h3>
+                        <p class="text-xs text-slate-300">Great job practicing core scientific fight responses. Select another role to sharpen your debate skills!</p>
+                        <button onclick="loadGameScenario('reporter')" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition-all">Restart Drill 重啟測驗</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const sc = currentRoleScenarios[currentScenarioIndex];
+            let optionsHTML = '';
+            sc.options.forEach((opt, idx) => {
+                optionsHTML += `
+                    <button onclick="selectOption(${idx})" class="w-full text-left p-4 rounded-xl glass-card hover:border-brand-500 text-xs text-slate-200 transition-all flex items-start gap-3">
+                        <span class="w-6 h-6 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-mono font-bold shrink-0">${String.fromCharCode(65 + idx)}</span>
+                        <span>${opt.text}</span>
+                    </button>
+                `;
+            });
+
+            arena.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <span class="text-xs font-bold font-mono text-brand-300">SCENARIO ${currentScenarioIndex + 1} OF ${currentRoleScenarios.length}</span>
+                        <span class="text-xs text-slate-400 font-mono">Select best tactical response (選擇最佳學術對策)</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">${sc.title}</h3>
+                    <p class="text-sm text-slate-300 p-4 bg-slate-900/80 rounded-xl border border-slate-800">${sc.question}</p>
+                    <div class="space-y-2 pt-2">
+                        ${optionsHTML}
+                    </div>
+                    <div id="scenario-feedback" class="hidden p-4 rounded-xl border text-xs font-sans space-y-2"></div>
+                </div>
+            `;
+        }
+
+        function selectOption(idx) {
+            const sc = currentRoleScenarios[currentScenarioIndex];
+            const opt = sc.options[idx];
+            const feedbackBox = document.getElementById('scenario-feedback');
+
+            if (opt.correct) {
+                playerXP += opt.xp;
+                document.getElementById('game-xp').innerText = `${playerXP} pts`;
+                feedbackBox.className = "p-4 rounded-xl border border-emerald-500/50 bg-emerald-950/40 text-emerald-200 text-xs space-y-2";
+                feedbackBox.innerHTML = `
+                    <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Correct Defense / Tactical Response (+${opt.xp} XP)</div>
+                    <p>${opt.feedback}</p>
+                    <button onclick="nextScenario()" class="mt-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-xs">Next Scenario 下一題 <i class="fa-solid fa-arrow-right"></i></button>
+                `;
+            } else {
+                feedbackBox.className = "p-4 rounded-xl border border-red-500/50 bg-red-950/40 text-red-200 text-xs space-y-2";
+                feedbackBox.innerHTML = `
+                    <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-circle-xmark text-red-400"></i> Tactical Misstep (0 XP)</div>
+                    <p>${opt.feedback}</p>
+                    <button onclick="renderScenario()" class="mt-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-bold text-xs">Try Again 重試</button>
+                `;
+            }
+            feedbackBox.classList.remove('hidden');
+        }
+
+        function nextScenario() {
+            currentScenarioIndex++;
+            renderScenario();
+        }
+
+        function renderProblems(problemsToRender) {
+            const grid = document.getElementById('problem-cards-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            problemsToRender.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'glass-card p-5 rounded-xl border border-slate-800 space-y-3';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-brand-500/20 text-brand-300 border border-brand-500/30">IYNT ${p.year} • ${p.num}</span>
+                        <span class="text-[11px] font-mono text-slate-400">${p.field}</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">${p.title}</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">${p.desc}</p>
+                    <div class="pt-2 border-t border-slate-800 space-y-1 text-[11px]">
+                        <div class="text-slate-400"><strong class="text-indigo-300">Variables:</strong> ${p.variables.join(', ')}</div>
+                        <div class="text-slate-400"><strong class="text-emerald-300">Attack Angle:</strong> ${p.attackPoint}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterProblems() {
+            const yearVal = document.getElementById('filter-year').value;
+            const fieldVal = document.getElementById('filter-field').value;
+            const query = document.getElementById('search-problem').value.toLowerCase();
+
+            const filtered = iyntProblems.filter(p => {
+                const matchYear = (yearVal === 'ALL' || p.year === yearVal);
+                const matchField = (fieldVal === 'ALL' || p.field === fieldVal);
+                const matchQuery = p.title.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query);
+                return matchYear && matchField && matchQuery;
+            });
+
+            renderProblems(filtered);
+        }
+
+        function setPhase(minutes, name, instruction) {
+            pauseTimer();
+            timerSeconds = minutes * 60;
+            document.getElementById('current-phase-name').innerText = name;
+            document.getElementById('timer-instruction').innerText = instruction;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timerSeconds / 60);
+            const secs = timerSeconds % 60;
+            document.getElementById('timer-display').innerText = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (timerInterval) return;
+            timerInterval = setInterval(() => {
+                if (timerSeconds > 0) {
+                    timerSeconds--;
+                    updateTimerDisplay();
+                } else {
+                    pauseTimer();
+                    showToast("Phase Time Expired!");
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function resetPhaseTimer() {
+            pauseTimer();
+            timerSeconds = 720;
+            updateTimerDisplay();
+        }
+
+        async function generateAICoachFeedback(mode) {
+            const userPrompt = document.getElementById('ai-input-prompt').value.trim();
+            if (!userPrompt) {
+                showToast("Please enter a research topic first!");
+                return;
+            }
+
+            const outputBox = document.getElementById('ai-output-container');
+            const outputText = document.getElementById('ai-output-text');
+            
+            outputBox.classList.remove('hidden');
+            outputText.innerHTML = `<div class="flex items-center gap-2 text-slate-400 font-mono"><i class="fa-solid fa-spinner animate-spin"></i> Gemini AI analyzing research parameters...</div>`;
+
+            let systemInstruction = "You are an elite International Young Naturalists' Tournament (IYNT) Jury member and Scientific Debate Coach. Give sharp, actionable academic advice in bilingual format (English and Traditional Chinese).";
+            let prompt = "";
+
+            if (mode === 'opponent') {
+                prompt = `Analyze this student research statement for an IYNT Science Fight: "${userPrompt}". Provide 3 highly targeted Opponent attack angles focusing on experimental control variables, theoretical boundary conditions, and potential measurement error sources.`;
+            } else if (mode === 'jury') {
+                prompt = `Given this IYNT problem presentation summary: "${userPrompt}", generate 3 realistic, tough Jury questions that test quantitative understanding and physical mechanisms.`;
+            } else {
+                prompt = `Suggest 4 formal, high-impact English signposting sentences (Reporter defense, Opponent diplomatic pushback, Reviewer synthesis) specifically tailored to this research topic: "${userPrompt}".`;
+            }
+
+            try {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    systemInstruction: { parts: [{ text: systemInstruction }] }
+                };
+
+                const res = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (reply) {
+                    const formatted = reply
+                        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-emerald-300">$1</strong>')
+                        .replace(/\n\n/g, '<br><br>')
+                        .replace(/\* /g, '• ');
+                    outputText.innerHTML = formatted;
+                } else {
+                    outputText.innerText = "Error generating AI response. Please try again.";
+                }
+            } catch (err) {
+                outputText.innerText = "Connection error to Gemini API. Please check internet access or try again.";
+            }
+        }
+
+        window.onload = function() {
+            loadGameScenario('reporter');
+            renderScaffoldingCards('all');
+            renderProblems(iyntProblems);
+            calculateScores();
+        };
+    </script>
+</body>
+</html>

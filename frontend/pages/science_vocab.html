@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>詞素合成實驗室 · Morpheme Synthesis Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --porcelain:#EDF1EC; --card:#F9FBF8; --ink:#15221C; --ink-soft:#4E5F55;
+  --ink-faint:#8A9A90; --rule:#C9D5CB;
+  --pre:#1C6FA8; --root:#BE2A6B; --suf:#B87309; --good:#0E8F7A; --bad:#A6402C;
+  --shadow:0 1px 0 rgba(21,34,28,.08), 0 8px 24px -18px rgba(21,34,28,.5);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background-color:var(--porcelain);
+  background-image:linear-gradient(rgba(21,34,28,.045) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(21,34,28,.045) 1px,transparent 1px);
+  background-size:26px 26px;color:var(--ink);
+  font-family:"Noto Sans TC","IBM Plex Sans",system-ui,sans-serif;font-size:15px;line-height:1.65;
+  -webkit-font-smoothing:antialiased}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 18px 64px}
+.masthead{border-bottom:2px solid var(--ink);padding-bottom:14px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--ink-faint);display:flex;gap:14px;flex-wrap:wrap}
+.eyebrow b{color:var(--good);font-weight:600}
+h1{font-family:"Bricolage Grotesque","Noto Sans TC",sans-serif;font-weight:800;
+  font-size:clamp(30px,6.4vw,50px);line-height:.98;letter-spacing:-.025em;margin:8px 0 4px}
+h1 .en{display:block;font-size:clamp(12px,2.4vw,15px);font-family:"IBM Plex Mono",monospace;
+  font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);margin-top:9px}
+.tagline{color:var(--ink-soft);font-size:14px;max-width:58ch;margin:10px 0 0}
+
+/* 領域選架 */
+.rack{display:flex;gap:7px;flex-wrap:wrap;align-items:center;padding:16px 0 15px;border-bottom:1px solid var(--rule)}
+.rack .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink-faint);margin-right:4px}
+.dom{appearance:none;font-family:inherit;font-size:13.5px;border:1px solid var(--rule);background:#fff;
+  color:var(--ink-soft);padding:6px 13px;border-radius:99px;cursor:pointer;display:flex;align-items:baseline;gap:7px}
+.dom .c{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-faint)}
+.dom:hover{border-color:var(--ink);color:var(--ink)}
+.dom[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:500}
+.dom[aria-pressed="true"] .c{color:#7FB8A9}
+.dom:focus-visible{outline:2px solid var(--good);outline-offset:2px}
+
+nav.tabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--rule);margin:0 0 22px}
+.tab{appearance:none;background:none;border:0;border-bottom:3px solid transparent;padding:13px 16px 11px;
+  cursor:pointer;color:var(--ink-soft);font-family:inherit;font-size:14px;font-weight:500;
+  display:flex;align-items:baseline;gap:8px;transition:color .15s,border-color .15s}
+.tab .idx{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;color:var(--ink-faint)}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--good)}
+.tab[aria-selected="true"] .idx{color:var(--good)}
+.tab:focus-visible{outline:2px solid var(--good);outline-offset:-2px}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 262px;gap:22px;align-items:start}
+@media(max-width:840px){.grid{grid-template-columns:1fr}}
+.bench{background:var(--card);border:1px solid var(--rule);box-shadow:var(--shadow);border-radius:3px;
+  padding:22px;min-height:430px;position:relative}
+.bench::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;
+  background:linear-gradient(90deg,var(--pre) 0 33.3%,var(--root) 33.3% 66.6%,var(--suf) 66.6% 100%)}
+.stamp{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-faint);margin:6px 0 14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.prompt{border-left:3px solid var(--ink);padding:2px 0 2px 15px;margin-bottom:22px}
+.prompt .field{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--good);margin-bottom:5px}
+.prompt .zh{font-size:21px;font-weight:700;line-height:1.35}
+.prompt .en{color:var(--ink-soft);font-size:14px;margin-top:5px}
+
+.chip{display:inline-flex;flex-direction:column;align-items:center;gap:1px;background:#fff;
+  border:1px solid var(--rule);border-bottom-width:3px;border-radius:3px;padding:8px 13px 6px;
+  cursor:pointer;font-family:inherit;min-width:74px;transition:transform .12s,box-shadow .12s}
+.chip .form{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:15.5px}
+.chip .gl{font-size:11px;color:var(--ink-soft);line-height:1.3;text-align:center}
+.chip[data-t="pre"]{border-bottom-color:var(--pre)} .chip[data-t="pre"] .form{color:var(--pre)}
+.chip[data-t="root"]{border-bottom-color:var(--root)} .chip[data-t="root"] .form{color:var(--root)}
+.chip[data-t="suf"]{border-bottom-color:var(--suf)} .chip[data-t="suf"] .form{color:var(--suf)}
+.chip:hover{transform:translateY(-2px);box-shadow:0 6px 14px -8px rgba(21,34,28,.55)}
+.chip:focus-visible{outline:2px solid var(--good);outline-offset:2px}
+.chip.used{opacity:.22;pointer-events:none;transform:none}
+.tray{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+.tray-label{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-faint);border-top:1px solid var(--rule);padding-top:14px;margin-top:26px}
+.slots{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:66px}
+.slot{min-width:96px;min-height:62px;border:1.5px dashed var(--rule);border-radius:3px;
+  background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:4px}
+.slot .n{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-faint)}
+.slot.filled{border-style:solid;border-color:transparent;background:none;padding:0}
+.slot.ok{box-shadow:0 0 0 2px var(--good)}
+.slot.no{box-shadow:0 0 0 2px var(--bad);animation:shake .32s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.bond{font-family:"IBM Plex Mono",monospace;color:var(--ink-faint);font-size:15px;user-select:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px;align-items:center}
+.btn{appearance:none;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;
+  border:1.5px solid var(--ink);background:var(--ink);color:#fff;padding:9px 20px;border-radius:3px}
+.btn:hover{opacity:.86}
+.btn:focus-visible{outline:2px solid var(--good);outline-offset:2px}
+.btn.ghost{background:none;color:var(--ink)}
+.btn.ghost:hover{background:rgba(21,34,28,.06);opacity:1}
+.btn:disabled{opacity:.32;cursor:not-allowed}
+.kbd{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-faint);margin-left:auto}
+.opts{display:grid;gap:9px;margin-top:6px}
+.opt{text-align:left;display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--rule);
+  border-radius:3px;padding:12px 15px;cursor:pointer;font-family:inherit;font-size:15px;color:var(--ink)}
+.opt:hover{border-color:var(--ink)}
+.opt:focus-visible{outline:2px solid var(--good);outline-offset:2px}
+.opt .key{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-faint);padding-top:2px}
+.opt.ok{border-color:var(--good);background:rgba(14,143,122,.09)} .opt.ok .key{color:var(--good)}
+.opt.no{border-color:var(--bad);background:rgba(166,64,44,.08)}
+.opt[disabled]{cursor:default}
+.verdict{margin-top:22px;border-top:1px solid var(--rule);padding-top:18px}
+.verdict .head{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;
+  text-transform:uppercase;margin-bottom:10px}
+.verdict.good .head{color:var(--good)} .verdict.bad .head{color:var(--bad)}
+.built{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px;font-family:"IBM Plex Mono",monospace;
+  font-size:clamp(20px,4.6vw,30px);font-weight:600;letter-spacing:-.02em;margin-bottom:8px}
+.built span[data-t="pre"]{color:var(--pre)} .built span[data-t="root"]{color:var(--root)}
+.built span[data-t="suf"]{color:var(--suf)}
+.built .sep{color:var(--ink-faint);font-weight:400;font-size:.6em;padding:0 3px}
+.gloss-line{color:var(--ink-soft);font-size:13.5px}
+.gloss-line b{color:var(--ink);font-weight:500}
+.readout{background:var(--ink);color:#DCE6DF;border-radius:3px;padding:18px 18px 20px;position:sticky;top:18px}
+.readout h2{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:#7F998A;margin:0 0 14px;font-weight:500}
+.stat{display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:1px solid rgba(220,230,223,.14);padding:8px 0}
+.stat .k{font-size:12.5px;color:#9FB3A6}
+.stat .v{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:600;color:#fff}
+.stat .v.hi{color:#4FD1B5}
+.meter{height:5px;background:rgba(220,230,223,.16);border-radius:99px;margin-top:14px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--good);width:0;transition:width .5s ease}
+.meter-cap{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;color:#7F998A;
+  margin-top:7px;text-transform:uppercase}
+.log{margin-top:18px}
+.log div{display:flex;gap:8px;padding:3px 0;color:#9FB3A6;font-family:"IBM Plex Mono",monospace;font-size:11.5px}
+.log .m{width:12px;flex:none} .log .m.y{color:#4FD1B5} .log .m.n{color:#E08A72}
+.log .w{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.pill{appearance:none;font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.08em;
+  border:1px solid var(--rule);background:#fff;color:var(--ink-soft);padding:6px 13px;border-radius:99px;
+  cursor:pointer;text-transform:uppercase}
+.pill[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pill:focus-visible{outline:2px solid var(--good);outline-offset:2px}
+input.search{font-family:"IBM Plex Mono",monospace;font-size:13px;border:1px solid var(--rule);background:#fff;
+  border-radius:3px;padding:7px 12px;color:var(--ink);flex:1;min-width:150px}
+input.search:focus{outline:2px solid var(--good);outline-offset:-1px}
+.codex{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px}
+.tile{background:#fff;border:1px solid var(--rule);border-radius:3px;padding:11px 13px 12px;position:relative;
+  overflow:hidden;text-align:left;cursor:pointer;font-family:inherit;width:100%}
+.tile::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+.tile[data-t="pre"]::before{background:var(--pre)}
+.tile[data-t="root"]::before{background:var(--root)}
+.tile[data-t="suf"]::before{background:var(--suf)}
+.tile:hover{border-color:var(--ink)}
+.tile:focus-visible{outline:2px solid var(--good);outline-offset:2px}
+.tile .f{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:16px}
+.tile .g{font-size:12.5px;color:var(--ink-soft);margin-top:1px}
+.tile .ex{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-faint);margin-top:7px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .seal{position:absolute;top:9px;right:10px;font-size:10px;color:var(--good);font-family:"IBM Plex Mono",monospace}
+.tile .cross{position:absolute;bottom:10px;right:10px;font-family:"IBM Plex Mono",monospace;font-size:9px;
+  letter-spacing:.1em;color:var(--good);border:1px solid var(--good);border-radius:99px;padding:0 5px}
+.tile.locked .f,.tile.locked .g{opacity:.55}
+.timer{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.1em}
+.timer b{font-size:22px;font-weight:600}
+.timer.low b{color:var(--bad)}
+.tbar{height:3px;background:var(--rule);border-radius:99px;overflow:hidden;margin:8px 0 22px}
+.tbar i{display:block;height:100%;background:var(--good);width:100%;transition:width 1s linear}
+.tbar.low i{background:var(--bad)}
+.big-morph{font-family:"IBM Plex Mono",monospace;font-size:clamp(34px,9vw,58px);font-weight:600;
+  letter-spacing:-.03em;line-height:1.05;margin:4px 0 6px}
+.big-morph[data-t="pre"]{color:var(--pre)} .big-morph[data-t="root"]{color:var(--root)}
+.big-morph[data-t="suf"]{color:var(--suf)}
+.type-note{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint)}
+.foot{margin-top:34px;border-top:1px solid var(--rule);padding-top:14px;font-size:12px;color:var(--ink-faint);line-height:1.75}
+.foot code{font-family:"IBM Plex Mono",monospace;color:var(--ink-soft)}
+@media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="eyebrow"><span>Specimen 002</span><span>National Pingtung University</span><b id="deckCount">—</b></div>
+  <h1>詞素合成實驗室<span class="en">Morpheme Synthesis Lab · seven fields</span></h1>
+  <p class="tagline">科學英文的長字不是背出來的，是組出來的。先挑領域，再把字首、字根、字尾當試劑，練到看見生字就能拆。</p>
+</header>
+
+<div class="rack" id="rack"><span class="lbl">Field 領域</span></div>
+
+<nav class="tabs" role="tablist" aria-label="操作台">
+  <button class="tab" role="tab" data-mode="build"  aria-selected="true"><span class="idx">01</span>合成</button>
+  <button class="tab" role="tab" data-mode="split"  aria-selected="false"><span class="idx">02</span>解構</button>
+  <button class="tab" role="tab" data-mode="rapid"  aria-selected="false"><span class="idx">03</span>快篩</button>
+  <button class="tab" role="tab" data-mode="infer"  aria-selected="false"><span class="idx">04</span>推理</button>
+  <button class="tab" role="tab" data-mode="codex"  aria-selected="false"><span class="idx">05</span>圖鑑</button>
+</nav>
+
+<div class="grid">
+  <main class="bench" id="bench" tabindex="-1"></main>
+  <aside class="readout" aria-label="紀錄">
+    <h2>Readout 作答紀錄</h2>
+    <div class="stat"><span class="k">分數</span><span class="v" id="sScore">0</span></div>
+    <div class="stat"><span class="k">連續答對</span><span class="v hi" id="sStreak">0</span></div>
+    <div class="stat"><span class="k">正確率</span><span class="v" id="sAcc">—</span></div>
+    <div class="meter"><i id="mBar"></i></div>
+    <div class="meter-cap" id="mCap">已掌握詞素 0</div>
+    <div class="log" id="log"></div>
+  </aside>
+</div>
+
+<p class="foot">
+  顏色編碼：<code style="color:#1C6FA8">字首 prefix</code> ·
+  <code style="color:#BE2A6B">字根 root</code> ·
+  <code style="color:#B87309">字尾 suffix</code>。
+  標示 <code>跨域</code> 的詞素橫跨三個以上領域，屬於學術科學英文的共通核心，值得優先掌握。
+  本教材採教學用三分法；<code>photo-</code>、<code>thermo-</code> 等在構詞學上多為結合形式（combining forms），可作課堂延伸討論。
+  拼寫採英式（<code>visualisation</code>、<code>palaeoclimate</code>、<code>epicentre</code>）。
+  鍵盤：<code>1–4</code> 選項、<code>Enter</code> 送出／下一題。作答紀錄僅存於本次瀏覽階段。
+</p>
+</div>
+
+<script>
+/* ================= 領域 ================= */
+const DOMS=[
+ {k:"all",zh:"全部",en:"All fields"},
+ {k:"core",zh:"共通核心",en:"Core Science"},
+ {k:"phys",zh:"物理",en:"Physics"},
+ {k:"chem",zh:"化學",en:"Chemistry"},
+ {k:"bio",zh:"生物",en:"Biology"},
+ {k:"earth",zh:"地球科學",en:"Earth Science"},
+ {k:"sport",zh:"體育與運動科學",en:"Sport & Exercise Science"},
+ {k:"comm",zh:"科學傳播",en:"Science Communication"}];
+const DOMZH=Object.fromEntries(DOMS.map(d=>[d.k,d.zh]));
+const DOMEN=Object.fromEntries(DOMS.map(d=>[d.k,d.en]));
+
+/* ================= 詞庫 ================= */
+const WORDS=[
+/* ---- 共通核心 ---- */
+{w:"thermometer",zh:"溫度計",d:"an instrument that measures temperature",dom:"core",p:[["thermo","pre","熱、溫度"],["meter","suf","測量儀器"]]},
+{w:"microscope",zh:"顯微鏡",d:"an instrument for viewing objects too small to see unaided",dom:"core",p:[["micro","pre","微小"],["scope","suf","觀察儀器"]]},
+{w:"hypothesis",zh:"假說",d:"a proposed explanation to be tested by experiment",dom:"core",p:[["hypo","pre","在…之下、低於"],["thesis","suf","放置、命題"]]},
+{w:"analysis",zh:"分析",d:"the detailed breakdown of something into its parts",dom:"core",p:[["ana","pre","徹底、逐一"],["lysis","suf","分解"]]},
+{w:"synthesis",zh:"合成、綜合",d:"the combining of separate parts into a whole",dom:"core",p:[["syn","pre","共同、一起"],["thesis","suf","放置、命題"]]},
+{w:"macroscopic",zh:"巨觀的",d:"large enough to be observed without a microscope",dom:"core",p:[["macro","pre","巨大"],["scop","root","觀看"],["ic","suf","…的（形容詞）"]]},
+{w:"transparent",zh:"透明的",d:"allowing light to pass through so objects behind can be seen",dom:"core",p:[["trans","pre","越過、跨越"],["parent","root","顯現"]]},
+{w:"methodology",zh:"研究方法論",d:"the system of methods used in a field of study",dom:"core",p:[["method","root","方法"],["ology","suf","…學、學科"]]},
+{w:"chronology",zh:"年代順序",d:"the arrangement of events in order of occurrence",dom:"core",p:[["chrono","pre","時間"],["logy","suf","…學、學科"]]},
+{w:"photograph",zh:"照片",d:"an image recorded by the action of light on a sensor or film",dom:"core",p:[["photo","pre","光"],["graph","suf","書寫、記錄"]]},
+{w:"antithesis",zh:"對立面",d:"the direct opposite of something",dom:"core",p:[["anti","pre","對抗、相反"],["thesis","suf","放置、命題"]]},
+{w:"parameter",zh:"參數",d:"a measurable factor that defines a system",dom:"core",p:[["para","pre","旁側、附帶"],["meter","suf","測量儀器"]]},
+/* ---- 物理 ---- */
+{w:"thermodynamics",zh:"熱力學",d:"the study of heat, work and energy transfer",dom:"phys",p:[["thermo","pre","熱、溫度"],["dynam","root","力、能"],["ics","suf","學科、領域"]]},
+{w:"kinetic",zh:"動能的、運動的",d:"relating to motion",dom:"phys",p:[["kinet","root","運動"],["ic","suf","…的（形容詞）"]]},
+{w:"electromagnetic",zh:"電磁的",d:"relating to the interaction of electric and magnetic fields",dom:"phys",p:[["electro","pre","電"],["magnet","root","磁"],["ic","suf","…的（形容詞）"]]},
+{w:"barometer",zh:"氣壓計",d:"an instrument that measures atmospheric pressure",dom:"phys",p:[["baro","pre","壓力"],["meter","suf","測量儀器"]]},
+{w:"superconductor",zh:"超導體",d:"a material with zero electrical resistance below a critical temperature",dom:"phys",p:[["super","pre","超越、之上"],["conduct","root","傳導"],["or","suf","…者、裝置"]]},
+{w:"semiconductor",zh:"半導體",d:"a material whose conductivity lies between a conductor and an insulator",dom:"phys",p:[["semi","pre","半"],["conduct","root","傳導"],["or","suf","…者、裝置"]]},
+{w:"cyclotron",zh:"迴旋加速器",d:"a machine that accelerates charged particles in a spiral path",dom:"phys",p:[["cyclo","pre","圓、循環"],["tron","suf","裝置、粒子"]]},
+{w:"quantum",zh:"量子",d:"the smallest discrete amount of a physical quantity",dom:"phys",p:[["quant","root","量"],["um","suf","名詞（單數）"]]},
+{w:"symmetry",zh:"對稱性",d:"correspondence of form on either side of an axis",dom:"phys",p:[["sym","pre","共同、相同"],["metry","suf","測量法"]]},
+{w:"isotropic",zh:"等向性的",d:"having identical properties in all directions",dom:"phys",p:[["iso","pre","相同、相等"],["trop","root","轉向"],["ic","suf","…的（形容詞）"]]},
+{w:"centrifugal",zh:"離心的",d:"moving away from a centre of rotation",dom:"phys",p:[["centri","pre","中心"],["fug","root","逃離"],["al","suf","…的（形容詞）"]]},
+{w:"amplitude",zh:"振幅",d:"the maximum displacement of a wave from equilibrium",dom:"phys",p:[["ampl","root","廣大"],["itude","suf","程度、狀態"]]},
+{w:"monochromatic",zh:"單色的",d:"consisting of light of a single wavelength",dom:"phys",p:[["mono","pre","單一"],["chromat","root","顏色"],["ic","suf","…的（形容詞）"]]},
+{w:"photon",zh:"光子",d:"a quantum of electromagnetic radiation",dom:"phys",p:[["phot","root","光"],["on","suf","粒子"]]},
+{w:"velocity",zh:"速度",d:"the rate of change of position in a given direction",dom:"phys",p:[["veloc","root","快速"],["ity","suf","性質、狀態"]]},
+{w:"luminosity",zh:"光度",d:"the total energy radiated by a body per unit time",dom:"phys",p:[["lumin","root","光亮"],["osity","suf","性質、程度"]]},
+{w:"accelerometer",zh:"加速度計",d:"a device that measures acceleration",dom:"phys",p:[["accelero","pre","加速"],["meter","suf","測量儀器"]]},
+{w:"resistor",zh:"電阻器",d:"a component that opposes the flow of electric current",dom:"phys",p:[["resist","root","抵抗"],["or","suf","…者、裝置"]]},
+/* ---- 化學 ---- */
+{w:"hydrolysis",zh:"水解",d:"the breakdown of a compound by reaction with water",dom:"chem",p:[["hydro","pre","水"],["lysis","suf","分解"]]},
+{w:"electrolysis",zh:"電解",d:"chemical decomposition produced by an electric current",dom:"chem",p:[["electro","pre","電"],["lysis","suf","分解"]]},
+{w:"catalyst",zh:"催化劑",d:"a substance that speeds up a reaction without being consumed",dom:"chem",p:[["cata","pre","向下、完全"],["lyst","suf","分解者、作用者"]]},
+{w:"polymer",zh:"聚合物",d:"a large molecule built from many repeating units",dom:"chem",p:[["poly","pre","多"],["mer","root","單元、部分"]]},
+{w:"monomer",zh:"單體",d:"a small molecule that can join to form a polymer",dom:"chem",p:[["mono","pre","單一"],["mer","root","單元、部分"]]},
+{w:"isotope",zh:"同位素",d:"atoms of one element differing in neutron number",dom:"chem",p:[["iso","pre","相同、相等"],["tope","root","位置"]]},
+{w:"hydrophobic",zh:"疏水的",d:"tending to repel or fail to mix with water",dom:"chem",p:[["hydro","pre","水"],["phob","root","厭惡、懼怕"],["ic","suf","…的（形容詞）"]]},
+{w:"hydrophilic",zh:"親水的",d:"having a strong affinity for water",dom:"chem",p:[["hydro","pre","水"],["phil","root","喜愛、親和"],["ic","suf","…的（形容詞）"]]},
+{w:"oxidation",zh:"氧化",d:"the loss of electrons from a substance",dom:"chem",p:[["oxid","root","氧化"],["ation","suf","動作、過程（名詞）"]]},
+{w:"chromatography",zh:"層析法",d:"a technique that separates mixtures as they move through a medium",dom:"chem",p:[["chromato","pre","顏色"],["graphy","suf","記錄法、…學"]]},
+{w:"spectroscopy",zh:"光譜學",d:"the study of the interaction between matter and radiation",dom:"chem",p:[["spectro","pre","光譜"],["scopy","suf","觀察法、檢查法"]]},
+{w:"exothermic",zh:"放熱的",d:"releasing heat to the surroundings",dom:"chem",p:[["exo","pre","向外"],["therm","root","熱"],["ic","suf","…的（形容詞）"]]},
+{w:"endothermic",zh:"吸熱的",d:"absorbing heat from the surroundings",dom:"chem",p:[["endo","pre","向內"],["therm","root","熱"],["ic","suf","…的（形容詞）"]]},
+{w:"macromolecule",zh:"巨分子",d:"a very large molecule such as a protein or nucleic acid",dom:"chem",p:[["macro","pre","巨大"],["molecule","root","分子"]]},
+{w:"lipase",zh:"脂肪酶",d:"an enzyme that breaks down fats",dom:"chem",p:[["lip","root","脂肪"],["ase","suf","酵素"]]},
+{w:"valence",zh:"價數",d:"the combining capacity of an atom",dom:"chem",p:[["valen","root","力量、價"],["ce","suf","性質、狀態"]]},
+{w:"crystallography",zh:"結晶學",d:"the study of atomic arrangement in crystalline solids",dom:"chem",p:[["crystallo","pre","結晶"],["graphy","suf","記錄法、…學"]]},
+{w:"distillation",zh:"蒸餾",d:"purifying a liquid by heating and condensing its vapour",dom:"chem",p:[["di","pre","分開、向下"],["still","root","滴落"],["ation","suf","動作、過程（名詞）"]]},
+{w:"solvent",zh:"溶劑",d:"a liquid in which solutes are dissolved",dom:"chem",p:[["solv","root","溶解"],["ent","suf","…的物質、…者"]]},
+{w:"equilibrium",zh:"平衡",d:"a state in which opposing rates or forces are balanced",dom:"chem",p:[["equi","pre","相等"],["libr","root","秤、平衡"],["ium","suf","狀態、物質"]]},
+/* ---- 生物 ---- */
+{w:"photosynthesis",zh:"光合作用",d:"the conversion of light energy into chemical energy by plants",dom:"bio",p:[["photo","pre","光"],["syn","pre","共同、一起"],["thesis","suf","放置、命題"]]},
+{w:"chlorophyll",zh:"葉綠素",d:"the green pigment that absorbs light for photosynthesis",dom:"bio",p:[["chloro","pre","綠色"],["phyll","root","葉"]]},
+{w:"cytoplasm",zh:"細胞質",d:"the material within a cell, excluding the nucleus",dom:"bio",p:[["cyto","pre","細胞"],["plasm","root","形質、原生質"]]},
+{w:"autotroph",zh:"自營生物",d:"an organism that makes its own food from inorganic sources",dom:"bio",p:[["auto","pre","自己"],["troph","root","營養"]]},
+{w:"heterotroph",zh:"異營生物",d:"an organism that obtains nutrition from other organisms",dom:"bio",p:[["hetero","pre","異、不同"],["troph","root","營養"]]},
+{w:"phagocyte",zh:"吞噬細胞",d:"a cell that engulfs bacteria and foreign particles",dom:"bio",p:[["phago","pre","吞食"],["cyte","suf","細胞"]]},
+{w:"erythrocyte",zh:"紅血球",d:"a red blood cell that transports oxygen",dom:"bio",p:[["erythro","pre","紅色"],["cyte","suf","細胞"]]},
+{w:"metamorphosis",zh:"變態、蛻變",d:"a marked change of form during an animal's development",dom:"bio",p:[["meta","pre","變化、超越（後設）"],["morph","root","形態"],["osis","suf","（變化）過程、狀態"]]},
+{w:"symbiosis",zh:"共生",d:"a close, long-term interaction between two different species",dom:"bio",p:[["sym","pre","共同、相同"],["bio","root","生命"],["sis","suf","過程、狀態"]]},
+{w:"biodiversity",zh:"生物多樣性",d:"the variety of living organisms in a habitat",dom:"bio",p:[["bio","pre","生命"],["divers","root","多樣、分歧"],["ity","suf","性質、狀態"]]},
+{w:"microorganism",zh:"微生物",d:"an organism too small to be seen without a microscope",dom:"bio",p:[["micro","pre","微小"],["organism","root","生物體"]]},
+{w:"bioluminescence",zh:"生物發光",d:"the emission of light by living organisms",dom:"bio",p:[["bio","pre","生命"],["lumin","root","光亮"],["escence","suf","過程、逐漸成為"]]},
+{w:"genome",zh:"基因體",d:"the complete set of genetic material in an organism",dom:"bio",p:[["gen","root","產生、基因"],["ome","suf","整體、總和"]]},
+{w:"zoology",zh:"動物學",d:"the scientific study of animals",dom:"bio",p:[["zoo","pre","動物"],["logy","suf","…學、學科"]]},
+{w:"epidermis",zh:"表皮",d:"the outer protective layer of the skin",dom:"bio",p:[["epi","pre","在…之上"],["dermis","root","皮膚層"]]},
+{w:"herbivore",zh:"草食動物",d:"an animal that feeds on plants",dom:"bio",p:[["herbi","pre","草、植物"],["vore","suf","吃…者"]]},
+{w:"carnivore",zh:"肉食動物",d:"an animal that feeds on flesh",dom:"bio",p:[["carni","pre","肉"],["vore","suf","吃…者"]]},
+{w:"osmosis",zh:"滲透作用",d:"the movement of solvent across a semi-permeable membrane",dom:"bio",p:[["osm","root","推擠、衝"],["osis","suf","（變化）過程、狀態"]]},
+{w:"homeostasis",zh:"恆定性",d:"the maintenance of a stable internal environment",dom:"bio",p:[["homeo","pre","相似、同樣"],["stasis","suf","維持、停滯"]]},
+{w:"thermophile",zh:"嗜熱菌",d:"an organism that thrives at high temperatures",dom:"bio",p:[["thermo","pre","熱、溫度"],["phile","suf","嗜…者"]]},
+{w:"antibiotic",zh:"抗生素",d:"a substance that inhibits or kills micro-organisms",dom:"bio",p:[["anti","pre","對抗、相反"],["biotic","root","與生命有關的"]]},
+/* ---- 地球科學 ---- */
+{w:"geothermal",zh:"地熱的",d:"relating to heat produced inside the Earth",dom:"earth",p:[["geo","pre","地球、土地"],["therm","root","熱"],["al","suf","…的（形容詞）"]]},
+{w:"seismograph",zh:"地震儀",d:"an instrument that records earthquake vibrations",dom:"earth",p:[["seismo","pre","地震"],["graph","suf","書寫、記錄"]]},
+{w:"lithosphere",zh:"岩石圈",d:"the rigid rocky outer layer of the Earth",dom:"earth",p:[["litho","pre","岩石"],["sphere","suf","球體、圈層"]]},
+{w:"atmosphere",zh:"大氣層",d:"the layer of gases surrounding a planet",dom:"earth",p:[["atmo","pre","蒸氣、氣體"],["sphere","suf","球體、圈層"]]},
+{w:"hydrosphere",zh:"水圈",d:"all the water on and around the Earth",dom:"earth",p:[["hydro","pre","水"],["sphere","suf","球體、圈層"]]},
+{w:"stratosphere",zh:"平流層",d:"the atmospheric layer above the troposphere",dom:"earth",p:[["strato","pre","層、鋪展"],["sphere","suf","球體、圈層"]]},
+{w:"magnetosphere",zh:"磁層",d:"the region of space dominated by a planet's magnetic field",dom:"earth",p:[["magneto","pre","磁"],["sphere","suf","球體、圈層"]]},
+{w:"isotherm",zh:"等溫線",d:"a line joining points of equal temperature",dom:"earth",p:[["iso","pre","相同、相等"],["therm","root","熱"]]},
+{w:"tectonic",zh:"板塊構造的",d:"relating to the structure and movement of the Earth's crust",dom:"earth",p:[["tecton","root","建造、構造"],["ic","suf","…的（形容詞）"]]},
+{w:"volcanology",zh:"火山學",d:"the study of volcanoes and volcanic activity",dom:"earth",p:[["volcano","pre","火山"],["logy","suf","…學、學科"]]},
+{w:"glaciology",zh:"冰河學",d:"the study of glaciers and ice sheets",dom:"earth",p:[["glacio","pre","冰河"],["logy","suf","…學、學科"]]},
+{w:"meteorology",zh:"氣象學",d:"the study of the atmosphere and weather",dom:"earth",p:[["meteoro","pre","大氣現象"],["logy","suf","…學、學科"]]},
+{w:"hydrology",zh:"水文學",d:"the study of the movement and distribution of water",dom:"earth",p:[["hydro","pre","水"],["logy","suf","…學、學科"]]},
+{w:"orogeny",zh:"造山運動",d:"the process of mountain formation",dom:"earth",p:[["oro","pre","山"],["gen","root","產生、基因"],["y","suf","名詞（狀態、行為）"]]},
+{w:"sedimentary",zh:"沉積的",d:"formed from deposited mineral or organic particles",dom:"earth",p:[["sediment","root","沉積物"],["ary","suf","…的（形容詞）"]]},
+{w:"palaeoclimate",zh:"古氣候（美式 paleoclimate）",d:"the climate of past geological periods",dom:"earth",p:[["palaeo","pre","古老"],["climate","root","氣候"]]},
+{w:"epicentre",zh:"震央（美式 epicenter）",d:"the point on the surface directly above an earthquake's focus",dom:"earth",p:[["epi","pre","在…之上"],["centre","root","中心"]]},
+{w:"subduction",zh:"隱沒作用",d:"the sinking of one tectonic plate beneath another",dom:"earth",p:[["sub","pre","在…之下"],["duc","root","引導、帶領"],["tion","suf","動作、過程（名詞）"]]},
+{w:"anemometer",zh:"風速計",d:"an instrument that measures wind speed",dom:"earth",p:[["anemo","pre","風"],["meter","suf","測量儀器"]]},
+{w:"bathymetry",zh:"水深測量",d:"the measurement of depth in bodies of water",dom:"earth",p:[["bathy","pre","深"],["metry","suf","測量法"]]},
+{w:"geochronology",zh:"地質年代學",d:"the dating of rocks and geological events",dom:"earth",p:[["geo","pre","地球、土地"],["chrono","pre","時間"],["logy","suf","…學、學科"]]},
+/* ---- 體育與運動科學 ---- */
+{w:"kinesiology",zh:"運動人體學",d:"the study of human movement",dom:"sport",p:[["kinesi","root","動作、運動"],["ology","suf","…學、學科"]]},
+{w:"ergometer",zh:"測功計",d:"a device that measures work or power output during exercise",dom:"sport",p:[["ergo","pre","功、能量"],["meter","suf","測量儀器"]]},
+{w:"myofibril",zh:"肌原纖維",d:"a thread-like unit inside a muscle fibre",dom:"sport",p:[["myo","pre","肌肉"],["fibril","root","小纖維"]]},
+{w:"aerobic",zh:"有氧的",d:"requiring oxygen to release energy",dom:"sport",p:[["aero","pre","空氣、氧"],["bic","suf","與生命有關的"]]},
+{w:"anaerobic",zh:"無氧的",d:"occurring in the absence of free oxygen",dom:"sport",p:[["an","pre","無、缺乏"],["aero","pre","空氣、氧"],["bic","suf","與生命有關的"]]},
+{w:"hypertrophy",zh:"肥大（肌肥大）",d:"an increase in the size of muscle cells through training",dom:"sport",p:[["hyper","pre","過度、超過"],["trophy","suf","營養、生長"]]},
+{w:"atrophy",zh:"萎縮",d:"the wasting away of muscle tissue through disuse",dom:"sport",p:[["a","pre","無、缺乏"],["trophy","suf","營養、生長"]]},
+{w:"isometric",zh:"等長的（收縮）",d:"a contraction in which muscle length stays constant",dom:"sport",p:[["iso","pre","相同、相等"],["metr","root","測量"],["ic","suf","…的（形容詞）"]]},
+{w:"isokinetic",zh:"等速的（收縮）",d:"a contraction at a constant speed of movement",dom:"sport",p:[["iso","pre","相同、相等"],["kinet","root","運動"],["ic","suf","…的（形容詞）"]]},
+{w:"plyometric",zh:"增強式的（訓練）",d:"training using rapid stretch-shortening jumps",dom:"sport",p:[["plyo","pre","增加、更多"],["metr","root","測量"],["ic","suf","…的（形容詞）"]]},
+{w:"anthropometry",zh:"人體測量學",d:"the measurement of body size and proportions",dom:"sport",p:[["anthropo","pre","人、人類"],["metry","suf","測量法"]]},
+{w:"cardiovascular",zh:"心血管的",d:"relating to the heart and blood vessels",dom:"sport",p:[["cardio","pre","心臟"],["vascul","root","血管"],["ar","suf","…的（形容詞）"]]},
+{w:"biomechanics",zh:"生物力學",d:"the study of forces acting on the human body in movement",dom:"sport",p:[["bio","pre","生命"],["mechan","root","機械、力學"],["ics","suf","學科、領域"]]},
+{w:"proprioception",zh:"本體感覺",d:"the sense of body position and movement",dom:"sport",p:[["proprio","pre","自身"],["cept","root","接收、抓取"],["ion","suf","動作、過程（名詞）"]]},
+{w:"lactate",zh:"乳酸鹽",d:"a by-product of anaerobic energy metabolism",dom:"sport",p:[["lact","root","乳"],["ate","suf","動作、使成為"]]},
+{w:"electromyography",zh:"肌電圖檢查",d:"recording the electrical activity of muscles",dom:"sport",p:[["electro","pre","電"],["myo","pre","肌肉"],["graphy","suf","記錄法、…學"]]},
+{w:"ligament",zh:"韌帶",d:"tough tissue connecting bone to bone",dom:"sport",p:[["liga","root","綁、連結"],["ment","suf","結果、事物（名詞）"]]},
+{w:"thermoregulation",zh:"體溫調節",d:"the control of body temperature during exercise",dom:"sport",p:[["thermo","pre","熱、溫度"],["regul","root","調節、規則"],["ation","suf","動作、過程（名詞）"]]},
+{w:"dehydration",zh:"脫水",d:"excessive loss of body water",dom:"sport",p:[["de","pre","去除、向下"],["hydr","root","水"],["ation","suf","動作、過程（名詞）"]]},
+{w:"metabolism",zh:"新陳代謝",d:"the chemical processes that release and store energy",dom:"sport",p:[["meta","pre","變化、超越（後設）"],["bol","root","投擲、轉變"],["ism","suf","狀態、體系"]]},
+{w:"hypoxia",zh:"缺氧",d:"a deficiency of oxygen reaching the tissues",dom:"sport",p:[["hyp","pre","不足、低於"],["ox","root","氧"],["ia","suf","狀態、情況"]]},
+/* ---- 科學傳播 ---- */
+{w:"audience",zh:"聽眾、受眾",d:"the people a message is intended to reach",dom:"comm",p:[["audi","root","聽"],["ence","suf","狀態、性質（名詞）"]]},
+{w:"dialogue",zh:"對話",d:"an exchange of ideas between two or more parties",dom:"comm",p:[["dia","pre","穿越、之間"],["logue","suf","言說、談話"]]},
+{w:"monologue",zh:"獨白",d:"a long speech by one speaker",dom:"comm",p:[["mono","pre","單一"],["logue","suf","言說、談話"]]},
+{w:"metaphor",zh:"隱喻",d:"a figure of speech describing one thing as another",dom:"comm",p:[["meta","pre","變化、超越（後設）"],["phor","suf","攜帶、傳送"]]},
+{w:"metadiscourse",zh:"後設論述",d:"language that guides readers through a text",dom:"comm",p:[["meta","pre","變化、超越（後設）"],["dis","pre","分開、散開"],["course","root","跑、進程"]]},
+{w:"interdisciplinary",zh:"跨學科的",d:"involving two or more fields of study",dom:"comm",p:[["inter","pre","之間、相互"],["disciplin","root","學科、訓練"],["ary","suf","…的（形容詞）"]]},
+{w:"transdisciplinary",zh:"超學科的",d:"integrating knowledge beyond established disciplines",dom:"comm",p:[["trans","pre","越過、跨越"],["disciplin","root","學科、訓練"],["ary","suf","…的（形容詞）"]]},
+{w:"dissemination",zh:"傳播、散布",d:"the spreading of information to a wide audience",dom:"comm",p:[["dis","pre","分開、散開"],["semin","root","播種"],["ation","suf","動作、過程（名詞）"]]},
+{w:"multimodal",zh:"多模態的",d:"using several modes such as text, image and sound",dom:"comm",p:[["multi","pre","多、多重"],["modal","root","模式的"]]},
+{w:"infographic",zh:"資訊圖表",d:"a visual representation of information or data",dom:"comm",p:[["info","pre","資訊"],["graphic","root","圖像的"]]},
+{w:"podcast",zh:"播客",d:"an episodic audio programme distributed online",dom:"comm",p:[["pod","pre","隨身裝置"],["cast","root","投射、傳送"]]},
+{w:"broadcast",zh:"廣播",d:"the transmission of a programme to a wide audience",dom:"comm",p:[["broad","pre","廣泛"],["cast","root","投射、傳送"]]},
+{w:"visualisation",zh:"視覺化（美式 visualization）",d:"the presentation of data or ideas in visual form",dom:"comm",p:[["visual","root","視覺的"],["isation","suf","化、過程（名詞）"]]},
+{w:"narrative",zh:"敘事",d:"an account of connected events",dom:"comm",p:[["narrat","root","敘述"],["ive","suf","傾向…的（形容詞）"]]},
+{w:"credibility",zh:"可信度",d:"the quality of being trusted and believed",dom:"comm",p:[["cred","root","相信"],["ibility","suf","可…性（名詞）"]]},
+{w:"persuasion",zh:"說服",d:"the act of causing someone to accept a position",dom:"comm",p:[["per","pre","徹底、貫穿"],["suas","root","勸說"],["ion","suf","動作、過程（名詞）"]]},
+{w:"abstract",zh:"摘要",d:"a short summary of a paper or talk",dom:"comm",p:[["abs","pre","離開、脫離"],["tract","root","拉、抽取"]]},
+{w:"synopsis",zh:"概要",d:"a brief overview of the main points",dom:"comm",p:[["syn","pre","共同、一起"],["opsis","suf","看、視野"]]},
+{w:"translanguaging",zh:"跨語言實踐",d:"the flexible use of a speaker's full linguistic repertoire",dom:"comm",p:[["trans","pre","越過、跨越"],["languag","root","語言"],["ing","suf","進行中的動作、過程"]]},
+{w:"collaborate",zh:"協作",d:"to work jointly with others on a shared task",dom:"comm",p:[["col","pre","共同（com- 變體）"],["labor","root","工作、勞動"],["ate","suf","動作、使成為"]]},
+{w:"diagram",zh:"圖解",d:"a simplified drawing that explains how something works",dom:"comm",p:[["dia","pre","穿越、之間"],["gram","suf","記錄、圖"]]},
+{w:"engagement",zh:"投入、互動",d:"the active involvement of an audience with a message",dom:"comm",p:[["en","pre","使進入、使成為"],["gage","root","承諾、抵押"],["ment","suf","結果、事物（名詞）"]]},
+{w:"mediate",zh:"中介、調解",d:"to convey or negotiate between two parties",dom:"comm",p:[["medi","root","中間"],["ate","suf","動作、使成為"]]}
+];
+
+/* ---- 由詞庫推導詞素 ---- */
+const MORPH={};
+WORDS.forEach(w=>w.p.forEach(([f,t,g])=>{
+  const k=t+"|"+f;
+  if(!MORPH[k])MORPH[k]={form:f,type:t,gloss:g,ex:[],doms:new Set()};
+  MORPH[k].ex.push(w.w);MORPH[k].doms.add(w.dom);
+}));
+const MLIST=Object.values(MORPH);
+MLIST.forEach(m=>{m.cross=m.doms.size>=3});
+const TYPE_ZH={pre:"字首",root:"字根",suf:"字尾"};
+const TYPE_EN={pre:"prefix",root:"root",suf:"suffix"};
+const notate=(f,t)=>t==="pre"?f+"-":t==="suf"?"-"+f:"-"+f+"-";
+
+/* ================= 狀態 ================= */
+const S={mode:"build",dom:"all",score:0,streak:0,correct:0,total:0,
+  mastered:new Set(),log:[],queue:[],tries:0,timer:null};
+const $=s=>document.querySelector(s);
+const bench=$("#bench");
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const wordPool=()=>S.dom==="all"?WORDS:WORDS.filter(w=>w.dom===S.dom);
+const morphPool=()=>S.dom==="all"?MLIST:MLIST.filter(m=>m.doms.has(S.dom));
+function nextWord(){const pool=wordPool();
+  if(!S.queue.length)S.queue=shuffle(pool);
+  const w=S.queue.pop();return w&&pool.includes(w)?w:(S.queue=shuffle(pool),S.queue.pop())}
+function distractorPool(){const p=morphPool();return p.length>=10?p:MLIST}
+
+/* ================= 領域列 ================= */
+function buildRack(){
+  const r=$("#rack");
+  DOMS.forEach(d=>{
+    const n=d.k==="all"?WORDS.length:WORDS.filter(w=>w.dom===d.k).length;
+    const b=document.createElement("button");
+    b.className="dom";b.type="button";b.dataset.k=d.k;
+    b.setAttribute("aria-pressed",d.k===S.dom);
+    b.innerHTML=`${esc(d.zh)}<span class="c">${n}</span>`;
+    b.onclick=()=>{S.dom=d.k;S.queue=[];
+      r.querySelectorAll(".dom").forEach(x=>x.setAttribute("aria-pressed",x.dataset.k===S.dom));
+      clearInterval(S.timer);S.timer=null;MODES[S.mode]();paint()};
+    r.appendChild(b);
+  });
+}
+
+/* ================= 記分 ================= */
+function paint(){
+  $("#sScore").textContent=S.score;
+  $("#sStreak").textContent=S.streak;
+  $("#sAcc").textContent=S.total?Math.round(S.correct/S.total*100)+"%":"—";
+  const pool=morphPool(),got=pool.filter(m=>S.mastered.has(m.type+"|"+m.form)).length;
+  $("#mBar").style.width=(pool.length?got/pool.length*100:0)+"%";
+  $("#mCap").textContent=`${DOMZH[S.dom]}詞素 ${got} / ${pool.length}`;
+  $("#deckCount").textContent=`${MLIST.length} 詞素 · ${WORDS.length} 詞 · 7 領域`;
+  $("#log").innerHTML=S.log.slice(0,7).map(e=>
+    `<div><span class="m ${e.ok?"y":"n"}">${e.ok?"✓":"✕"}</span><span class="w">${esc(e.t)}</span></div>`).join("");
+}
+function record(ok,label,pts){
+  S.total++;if(ok){S.correct++;S.streak++;S.score+=pts}else{S.streak=0;S.score=Math.max(0,S.score-2)}
+  S.log.unshift({ok,t:label});paint();
+}
+const master=k=>S.mastered.add(k);
+
+/* ================= 01 合成 ================= */
+function modeBuild(){
+  const w=nextWord();S.tries=0;
+  const need=w.p.map(([f,t,g])=>({f,t,g}));
+  const pool=shuffle(distractorPool().filter(m=>!need.some(n=>n.f===m.form&&n.t===m.type)));
+  const decoys=[];
+  need.forEach(n=>{const d=pool.find(m=>m.type===n.type&&!decoys.includes(m));if(d)decoys.push(d)});
+  pool.forEach(m=>{if(decoys.length<4&&!decoys.includes(m))decoys.push(m)});
+  const chips=shuffle(need.map(n=>({form:n.f,type:n.t,gloss:n.g}))
+    .concat(decoys.map(d=>({form:d.form,type:d.type,gloss:d.gloss}))));
+
+  bench.innerHTML=`
+   <div class="stamp"><span>Bench 01 — 合成 Synthesis</span><span>${esc(DOMZH[w.dom])} · ${esc(DOMEN[w.dom])}</span></div>
+   <div class="prompt"><div class="field">依定義組裝出這個字</div>
+     <div class="zh">${esc(w.zh)}</div><div class="en">${esc(w.d)}</div></div>
+   <div class="slots" id="slots"></div>
+   <div class="tray-label">試劑架 · 點選字素放入欄位（含干擾項）</div>
+   <div class="tray" id="tray"></div>
+   <div class="row"><button class="btn" id="check" disabled>檢查</button>
+     <button class="btn ghost" id="hint">提示（−5 分）</button>
+     <button class="btn ghost" id="skip">換一題</button>
+     <span class="kbd">Enter 送出</span></div>
+   <div id="out"></div>`;
+
+  const slots=$("#slots"),tray=$("#tray"),filled=new Array(w.p.length).fill(null);
+  function drawSlots(){
+    slots.innerHTML="";
+    w.p.forEach((_,i)=>{
+      if(i)slots.insertAdjacentHTML("beforeend",'<span class="bond">+</span>');
+      const s=document.createElement("button");
+      s.className="slot"+(filled[i]?" filled":"");s.type="button";s.setAttribute("aria-label","欄位 "+(i+1));
+      if(filled[i]){const c=filled[i];
+        s.innerHTML=`<span class="chip" data-t="${c.type}" style="pointer-events:none">
+          <span class="form">${esc(notate(c.form,c.type))}</span><span class="gl">${esc(c.gloss)}</span></span>`;
+      }else s.innerHTML=`<span class="n">${i+1}</span>`;
+      s.onclick=()=>{if(filled[i]){const c=filled[i];filled[i]=null;
+        [...tray.children].find(el=>el.dataset.key===c.key)?.classList.remove("used");drawSlots();refresh()}};
+      slots.appendChild(s);
+    });
+  }
+  const refresh=()=>{$("#check").disabled=filled.some(x=>!x)};
+  chips.forEach((c,i)=>{c.key="k"+i;
+    const b=document.createElement("button");
+    b.className="chip";b.dataset.t=c.type;b.dataset.key=c.key;b.type="button";
+    b.innerHTML=`<span class="form">${esc(notate(c.form,c.type))}</span><span class="gl">${esc(c.gloss)}</span>`;
+    b.onclick=()=>{const idx=filled.findIndex(x=>!x);if(idx<0)return;
+      filled[idx]=c;b.classList.add("used");drawSlots();refresh()};
+    tray.appendChild(b);});
+  drawSlots();
+
+  $("#hint").onclick=()=>{const i=filled.findIndex(x=>!x),j=i<0?0:i;
+    S.score=Math.max(0,S.score-5);paint();
+    $("#out").innerHTML=`<div class="verdict"><div class="head" style="color:var(--ink-soft)">Hint 提示</div>
+      <div class="gloss-line">第 ${j+1} 個欄位是 <b>${TYPE_ZH[w.p[j][1]]}</b>，意思是「<b>${esc(w.p[j][2])}</b>」。</div></div>`};
+  $("#skip").onclick=modeBuild;
+  $("#check").onclick=()=>{
+    const ok=filled.every((c,i)=>c.form===w.p[i][0]&&c.type===w.p[i][1]);
+    [...slots.querySelectorAll(".slot")].forEach((el,i)=>{el.classList.remove("ok","no");
+      el.classList.add(filled[i].form===w.p[i][0]&&filled[i].type===w.p[i][1]?"ok":"no")});
+    if(ok){w.p.forEach(([f,t])=>master(t+"|"+f));
+      record(true,w.w,S.tries?10:20);
+      $("#out").innerHTML=verdictHTML(w,true,S.tries?10:20);
+      $("#check").disabled=true;$("#hint").disabled=true;
+      $("#skip").textContent="下一題";$("#skip").className="btn";$("#skip").focus();
+    }else{S.tries++;
+      if(S.tries>=2){record(false,w.w,0);$("#out").innerHTML=verdictHTML(w,false,0);
+        $("#check").disabled=true;$("#skip").textContent="下一題";$("#skip").className="btn";$("#skip").focus();}
+      else $("#out").innerHTML=`<div class="verdict bad"><div class="head">Recheck 再看一次</div>
+        <div class="gloss-line">紅框的欄位放錯了。點欄位可以把字素退回試劑架。</div></div>`}
+  };
+}
+function verdictHTML(w,ok,pts){
+  const built=w.p.map(([f,t])=>`<span data-t="${t}">${esc(f)}</span>`).join('<span class="sep">|</span>');
+  const lines=w.p.map(([f,t,g])=>
+    `<div class="gloss-line"><b class="mono">${esc(notate(f,t))}</b> ｜ ${TYPE_ZH[t]} ｜ ${esc(g)}</div>`).join("");
+  return `<div class="verdict ${ok?"good":"bad"}">
+    <div class="head">${ok?"Synthesised 合成成功 +"+pts+" 分":"Answer 正解"}</div>
+    <div class="built">${built}</div>
+    <div class="gloss-line" style="margin-bottom:10px"><b>${esc(w.w)}</b> ${esc(w.zh)} — ${esc(w.d)}</div>
+    ${lines}</div>`;
+}
+
+/* ================= 02 解構 ================= */
+function modeSplit(){
+  const w=nextWord();let step=0,hits=0;
+  bench.innerHTML=`
+   <div class="stamp"><span>Bench 02 — 解構 Dissection</span><span>${esc(DOMZH[w.dom])} · ${esc(DOMEN[w.dom])}</span></div>
+   <div class="prompt"><div class="field">拆解這個字，逐段判斷意思</div>
+     <div class="zh mono" style="letter-spacing:-.02em">${esc(w.w)}</div>
+     <div class="en">${esc(w.zh)}</div></div>
+   <div class="slots" id="segs"></div>
+   <div class="tray-label" id="ask"></div>
+   <div class="opts" id="opts"></div><div id="out"></div>`;
+  function drawSegs(){
+    const segs=$("#segs");segs.innerHTML="";
+    w.p.forEach(([f,t,g],i)=>{
+      if(i)segs.insertAdjacentHTML("beforeend",'<span class="bond">+</span>');
+      const done=i<step,now=i===step;
+      const el=document.createElement("span");
+      el.className="chip";el.style.cursor="default";el.dataset.t=done||now?t:"";
+      if(now)el.style.boxShadow="0 0 0 2px var(--good)";
+      if(!done&&!now)el.style.opacity=".45";
+      el.innerHTML=`<span class="form">${esc(notate(f,t))}</span><span class="gl">${done?esc(g):now?"？":"…"}</span>`;
+      segs.appendChild(el);});
+  }
+  function ask(){
+    drawSegs();
+    if(step>=w.p.length){
+      w.p.forEach(([f,t])=>master(t+"|"+f));
+      const ok=hits===w.p.length;record(ok,w.w,hits*10);
+      $("#ask").textContent="完成";$("#opts").innerHTML="";
+      $("#out").innerHTML=verdictHTML(w,ok,hits*10)+`<div class="row"><button class="btn" id="nx">下一題</button></div>`;
+      $("#nx").onclick=modeSplit;$("#nx").focus();return;}
+    const [f,t,g]=w.p[step];
+    $("#ask").textContent=`第 ${step+1} 段 ${notate(f,t)} 的意思是什麼？（${TYPE_ZH[t]}）`;
+    const wrong=shuffle(distractorPool().filter(m=>m.gloss!==g)).slice(0,3).map(m=>m.gloss);
+    renderOpts(shuffle([g,...wrong]),g,()=>{hits++;step++;setTimeout(ask,620)},()=>{step++;setTimeout(ask,900)});
+  }
+  ask();
+}
+function renderOpts(list,answer,onRight,onWrong){
+  const box=$("#opts");box.innerHTML="";
+  list.forEach((txt,i)=>{
+    const b=document.createElement("button");b.className="opt";b.type="button";
+    b.innerHTML=`<span class="key">${i+1}</span><span>${esc(txt)}</span>`;
+    b.onclick=()=>{[...box.children].forEach(el=>el.disabled=true);
+      if(txt===answer){b.classList.add("ok");onRight()}
+      else{b.classList.add("no");
+        [...box.children].forEach(el=>{if(el.textContent.includes(answer))el.classList.add("ok")});onWrong()}};
+    box.appendChild(b);});
+}
+
+/* ================= 03 快篩 ================= */
+function modeRapid(){
+  clearInterval(S.timer);
+  let left=60,hits=0,miss=0;
+  bench.innerHTML=`
+   <div class="stamp"><span>Bench 03 — 快篩 Rapid Assay</span><span class="timer" id="clk"><b>60</b> 秒</span></div>
+   <div class="tbar" id="tb"><i></i></div>
+   <div class="type-note" id="tn">—</div><div class="big-morph" id="bm">—</div>
+   <div class="tray-label" style="margin-top:18px">${esc(DOMZH[S.dom])}詞素 · 選出正確中文 · 答錯扣 3 秒</div>
+   <div class="opts" id="opts"></div><div id="out"></div>`;
+  S.timer=setInterval(()=>{left--;
+    $("#clk").innerHTML=`<b>${Math.max(0,left)}</b> 秒`;
+    $("#tb").querySelector("i").style.width=Math.max(0,left/60*100)+"%";
+    $("#clk").classList.toggle("low",left<=10);$("#tb").classList.toggle("low",left<=10);
+    if(left<=0)finish();},1000);
+  function q(){
+    const pool=morphPool(),m=pool[Math.random()*pool.length|0];
+    $("#tn").textContent=`${TYPE_ZH[m.type]} ${TYPE_EN[m.type]}`;
+    const bm=$("#bm");bm.dataset.t=m.type;bm.textContent=notate(m.form,m.type);
+    const wrong=shuffle(distractorPool().filter(x=>x.gloss!==m.gloss)).slice(0,3).map(x=>x.gloss);
+    renderOpts(shuffle([m.gloss,...wrong]),m.gloss,
+      ()=>{hits++;master(m.type+"|"+m.form);record(true,notate(m.form,m.type),12);setTimeout(q,380)},
+      ()=>{miss++;left=Math.max(0,left-3);record(false,notate(m.form,m.type),0);setTimeout(q,900)});
+  }
+  function finish(){
+    clearInterval(S.timer);S.timer=null;
+    $("#opts").innerHTML="";$("#bm").textContent="—";$("#bm").dataset.t="";$("#tn").textContent="—";
+    const acc=hits+miss?Math.round(hits/(hits+miss)*100):0;
+    $("#out").innerHTML=`<div class="verdict good"><div class="head">Assay complete 快篩結束</div>
+      <div class="gloss-line" style="font-size:15px">答對 <b>${hits}</b> ／ 答錯 <b>${miss}</b> ／ 正確率 <b>${acc}%</b></div>
+      <div class="row"><button class="btn" id="again">再測一次</button></div></div>`;
+    $("#again").onclick=modeRapid;$("#again").focus();
+  }
+  q();
+}
+
+/* ================= 04 推理 ================= */
+function modeInfer(){
+  const w=nextWord();
+  const others=WORDS.filter(x=>x.w!==w.w&&(S.dom==="all"||x.dom===w.dom));
+  const wrong=shuffle(others.length>=3?others:WORDS.filter(x=>x.w!==w.w)).slice(0,3);
+  const opts=shuffle([w,...wrong]);
+  bench.innerHTML=`
+   <div class="stamp"><span>Bench 04 — 推理 Inference</span><span>${esc(DOMZH[w.dom])} · ${esc(DOMEN[w.dom])}</span></div>
+   <div class="prompt"><div class="field">先不查字典，從字素推出意思</div>
+     <div class="zh mono" style="letter-spacing:-.02em;font-size:clamp(21px,5vw,33px)">${esc(w.w)}</div></div>
+   <div class="tray-label" style="margin-top:0">這個字最可能是什麼意思？</div>
+   <div class="opts" id="opts"></div><div id="out"></div>`;
+  const box=$("#opts");
+  opts.forEach((o,i)=>{
+    const b=document.createElement("button");b.className="opt";b.type="button";
+    b.innerHTML=`<span class="key">${i+1}</span><span><b>${esc(o.zh)}</b><br>
+      <span style="color:var(--ink-soft);font-size:13.5px">${esc(o.d)}</span></span>`;
+    b.onclick=()=>{[...box.children].forEach(el=>el.disabled=true);
+      const ok=o.w===w.w;b.classList.add(ok?"ok":"no");
+      if(!ok)[...box.children][opts.indexOf(w)].classList.add("ok");
+      w.p.forEach(([f,t])=>master(t+"|"+f));record(ok,w.w,25);
+      $("#out").innerHTML=verdictHTML(w,ok,25)+`<div class="row"><button class="btn" id="nx">下一題</button></div>`;
+      $("#nx").onclick=modeInfer;$("#nx").focus();};
+    box.appendChild(b);});
+}
+
+/* ================= 05 圖鑑 ================= */
+let cxType="all",cxQ="";
+function modeCodex(){
+  bench.innerHTML=`
+   <div class="stamp"><span>Bench 05 — 圖鑑 Codex</span><span>${esc(DOMZH[S.dom])}</span></div>
+   <div class="filters">
+     <button class="pill" data-f="all">全部</button>
+     <button class="pill" data-f="pre">字首</button>
+     <button class="pill" data-f="root">字根</button>
+     <button class="pill" data-f="suf">字尾</button>
+     <button class="pill" data-f="cross">跨域</button>
+     <button class="pill" data-f="mine">已掌握</button>
+     <input class="search mono" id="q" placeholder="搜尋 morpheme 或中文…" value="${esc(cxQ)}">
+   </div>
+   <div class="codex" id="cx"></div><div id="out"></div>`;
+  bench.querySelectorAll(".pill").forEach(p=>{
+    p.setAttribute("aria-pressed",p.dataset.f===cxType);
+    p.onclick=()=>{cxType=p.dataset.f;modeCodex()}});
+  $("#q").oninput=e=>{cxQ=e.target.value;draw()};
+  draw();
+  function draw(){
+    const q=cxQ.trim().toLowerCase();
+    const list=morphPool().filter(m=>{
+      const k=m.type+"|"+m.form;
+      if(cxType==="mine"&&!S.mastered.has(k))return false;
+      if(cxType==="cross"&&!m.cross)return false;
+      if(["pre","root","suf"].includes(cxType)&&m.type!==cxType)return false;
+      if(q&&!(m.form.toLowerCase().includes(q)||m.gloss.includes(q)||m.ex.join(" ").includes(q)))return false;
+      return true;}).sort((a,b)=>a.form.localeCompare(b.form));
+    $("#cx").innerHTML=list.length?list.map(m=>{
+      const k=m.type+"|"+m.form,got=S.mastered.has(k);
+      return `<button class="tile ${got?"":"locked"}" data-t="${m.type}" data-k="${esc(k)}">
+        ${got?'<span class="seal">✓</span>':""}
+        <div class="f">${esc(notate(m.form,m.type))}</div>
+        <div class="g">${esc(m.gloss)}</div>
+        <div class="ex">${esc(m.ex.slice(0,2).join(", "))}</div>
+        ${m.cross?'<span class="cross">跨域</span>':""}</button>`}).join("")
+      :`<div class="gloss-line">這個領域沒有符合的詞素。換個關鍵字或切換領域。</div>`;
+    $("#cx").querySelectorAll(".tile").forEach(t=>{t.onclick=()=>{
+      const m=MORPH[t.dataset.k];
+      $("#out").innerHTML=`<div class="verdict good"><div class="head">Entry 詞素卡</div>
+        <div class="built"><span data-t="${m.type}">${esc(notate(m.form,m.type))}</span></div>
+        <div class="gloss-line" style="margin-bottom:8px"><b>${TYPE_ZH[m.type]} ${TYPE_EN[m.type]}</b> ｜ ${esc(m.gloss)}
+          ｜ 領域：${[...m.doms].map(d=>DOMZH[d]).join("、")}</div>
+        <div class="gloss-line">出現在：<span class="mono">${esc(m.ex.join(" · "))}</span></div></div>`;
+      $("#out").scrollIntoView({behavior:"smooth",block:"nearest"})}});
+  }
+}
+
+/* ================= 切換 ================= */
+const MODES={build:modeBuild,split:modeSplit,rapid:modeRapid,infer:modeInfer,codex:modeCodex};
+document.querySelectorAll(".tab").forEach(t=>{t.onclick=()=>{
+  clearInterval(S.timer);S.timer=null;
+  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===t));
+  S.mode=t.dataset.mode;MODES[S.mode]();bench.focus()}});
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT")return;
+  if(e.key>="1"&&e.key<="4"){const o=bench.querySelectorAll(".opt:not([disabled])")[+e.key-1];
+    if(o){e.preventDefault();o.click()}}
+  if(e.key==="Enter"){const c=$("#check"),n=$("#nx")||$("#again")||$("#skip");
+    if(c&&!c.disabled){e.preventDefault();c.click()}
+    else if(n&&n.classList.contains("btn")&&!n.classList.contains("ghost")){e.preventDefault();n.click()}}});
+
+buildRack();paint();modeBuild();
+</script>
+</body>
+</html>
+

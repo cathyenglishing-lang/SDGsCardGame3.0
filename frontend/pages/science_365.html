@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science Every Day 每日科學人 · 365 Days of Scientific Minds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cobalt:#1F35B0; --cobalt-deep:#16247E;
+  --paper:#FBF7EE; --paper-dim:#F1EBDD;
+  --ink:#171431; --ink-soft:#4A4763;
+  --sun:#FFC53D; --coral:#FF5D47; --orange:#FF9F1C;
+  --mint:#2FBE8F; --sky:#2EA8E0; --violet:#7B5CD6; --rose:#E8558E;
+  --shadow:8px 8px 0 rgba(11,10,30,.35);
+  --shadow-sm:4px 4px 0 rgba(11,10,30,.3);
+  --shadow-xs:3px 3px 0 rgba(11,10,30,.28);
+  --disp:'Archivo Black','Noto Sans TC',sans-serif;
+  --body:'Space Grotesk','Noto Sans TC',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);color:var(--ink);background:var(--cobalt);
+  background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);
+  background-size:28px 28px;min-height:100vh;padding-bottom:80px;
+}
+.wrap{max-width:940px;margin:0 auto;padding:0 16px}
+button{font-family:var(--body)}
+
+/* header */
+header{padding:20px 0 6px}
+.head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{background:var(--paper);border:3px solid var(--ink);border-radius:14px;padding:9px 15px;
+  box-shadow:var(--shadow-sm);transform:rotate(-1.2deg);cursor:pointer}
+.brand h1{font-family:var(--disp);font-size:clamp(16px,3.6vw,23px);line-height:1.05}
+.brand h1 .sun{color:var(--cobalt)}
+.brand .zh{font-size:11px;font-weight:700;color:var(--ink-soft);letter-spacing:3px;margin-top:3px}
+.stats{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.chip{display:flex;align-items:center;gap:5px;background:var(--paper);border:3px solid var(--ink);
+  border-radius:999px;padding:6px 13px;font-weight:700;font-size:13.5px;box-shadow:var(--shadow-xs)}
+.chip b{font-size:15px}
+.chip.btn{cursor:pointer;transition:transform .12s}
+.chip.btn:hover{transform:translate(-1px,-1px)}
+.chip.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(11,10,30,.3)}
+.chip.sun-chip{background:var(--sun)}
+.chip.coral-chip{background:var(--coral);color:#fff}
+
+/* nav tabs */
+.tabs{display:flex;gap:8px;margin:16px 0 6px;flex-wrap:wrap}
+.tab{border:3px solid var(--ink);border-radius:12px;background:var(--paper);padding:8px 16px;
+  font-weight:700;font-size:13.5px;cursor:pointer;box-shadow:var(--shadow-xs);transition:transform .12s}
+.tab:hover{transform:translateY(-2px)}
+.tab.on{background:var(--ink);color:var(--sun)}
+
+/* section headings on blue */
+.sec-head{color:#fff;margin:22px 0 12px}
+.sec-head h2{font-family:var(--disp);font-size:clamp(19px,4vw,26px);text-shadow:3px 3px 0 rgba(0,0,0,.3)}
+.sec-head p{font-weight:700;font-size:13.5px;opacity:.92;margin-top:5px;line-height:1.6}
+
+/* YEAR VIEW */
+.year-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-bottom:26px}
+.month-tile{border:4px solid var(--ink);border-radius:18px;background:var(--paper);box-shadow:var(--shadow-sm);
+  overflow:hidden;cursor:pointer;transition:transform .14s;text-align:left}
+.month-tile:hover{transform:translate(-2px,-3px);box-shadow:10px 11px 0 rgba(11,10,30,.35)}
+.mt-band{padding:12px 14px;color:#fff;border-bottom:4px solid var(--ink)}
+.mt-num{font-family:var(--disp);font-size:12px;opacity:.85;letter-spacing:2px}
+.mt-name{font-family:var(--disp);font-size:19px;line-height:1.1;margin-top:2px}
+.mt-theme{font-weight:700;font-size:12px;margin-top:4px;opacity:.95;line-height:1.4}
+.mt-body{padding:11px 14px}
+.mt-zh{font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:8px}
+.mini-bar{height:12px;border:2.5px solid var(--ink);border-radius:999px;background:var(--paper-dim);overflow:hidden}
+.mini-fill{height:100%;background:repeating-linear-gradient(45deg,var(--mint) 0 9px,#27A87D 9px 18px);width:0;transition:width .5s}
+.mt-count{font-size:11.5px;font-weight:900;color:var(--ink-soft);margin-top:6px}
+
+/* MONTH VIEW */
+.month-head{background:var(--paper);border:4px solid var(--ink);border-radius:18px;box-shadow:var(--shadow-sm);
+  padding:16px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.mh-l h2{font-family:var(--disp);font-size:22px;line-height:1.1}
+.mh-l p{font-weight:700;font-size:13px;color:var(--ink-soft);margin-top:4px}
+.mh-nav{display:flex;gap:7px}
+.nav-btn{border:3px solid var(--ink);border-radius:11px;background:var(--sun);padding:8px 14px;
+  font-family:var(--disp);font-size:13px;cursor:pointer;box-shadow:var(--shadow-xs)}
+.nav-btn:hover{transform:translate(-1px,-1px)}
+.nav-btn.ghost{background:var(--paper)}
+.dow-row{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:7px}
+.dow{text-align:center;font-size:11px;font-weight:900;color:#C9D1FF;letter-spacing:1px}
+.day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:24px}
+.dcell{aspect-ratio:1;border:3px solid var(--ink);border-radius:12px;background:var(--paper);
+  padding:5px 4px;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s;
+  display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow-xs);text-align:left}
+.dcell:hover{transform:translateY(-3px);z-index:2}
+.dcell .dn{font-family:var(--disp);font-size:12px;line-height:1}
+.dcell .dnm{font-size:8.5px;font-weight:700;line-height:1.15;color:var(--ink-soft);
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.dcell .cdot{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;border:2px solid var(--ink)}
+.dcell.done{background:var(--mint)}
+.dcell.done .dnm,.dcell.done .dn{color:#fff}
+.dcell.today{outline:4px solid var(--sun);outline-offset:-4px}
+.dcell.blank{background:transparent;border:3px dashed rgba(255,255,255,.25);box-shadow:none;cursor:default}
+.dcell.blank:hover{transform:none}
+@media(max-width:600px){.dcell .dnm{display:none}.dcell{aspect-ratio:1;justify-content:center;align-items:center}
+  .dcell .dn{font-size:15px}}
+
+/* DAY VIEW: card */
+.back-row{margin-bottom:12px}
+.sci-card{background:var(--paper);border:4px solid var(--ink);border-radius:18px;box-shadow:var(--shadow);
+  overflow:hidden;margin-bottom:18px;animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.sci-band{padding:17px 20px 15px;color:#fff;position:relative;border-bottom:4px solid var(--ink)}
+.sci-band .daytag{position:absolute;top:13px;right:15px;background:var(--paper);color:var(--ink);
+  border:3px solid var(--ink);border-radius:10px;padding:3px 10px;font-family:var(--disp);font-size:12px;
+  transform:rotate(4deg);box-shadow:2px 2px 0 rgba(11,10,30,.3)}
+.sci-top{display:flex;align-items:center;gap:15px}
+.monogram{flex:0 0 auto;width:70px;height:70px;border-radius:50%;background:var(--paper);color:var(--ink);
+  border:3.5px solid var(--ink);display:flex;align-items:center;justify-content:center;
+  font-family:var(--disp);font-size:23px;box-shadow:3px 3px 0 rgba(11,10,30,.35)}
+.sci-name{font-family:var(--disp);font-size:clamp(19px,4.3vw,28px);line-height:1.08;text-shadow:2px 2px 0 rgba(0,0,0,.25)}
+.sci-zh{font-weight:900;font-size:14.5px;opacity:.95;margin-top:2px}
+.sci-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.tag{background:rgba(255,255,255,.93);color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;
+  padding:3px 10px;font-size:12px;font-weight:700}
+.sci-body{padding:19px 20px 21px}
+.block-label{display:inline-flex;align-items:center;gap:6px;font-family:var(--disp);font-size:12px;
+  letter-spacing:2px;text-transform:uppercase;background:var(--ink);color:var(--sun);
+  border-radius:8px;padding:4px 11px;margin-bottom:10px}
+.discovery{background:#FFF6DC;border:3px solid var(--ink);border-radius:14px;padding:13px 15px;
+  font-weight:500;font-size:15px;margin-bottom:17px;box-shadow:var(--shadow-xs)}
+.lvl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:11px}
+.lvl-row .hint{font-size:12.5px;font-weight:700;color:var(--ink-soft)}
+.lvl-toggle{display:flex;border:3px solid var(--ink);border-radius:999px;overflow:hidden;background:var(--paper-dim)}
+.lvl-toggle button{border:0;background:transparent;font-weight:700;font-size:13px;padding:6px 15px;
+  cursor:pointer;color:var(--ink-soft)}
+.lvl-toggle button.on{background:var(--ink);color:var(--sun)}
+.story{font-size:15.5px;line-height:1.75;margin-bottom:15px}
+.kw-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+.kw{background:var(--paper-dim);border:2.5px solid var(--ink);border-radius:10px;padding:4px 10px;font-size:12.5px;font-weight:700}
+.kw span{color:var(--cobalt)}
+.quote{border-left:6px solid var(--sun);background:#fff;border-top:3px solid var(--ink);
+  border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);border-radius:0 14px 14px 0;
+  padding:12px 15px;margin-bottom:15px;box-shadow:var(--shadow-xs)}
+.quote p{font-size:15px;font-style:italic;font-weight:500}
+.q-tag{display:inline-block;margin-top:8px;font-size:11px;font-weight:900;letter-spacing:1px;
+  border:2px solid var(--ink);border-radius:999px;padding:2px 10px}
+.q-tag.verified{background:var(--mint);color:#fff}
+.q-tag.attributed{background:var(--sun)}
+.q-tag.paraphrased{background:var(--sky);color:#fff}
+.life{background:#E9F7F0;border:3px solid var(--ink);border-radius:14px;padding:12px 15px;
+  font-size:14.5px;line-height:1.6;box-shadow:var(--shadow-xs)}
+.draft-note{display:flex;gap:10px;align-items:flex-start;background:#FFF0E6;border:3px dashed var(--ink);
+  border-radius:14px;padding:12px 14px;margin-bottom:16px;font-size:13px;line-height:1.6;font-weight:500}
+.draft-note b{display:block;margin-bottom:2px}
+
+/* bloom */
+.bloom{display:flex;flex-direction:column;gap:11px;margin:14px 0 8px}
+.b-row{border:3.5px solid var(--ink);border-radius:16px;background:var(--paper);box-shadow:var(--shadow-sm);overflow:hidden}
+.b-head{display:flex;align-items:center;gap:11px;padding:12px 15px;cursor:pointer;user-select:none}
+.b-num{flex:0 0 auto;width:36px;height:36px;border-radius:11px;border:3px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:15px;color:#fff}
+.b-info{flex:1;min-width:0}
+.b-name{font-weight:700;font-size:15px}
+.b-name .zh{color:var(--ink-soft);font-size:12.5px;margin-left:6px}
+.b-pts{font-size:11.5px;font-weight:900;color:var(--ink-soft)}
+.b-state{flex:0 0 auto;font-size:19px;transition:transform .2s}
+.b-row.open .b-state.arrow{transform:rotate(180deg)}
+.b-row.done{outline:3px solid var(--mint);outline-offset:-3px}
+.b-panel{display:none;border-top:3px dashed var(--ink);padding:15px;background:#fff}
+.b-row.open .b-panel{display:block}
+.b-q{font-size:15px;font-weight:500;line-height:1.6;margin-bottom:13px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;border:3px solid var(--ink);border-radius:12px;background:var(--paper);
+  padding:10px 13px;font-size:14.5px;font-weight:500;cursor:pointer;transition:transform .1s}
+.opt:hover:not(:disabled){transform:translateX(3px);background:#FFF6DC}
+.opt.right{background:var(--mint);color:#fff;font-weight:700}
+.opt.wrong{background:#FFE1DC;animation:shake .35s}
+.opt:disabled{cursor:default}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.stances{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:11px}
+.stance{border:3px solid var(--ink);border-radius:999px;background:var(--paper);padding:7px 15px;
+  font-weight:700;font-size:13px;cursor:pointer}
+.stance.on{background:var(--ink);color:var(--sun)}
+textarea{width:100%;border:3px solid var(--ink);border-radius:12px;padding:10px 12px;
+  font-family:var(--body);font-size:14.5px;min-height:84px;resize:vertical;background:var(--paper)}
+textarea:focus{outline:3px solid var(--sun);outline-offset:2px}
+input[type=text]{width:100%;border:3px solid var(--ink);border-radius:12px;padding:9px 12px;
+  font-family:var(--body);font-size:14.5px;background:var(--paper)}
+.starter{font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:8px;line-height:1.6}
+.submit-row{display:flex;align-items:center;gap:11px;margin-top:10px;flex-wrap:wrap}
+.btn-main{border:3px solid var(--ink);border-radius:12px;background:var(--sun);font-family:var(--disp);
+  font-size:13.5px;padding:10px 19px;cursor:pointer;box-shadow:var(--shadow-xs);transition:transform .12s}
+.btn-main:hover:not(:disabled){transform:translate(-1px,-1px)}
+.btn-main:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(11,10,30,.3)}
+.btn-main:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-main.mint{background:var(--mint);color:#fff}
+.btn-main.sky{background:var(--sky);color:#fff}
+.btn-main.ghost{background:var(--paper)}
+.btn-main.big{font-size:15px;padding:12px 24px}
+.wc{font-size:12px;font-weight:700;color:var(--ink-soft)}
+.feedback{margin-top:11px;background:#EAF3FF;border:3px solid var(--ink);border-radius:12px;
+  padding:11px 13px;font-size:13.5px;line-height:1.6;display:none}
+.feedback.show{display:block;animation:pop .3s}
+.feedback b{color:var(--cobalt)}
+
+.day-progress{margin:18px 0 30px;background:var(--paper);border:4px solid var(--ink);border-radius:18px;
+  box-shadow:var(--shadow);padding:17px 19px;display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+.prog-bar{flex:1;min-width:170px;height:19px;border:3px solid var(--ink);border-radius:999px;
+  background:var(--paper-dim);overflow:hidden}
+.prog-fill{height:100%;width:0;background:repeating-linear-gradient(45deg,var(--mint) 0 12px,#27A87D 12px 24px);
+  transition:width .5s;border-radius:999px}
+.prog-txt{font-weight:900;font-size:14px}
+.collect-note{font-size:12.5px;font-weight:700;color:var(--ink-soft);width:100%;line-height:1.6}
+
+/* PATHS */
+.path-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:13px;margin-bottom:26px}
+.path{border:4px solid var(--ink);border-radius:18px;background:var(--paper);box-shadow:var(--shadow-sm);
+  overflow:hidden;cursor:pointer;transition:transform .14s;text-align:left}
+.path:hover{transform:translate(-2px,-3px)}
+.path-band{padding:13px 15px;color:#fff;border-bottom:4px solid var(--ink);display:flex;gap:11px;align-items:center}
+.path-ico{font-size:27px}
+.path-band .pt{font-family:var(--disp);font-size:15.5px;line-height:1.15}
+.path-band .pz{font-size:11.5px;font-weight:700;opacity:.95;margin-top:2px}
+.path-body{padding:11px 15px}
+.path-body p{font-size:12.5px;line-height:1.55;color:var(--ink-soft);font-weight:500;margin-bottom:9px}
+
+/* LIST (path detail / search) */
+.list{display:flex;flex-direction:column;gap:8px;margin-bottom:26px}
+.li{display:flex;gap:12px;align-items:center;border:3px solid var(--ink);border-radius:13px;
+  background:var(--paper);padding:9px 13px;box-shadow:var(--shadow-xs);cursor:pointer;transition:transform .1s;text-align:left}
+.li:hover{transform:translateX(4px)}
+.li-date{flex:0 0 auto;width:56px;text-align:center;border-right:3px solid var(--ink);padding-right:9px}
+.li-date .m{font-size:10px;font-weight:900;color:var(--ink-soft);letter-spacing:1px}
+.li-date .d{font-family:var(--disp);font-size:17px;line-height:1}
+.li-main{flex:1;min-width:0}
+.li-main .n{font-weight:700;font-size:14.5px;line-height:1.25}
+.li-main .s{font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-top:2px}
+.li-chk{flex:0 0 auto;font-size:17px}
+
+/* COLLECTION / modal */
+.overlay{position:fixed;inset:0;background:rgba(15,13,40,.75);display:none;align-items:flex-start;
+  justify-content:center;padding:26px 14px;z-index:60;overflow-y:auto}
+.overlay.show{display:flex}
+.modal{background:var(--paper);border:4px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);
+  width:min(820px,100%);padding:22px;animation:pop .3s}
+.modal h2{font-family:var(--disp);font-size:21px;margin-bottom:4px}
+.modal h3{font-family:var(--disp);font-size:16px;margin:20px 0 4px}
+.modal .sub{font-weight:700;color:var(--ink-soft);font-size:13px;margin-bottom:16px;line-height:1.6}
+.close-x{float:right;border:3px solid var(--ink);background:var(--coral);color:#fff;border-radius:10px;
+  font-family:var(--disp);font-size:13px;padding:6px 12px;cursor:pointer;box-shadow:var(--shadow-xs)}
+.badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:10px}
+.badge{display:flex;gap:10px;align-items:center;border:3px solid var(--ink);border-radius:14px;
+  padding:10px 12px;background:#fff;box-shadow:var(--shadow-xs)}
+.badge .b-ico{font-size:25px}
+.badge .b-t{font-weight:900;font-size:12.5px}
+.badge .b-d{font-size:11px;font-weight:500;color:var(--ink-soft);line-height:1.4}
+.badge.locked{opacity:.4;filter:grayscale(1)}
+.world{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.wc-item{border:3px solid var(--ink);border-radius:12px;padding:8px;text-align:center;background:#fff;box-shadow:var(--shadow-xs)}
+.wc-item .f{font-size:21px}
+.wc-item .n{font-size:10.5px;font-weight:900;margin-top:3px;line-height:1.25}
+.wc-item .c{font-size:10px;font-weight:700;color:var(--ink-soft)}
+.wc-item.dim{opacity:.35;filter:grayscale(1)}
+
+/* studio */
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12px;font-weight:900;letter-spacing:1px;text-transform:uppercase;
+  color:var(--ink-soft);margin-bottom:5px}
+.field .help{font-size:11.5px;font-weight:500;color:var(--ink-soft);margin-top:4px;line-height:1.5}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.two-col{grid-template-columns:1fr}}
+pre.out{background:var(--ink);color:#9DE7C6;border-radius:12px;padding:13px;font-size:11.5px;
+  overflow-x:auto;max-height:260px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+
+/* toast + confetti */
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(130px);
+  background:var(--ink);color:var(--sun);border:3px solid var(--sun);border-radius:14px;
+  padding:11px 20px;font-weight:900;font-size:14px;z-index:90;
+  transition:transform .35s cubic-bezier(.2,1.3,.4,1);box-shadow:0 10px 30px rgba(0,0,0,.4);
+  max-width:88vw;text-align:center}
+#toast.show{transform:translateX(-50%) translateY(0)}
+.confetti{position:fixed;top:-12px;width:10px;height:16px;z-index:80;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
+
+footer{color:#C9D1FF;text-align:center;font-size:12px;font-weight:700;margin-top:24px;line-height:1.8}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="head-row">
+      <div class="brand" id="brandHome">
+        <h1>SCIENCE<br>EVERY <span class="sun">DAY</span></h1>
+        <div class="zh">每日科學人 · 365</div>
+      </div>
+      <div class="stats">
+        <div class="chip sun-chip">⭐<b id="ptsVal">0</b>&nbsp;pts</div>
+        <div class="chip coral-chip">🔥<b id="streakVal">0</b>&nbsp;streak</div>
+        <div class="chip btn" id="collBtn">🃏<b id="collCount">0</b>/<span id="collTot">365</span></div>
+      </div>
+    </div>
+    <nav class="tabs">
+      <button class="tab on" data-v="year">📅 Year 全年</button>
+      <button class="tab" data-v="today">⭐ Today 今日</button>
+      <button class="tab" data-v="paths">🧭 Paths 主題路徑</button>
+      <button class="tab" data-v="search">🔍 Search 搜尋</button>
+      <button class="tab" data-v="studio">✍️ Studio 編輯室</button>
+    </nav>
+  </header>
+  <main id="stage"></main>
+  <footer>
+    365 scientists, teams, events &amp; ethics cases · 6 Bloom levels · A2/B1/B2<br>
+    Roster is a curated draft — verify names, dates &amp; quotes before classroom use 課堂使用前請查證<br>
+    Progress is not saved after refresh 進度重新整理後不會保存
+  </footer>
+</div>
+
+<div class="overlay" id="ov"><div class="modal" id="ovBody"></div></div>
+<div id="toast"></div>
+<script>
+/* Science Every Day 365 — month themes and shared config
+   Edit month names, themes and colours here. */
+const MONTHS=[
+ {n:'January',zh:'一月',theme:'Foundations & First Questions',tz:'起點與最初的提問',c:'#1F35B0',len:31},
+ {n:'February',zh:'二月',theme:'Matter & Chemistry',tz:'物質與化學',c:'#7B5CD6',len:29},
+ {n:'March',zh:'三月',theme:'Forces, Energy & Light',tz:'力、能量與光',c:'#FF9F1C',len:31},
+ {n:'April',zh:'四月',theme:'Earth, Climate & Ocean',tz:'地球、氣候與海洋',c:'#2FBE8F',len:30},
+ {n:'May',zh:'五月',theme:'Life & Evolution',tz:'生命與演化',c:'#2EA8E0',len:31},
+ {n:'June',zh:'六月',theme:'The Body & Medicine',tz:'身體與醫學',c:'#E8558E',len:30},
+ {n:'July',zh:'七月',theme:'Microbes & Immunity',tz:'微生物與免疫',c:'#FF5D47',len:31},
+ {n:'August',zh:'八月',theme:'Genes & Molecules',tz:'基因與分子',c:'#16247E',len:31},
+ {n:'September',zh:'九月',theme:'Numbers, Logic & Computing',tz:'數學、邏輯與計算',c:'#2FBE8F',len:30},
+ {n:'October',zh:'十月',theme:'Space & Exploration',tz:'太空與探索',c:'#171431',len:31},
+ {n:'November',zh:'十一月',theme:'Technology, Engineering & AI',tz:'科技、工程與人工智慧',c:'#FF9F1C',len:30},
+ {n:'December',zh:'十二月',theme:'Ethics, Teams & Futures',tz:'倫理、團隊與未來',c:'#7B5CD6',len:31}
+];
+
+
+/* Science Every Day 365 — THE ROSTER (366 entries)
+   Format:  "Name|中文|Flag Country|Years|Field|category|contribution"
+   categories: classic women asia modern overlooked team event ethics
+   ⚠ Curated draft — verify names, dates and framings before classroom use. */
+const R={};
+
+R[1]=[
+"Isaac Newton|牛頓|🇬🇧 England|1643–1727|Physics|classic|Described the laws of motion and universal gravitation, linking falling apples and orbiting moons",
+"Hypatia of Alexandria|希帕提婭|🇪🇬 Alexandria|c.360–415|Mathematics|overlooked|Taught mathematics and astronomy in ancient Alexandria; among the earliest named women scholars",
+"Zhang Heng|張衡|🇨🇳 China|78–139|Astronomy|asia|Built an early seismoscope that could signal the direction of a distant earthquake",
+"Archimedes|阿基米德|🇬🇷 Syracuse|c.287–212 BCE|Mathematics|classic|Explained buoyancy and the power of levers, founding mathematical physics",
+"Ibn al-Haytham|海什木|🌍 Basra & Cairo|c.965–1040|Optics|classic|Showed that we see because light enters the eye, and insisted claims be tested by experiment",
+"Galileo Galilei|伽利略|🇮🇹 Italy|1564–1642|Astronomy|classic|Turned a telescope on the sky and found moons orbiting Jupiter, not Earth",
+"Johannes Kepler|克卜勒|🇩🇪 Germany|1571–1630|Astronomy|classic|Found that planets travel in ellipses, not perfect circles",
+"Nicolaus Copernicus|哥白尼|🇵🇱 Poland|1473–1543|Astronomy|classic|Placed the Sun, not the Earth, at the centre of the known cosmos",
+"Al-Khwarizmi|花拉子米|🌍 Persia & Baghdad|c.780–850|Mathematics|classic|Systematised algebra; the word 'algorithm' comes from his name",
+"Zu Chongzhi|祖沖之|🇨🇳 China|429–500|Mathematics|asia|Calculated π accurately to seven decimal places over a thousand years ago",
+"Shen Kuo|沈括|🇨🇳 China|1031–1095|Polymath|asia|Described magnetic compass navigation and read landscape as evidence of slow geological change",
+"Émilie du Châtelet|夏特萊|🇫🇷 France|1706–1749|Physics|women|Translated and extended Newton, sharpening the idea of kinetic energy",
+"Robert Hooke|虎克|🇬🇧 England|1635–1703|Microscopy|classic|Looked at cork through a microscope and gave us the word 'cell'",
+"Antonie van Leeuwenhoek|雷文霍克|🇳🇱 Netherlands|1632–1723|Microbiology|classic|Ground his own lenses and became the first person to see living microorganisms",
+"Aryabhata|阿耶波多|🇮🇳 India|476–550|Astronomy|asia|Explained eclipses naturally and proposed that the Earth rotates on its axis",
+"Maria Sibylla Merian|梅里安|🇩🇪 Germany|1647–1717|Entomology|women|Documented insect metamorphosis from live observation, transforming how insects were understood",
+"Blaise Pascal|巴斯卡|🇫🇷 France|1623–1662|Mathematics|classic|Worked out pressure and probability, and built an early mechanical calculator",
+"Christiaan Huygens|惠更斯|🇳🇱 Netherlands|1629–1695|Physics|classic|Argued light travels as a wave and built the first accurate pendulum clock",
+"Tycho Brahe|第谷|🇩🇰 Denmark|1546–1601|Astronomy|classic|Recorded decades of precise naked-eye star positions that made Kepler's laws possible",
+"Caroline Herschel|卡羅琳·赫歇爾|🇩🇪🇬🇧 Germany & Britain|1750–1848|Astronomy|women|Discovered comets and became the first woman in Britain paid for scientific work",
+"Leonardo da Vinci|達文西|🇮🇹 Italy|1452–1519|Anatomy & Engineering|classic|Drew the human body and flying machines with an observer's exactness",
+"Andreas Vesalius|維薩里|🇧🇪 Flanders|1514–1564|Anatomy|classic|Corrected centuries of anatomy errors by dissecting and looking for himself",
+"Li Shizhen|李時珍|🇨🇳 China|1518–1593|Pharmacology|asia|Spent decades compiling the Bencao Gangmu, a vast catalogue of medicinal substances",
+"Eratosthenes|埃拉托斯特尼|🇬🇷🇪🇬 Greece & Egypt|c.276–194 BCE|Geography|classic|Measured the circumference of the Earth using shadows and geometry",
+"Mary Anning|瑪麗·安寧|🇬🇧 England|1799–1847|Palaeontology|overlooked|Found the fossils that revealed extinct sea reptiles, while barred from scientific societies",
+"James Hutton|赫頓|🇬🇧 Scotland|1726–1797|Geology|classic|Read rock layers as evidence that Earth is unimaginably old",
+"Alexander von Humboldt|洪堡德|🇩🇪 Germany|1769–1859|Natural science|classic|Described nature as one connected web, an early ancestor of ecology",
+"Wang Zhenyi|王貞儀|🇨🇳 China|1768–1797|Astronomy|women|Modelled lunar eclipses with household objects and wrote to make astronomy public",
+"Ibn Sina (Avicenna)|伊本·西那|🌍 Persia|c.980–1037|Medicine|classic|Wrote a medical encyclopaedia used across Asia and Europe for six centuries",
+"The Royal Society|皇家學會|🇬🇧 United Kingdom|founded 1660|Institution|team|Made publishing, witnessing and reviewing each other's work a permanent part of science",
+"The First Scientific Journal|第一本科學期刊|🇬🇧🇫🇷 Britain & France|1665|Publishing|event|Philosophical Transactions began the practice of dated, citable, public scientific claims"
+];
+
+R[2]=[
+"Antoine Lavoisier|拉瓦節|🇫🇷 France|1743–1794|Chemistry|classic|Named oxygen and showed that matter is conserved in chemical reactions",
+"Marie-Anne Paulze Lavoisier|拉瓦節夫人|🇫🇷 France|1758–1836|Chemistry|overlooked|Ran experiments, translated rival chemists and drew the plates that spread the new chemistry",
+"Dmitri Mendeleev|門得列夫|🇷🇺 Russia|1834–1907|Chemistry|classic|Arranged the elements into a table that left gaps for elements not yet discovered",
+"Marie Curie|瑪麗·居禮|🇵🇱🇫🇷 Poland & France|1867–1934|Physics & Chemistry|women|Discovered polonium and radium and named the phenomenon of radioactivity",
+"John Dalton|道耳頓|🇬🇧 England|1766–1844|Chemistry|classic|Revived the atom as a working scientific idea with measurable weights",
+"Robert Boyle|波以耳|🇮🇪🇬🇧 Ireland & England|1627–1691|Chemistry|classic|Related gas pressure and volume, and pushed chemistry away from alchemy",
+"Alice Ball|艾莉絲·鮑爾|🇺🇸 United States|1892–1916|Chemistry|overlooked|Devised the first effective injectable leprosy treatment; died at 24 and was long uncredited",
+"Linus Pauling|鮑林|🇺🇸 United States|1901–1994|Chemistry|classic|Explained the nature of the chemical bond, then campaigned against nuclear testing",
+"Dorothy Hodgkin|霍奇金|🇬🇧 United Kingdom|1910–1994|Crystallography|women|Used X-rays to reveal the structures of penicillin, vitamin B12 and insulin",
+"Fritz Haber|哈伯|🇩🇪 Germany|1868–1934|Chemistry|ethics|His ammonia synthesis feeds billions; he also led Germany's chemical weapons programme",
+"Tu Youyou|屠呦呦|🇨🇳 China|b.1930|Pharmaceutical chemistry|asia|Extracted artemisinin from sweet wormwood, creating a malaria drug that saved millions",
+"Stephanie Kwolek|克沃萊克|🇺🇸 United States|1923–2014|Polymer chemistry|women|Invented the fibre behind body armour after noticing an odd, cloudy solution",
+"Ahmed Zewail|齊威爾|🇪🇬🇺🇸 Egypt & US|1946–2016|Chemistry|modern|Used ultrafast laser pulses to film chemical bonds breaking in femtoseconds",
+"Yuan T. Lee|李遠哲|🇹🇼 Taiwan|b.1936|Chemistry|asia|Built crossed molecular-beam machines that let chemists watch a reaction happen step by step",
+"Glenn Seaborg|西博格|🇺🇸 United States|1912–1999|Chemistry|classic|Co-discovered plutonium and reshaped the bottom of the periodic table",
+"Ellen Swallow Richards|理查茲|🇺🇸 United States|1842–1911|Environmental chemistry|women|Applied chemistry to water, air and food safety, founding sanitary science",
+"Kathleen Lonsdale|朗斯代爾|🇮🇪🇬🇧 Ireland & Britain|1903–1971|Crystallography|women|Proved the benzene ring is flat, and went to prison as a wartime pacifist",
+"Friedrich Wöhler|維勒|🇩🇪 Germany|1800–1882|Chemistry|classic|Made urea from non-living chemicals, blurring the line between living and lifeless matter",
+"Humphry Davy|戴維|🇬🇧 England|1778–1829|Chemistry|classic|Isolated sodium and potassium with electricity, and designed a lamp that saved miners' lives",
+"Percy Julian|朱利安|🇺🇸 United States|1899–1975|Organic chemistry|overlooked|Synthesised medicines from soybeans while barred from many labs by racial segregation",
+"Bakelite & the Plastic Age|塑膠時代|🇧🇪🇺🇸 Belgium & US|1907|Materials|event|The first fully synthetic plastic began an age of cheap materials — and of plastic waste",
+"Ziegler & Natta|齊格勒與納塔|🇩🇪🇮🇹 Germany & Italy|1950s|Polymer science|team|Their catalysts made modern plastics possible through a cross-border collaboration",
+"Lise Meitner|莉澤·邁特納|🇦🇹🇸🇪 Austria & Sweden|1878–1968|Nuclear physics|overlooked|Explained nuclear fission from exile, then watched the Nobel go only to her collaborator",
+"Otto Hahn & the missing name|哈恩與被遺漏的名字|🇩🇪 Germany|1944|Nuclear chemistry|ethics|A Nobel awarded to one collaborator raises the question of how credit should be shared",
+"Chien-Shiung Wu|吳健雄|🇨🇳🇺🇸 China & US|1912–1997|Experimental physics|asia|Her precise cobalt experiment showed nature does not treat left and right alike",
+"Irène Joliot-Curie|伊雷娜·居禮|🇫🇷 France|1897–1956|Chemistry|women|Created artificial radioactivity with Frédéric Joliot, extending her mother's work",
+"Gertrude Elion|埃利恩|🇺🇸 United States|1918–1999|Pharmacology|women|Designed drugs from an understanding of biochemistry rather than by trial and error",
+"Mario Molina|莫利納|🇲🇽 Mexico|1943–2020|Atmospheric chemistry|modern|Showed that CFCs from spray cans were destroying the ozone layer",
+"Leap Day: Fixing the Calendar|閏日：修正曆法|🌍 Worldwide|1582 & today|Measurement|event|An extra day every four years is a scientific correction hiding in plain sight"
+];
+
+R[3]=[
+"Albert Einstein|愛因斯坦|🇩🇪🇨🇭🇺🇸 Germany, Switzerland & US|1879–1955|Physics|classic|Reimagined space, time and gravity, and showed mass and energy are the same thing",
+"Michael Faraday|法拉第|🇬🇧 England|1791–1867|Physics|classic|Discovered electromagnetic induction with almost no formal schooling",
+"James Clerk Maxwell|馬克士威|🇬🇧 Scotland|1831–1879|Physics|classic|Wrote equations showing electricity, magnetism and light are one phenomenon",
+"Nikola Tesla|特斯拉|🇷🇸🇺🇸 Serbia & US|1856–1943|Engineering|classic|Championed alternating current, the reason electricity reaches your wall socket",
+"Heinrich Hertz|赫茲|🇩🇪 Germany|1857–1894|Physics|classic|Generated and detected radio waves, proving Maxwell right",
+"Hedy Lamarr|海蒂·拉瑪|🇦🇹🇺🇸 Austria & US|1914–2000|Invention|overlooked|Co-invented frequency hopping, an ancestor of Wi-Fi, while known only as a film star",
+"Max Planck|普朗克|🇩🇪 Germany|1858–1947|Physics|classic|Proposed that energy comes in packets, opening the quantum era",
+"Niels Bohr|波耳|🇩🇰 Denmark|1885–1962|Physics|classic|Built an atomic model with electrons on fixed energy levels",
+"Werner Heisenberg|海森堡|🇩🇪 Germany|1901–1976|Physics|classic|Showed there are limits to how precisely nature can be pinned down",
+"Erwin Schrödinger|薛丁格|🇦🇹 Austria|1887–1961|Physics|classic|Wrote the wave equation of quantum mechanics — and a famous cat thought experiment",
+"Paul Dirac|狄拉克|🇬🇧 England|1902–1984|Physics|classic|Predicted antimatter from the mathematics before anyone had seen it",
+"Satyendra Nath Bose|玻色|🇮🇳 India|1894–1974|Physics|asia|His statistics describe a whole class of particles now named bosons",
+"Meghnad Saha|薩哈|🇮🇳 India|1893–1956|Astrophysics|asia|His ionisation equation let astronomers read the temperature of stars",
+"C. V. Raman|拉曼|🇮🇳 India|1888–1970|Physics|asia|Found that light changes colour slightly when scattered, a tool now used worldwide",
+"Richard Feynman|費曼|🇺🇸 United States|1918–1988|Physics|classic|Reinvented quantum electrodynamics and insisted science should be explainable",
+"Tomonaga Shin'ichirō|朝永振一郎|🇯🇵 Japan|1906–1979|Physics|asia|Developed quantum electrodynamics in wartime isolation, independently of the US",
+"Emmy Noether|艾米·諾特|🇩🇪 Germany|1882–1935|Mathematics|women|Proved that every symmetry in nature implies a conservation law",
+"Maria Goeppert Mayer|梅耶|🇩🇪🇺🇸 Germany & US|1906–1972|Physics|women|Worked out the shell structure of the atomic nucleus, often in unpaid positions",
+"Lene Hau|勞·豪|🇩🇰 Denmark|b.1959|Physics|modern|Slowed a beam of light to a walking pace, then stopped it altogether",
+"Donna Strickland|斯特里克蘭|🇨🇦 Canada|b.1959|Laser physics|women|Co-invented the pulse amplification behind laser eye surgery",
+"Arthur Ashkin|阿什金|🇺🇸 United States|1922–2020|Optics|modern|Invented optical tweezers that hold living cells in a beam of light",
+"Shuji Nakamura|中村修二|🇯🇵 Japan|b.1954|Materials|asia|Created the bright blue LED that made white LED lighting possible",
+"Akasaki & Amano|赤崎與天野|🇯🇵 Japan|1980s–90s|Materials|team|Persisted for years on gallium nitride crystals when almost everyone had given up",
+"The LIGO Collaboration|重力波觀測團隊|🌍 International|2015|Astrophysics|team|A thousand scientists detected ripples in spacetime from colliding black holes",
+"Vera Rubin|薇拉·魯賓|🇺🇸 United States|1928–2016|Astronomy|overlooked|Her galaxy rotation measurements revealed dark matter; she never received a Nobel",
+"Subrahmanyan Chandrasekhar|錢德拉塞卡|🇮🇳🇺🇸 India & US|1910–1995|Astrophysics|asia|Calculated the mass limit beyond which a dying star must collapse",
+"Stephen Hawking|霍金|🇬🇧 United Kingdom|1942–2018|Cosmology|modern|Argued black holes slowly radiate, and brought cosmology to a huge public",
+"Jocelyn Bell Burnell|貝爾·伯奈爾|🇬🇧 United Kingdom|b.1943|Astrophysics|overlooked|Spotted the first pulsar as a student; the Nobel went to her supervisor",
+"Fabiola Gianotti|賈諾提|🇮🇹 Italy|b.1960|Particle physics|modern|Led the ATLAS team at CERN and became the laboratory's first woman director-general",
+"CERN & the Higgs Boson|希格斯玻色子|🌍 International|2012|Particle physics|event|Thousands of people across dozens of countries confirmed a particle predicted in 1964",
+"The Silicon Solar Cell|矽太陽能電池|🇺🇸 United States|1954|Energy|event|Bell Labs turned sunlight into useful electricity, starting the solar industry"
+];
+
+R[4]=[
+"Charles David Keeling|基林|🇺🇸 United States|1928–2005|Atmospheric science|modern|Measured atmospheric CO₂ year after year, producing climate science's most famous graph",
+"Eunice Newton Foote|尤妮絲·富特|🇺🇸 United States|1819–1888|Physics|overlooked|Showed in 1856 that CO₂ traps heat — three years before the credit went elsewhere",
+"Svante Arrhenius|阿瑞尼斯|🇸🇪 Sweden|1859–1927|Chemistry|classic|Calculated by hand how doubling CO₂ would warm the planet",
+"Alfred Wegener|韋格納|🇩🇪 Germany|1880–1930|Geophysics|classic|Proposed that continents drift; ridiculed in his lifetime, vindicated after his death",
+"Marie Tharp|瑪麗·薩普|🇺🇸 United States|1920–2006|Oceanography|overlooked|Mapped the ocean floor by hand and revealed the mid-ocean ridge that proved plate tectonics",
+"Inge Lehmann|英厄·萊曼|🇩🇰 Denmark|1888–1993|Seismology|women|Read earthquake waves and discovered that Earth has a solid inner core",
+"Rachel Carson|瑞秋·卡森|🇺🇸 United States|1907–1964|Marine biology|women|Silent Spring showed pesticides moving through food chains and launched modern environmentalism",
+"Wangari Maathai|馬塔伊|🇰🇪 Kenya|1940–2011|Biology & activism|modern|Linked deforestation, poverty and rights through a movement that planted millions of trees",
+"Syukuro Manabe|真鍋淑郎|🇯🇵🇺🇸 Japan & US|b.1931|Climate science|asia|Built the first computer models that connected CO₂ to global temperature",
+"Jacques Cousteau|庫斯托|🇫🇷 France|1910–1997|Ocean exploration|modern|Co-invented the aqualung and filmed the ocean for a global audience",
+"Sylvia Earle|席薇亞·厄爾|🇺🇸 United States|b.1935|Marine biology|women|Has spent thousands of hours underwater and campaigns for ocean protected areas",
+"Taiwan's Seismic Network|臺灣地震觀測網|🇹🇼 Taiwan|1990s–now|Seismology|team|Dense island-wide sensors deliver earthquake alerts in seconds",
+"James Lovelock|洛夫洛克|🇬🇧 United Kingdom|1919–2022|Earth systems|modern|Proposed that life and the planet regulate each other — an idea still debated",
+"Milutin Milanković|米蘭科維奇|🇷🇸 Serbia|1879–1958|Geophysics|classic|Showed how slow wobbles in Earth's orbit pace the ice ages",
+"Charles Lyell|萊爾|🇬🇧 Scotland|1797–1875|Geology|classic|Argued that today's slow processes explain Earth's dramatic past",
+"Formosat & TASA|福爾摩沙衛星與太空中心|🇹🇼 Taiwan|1999–now|Remote sensing|team|Taiwan's own satellites watch typhoons, land use and the atmosphere",
+"Anna Mani|安娜·馬尼|🇮🇳 India|1918–2001|Meteorology|women|Built India's weather and solar instruments, making its climate data possible",
+"Earth Day, 1970|地球日|🇺🇸🌍 US & worldwide|1970|Environment|event|Twenty million people marched, turning environmental science into public policy",
+"Katharine Hayhoe|海霍|🇨🇦🇺🇸 Canada & US|b.1972|Climate science|modern|Shows that talking about climate works better through shared values than more data",
+"The Montreal Protocol|蒙特婁議定書|🌍 International|1987|Policy|event|The world phased out ozone-destroying chemicals — proof that global action can work",
+"Susan Solomon|所羅門|🇺🇸 United States|b.1956|Atmospheric chemistry|women|Led the Antarctic expedition that pinned the ozone hole on CFC chemistry",
+"Paul Crutzen|克魯岑|🇳🇱 Netherlands|1933–2021|Atmospheric chemistry|modern|Explained ozone chemistry and popularised the term Anthropocene",
+"Hydrothermal Vents|深海熱泉|🌊 Pacific Ocean|1977|Deep-sea biology|event|Scientists found whole ecosystems living on chemistry instead of sunlight",
+"Ruth Patrick|露絲·派翠克|🇺🇸 United States|1907–2013|Freshwater ecology|women|Used tiny algae as living indicators of river pollution",
+"Chernobyl, 1986|車諾比事件|🇺🇦 Ukraine|1986|Nuclear safety|ethics|A reactor disaster that raised lasting questions about risk, secrecy and public trust",
+"The IPCC|政府間氣候變遷專門委員會|🌍 International|1988–now|Climate assessment|team|Thousands of scientists synthesise the evidence that governments negotiate over",
+"Ove Hoegh-Guldberg|霍格-古德柏|🇦🇺 Australia|b.1959|Marine biology|modern|Warned early that warming seas would bleach coral reefs worldwide",
+"East Asian Monsoon Research|東亞季風研究|🇹🇼🇯🇵🇨🇳 East Asia|1980s–now|Meteorology|team|Regional collaboration made typhoon and monsoon forecasting far more accurate",
+"Charles Moore|查爾斯·摩爾|🇺🇸 United States|b.1947|Oceanography|modern|Sailed into a vast field of floating plastic and brought ocean plastic into public view",
+"The World's Aquifers|地下水資源|🌍 Worldwide|ongoing|Hydrology|event|Invisible groundwater feeds much of humanity — and is being drained faster than it refills"
+];
+
+R[5]=[
+"Charles Darwin|達爾文|🇬🇧 England|1809–1882|Biology|classic|Explained the diversity of life through descent with modification and natural selection",
+"Alfred Russel Wallace|華萊士|🇬🇧 England|1823–1913|Biology|overlooked|Reached natural selection independently while collecting specimens in Southeast Asia",
+"Gregor Mendel|孟德爾|🇨🇿 Moravia|1822–1884|Genetics|classic|Found the rules of inheritance in pea plants; his work was ignored for 35 years",
+"Carl Linnaeus|林奈|🇸🇪 Sweden|1707–1778|Taxonomy|classic|Gave every species a two-part name, a system still used today",
+"Barbara McClintock|麥克林托克|🇺🇸 United States|1902–1992|Genetics|women|Discovered that genes can move within a genome, decades before others accepted it",
+"Lynn Margulis|馬古利斯|🇺🇸 United States|1938–2011|Biology|women|Argued complex cells arose when one microbe swallowed another and both survived",
+"E. O. Wilson|威爾森|🇺🇸 United States|1929–2021|Ecology|classic|Studied ants, coined biodiversity as a cause, and pushed for large-scale conservation",
+"Jane Goodall|珍·古德|🇬🇧 United Kingdom|b.1934|Primatology|women|Watched wild chimpanzees make tools, breaking the line between humans and other animals",
+"Dian Fossey|黛安·佛西|🇺🇸 United States|1932–1985|Primatology|women|Lived among mountain gorillas and fought poaching until her killing",
+"Biruté Galdikas|高蒂卡|🇨🇦🇮🇩 Canada & Indonesia|b.1946|Primatology|women|Has studied wild orangutans in Borneo for more than fifty years",
+"Ernst Mayr|邁爾|🇩🇪🇺🇸 Germany & US|1904–2005|Evolutionary biology|classic|Defined species by whether populations can actually interbreed",
+"Motoo Kimura|木村資生|🇯🇵 Japan|1924–1994|Population genetics|asia|Argued most molecular change is neutral, not driven by selection",
+"Mary Leakey|瑪麗·李基|🇬🇧🇹🇿 Britain & Tanzania|1913–1996|Palaeoanthropology|overlooked|Found 3.6-million-year-old footprints proving early humans walked upright",
+"Donald Johanson & 'Lucy'|喬韓森與露西|🇺🇸🇪🇹 US & Ethiopia|1974|Palaeoanthropology|event|A partial skeleton reshaped the human family tree and became world famous",
+"Tomoko Ohta|太田朋子|🇯🇵 Japan|b.1933|Population genetics|asia|Refined neutral theory to explain slightly harmful mutations that persist",
+"Sewall Wright|賴特|🇺🇸 United States|1889–1988|Genetics|classic|Showed how chance, not only selection, shapes small populations",
+"Theodosius Dobzhansky|杜布贊斯基|🇺🇦🇺🇸 Ukraine & US|1900–1975|Genetics|classic|Joined genetics and evolution, arguing biology makes sense only in the light of evolution",
+"The Ediacaran Fossils|埃迪卡拉化石|🇦🇺🌍 Australia & worldwide|discovered 1946|Palaeontology|event|Strange soft-bodied creatures revealed complex life long before the Cambrian",
+"The Cambrian Explosion|寒武紀大爆發|🌍 Worldwide|c.540 million yrs ago|Palaeontology|event|Most major animal body plans appear in the fossil record within a geological blink",
+"Konrad Lorenz|勞倫茲|🇦🇹 Austria|1903–1989|Ethology|ethics|Discovered imprinting in birds; his wartime political record complicates his legacy",
+"Nikolaas Tinbergen|廷貝亨|🇳🇱 Netherlands|1907–1988|Ethology|classic|Set out four questions any explanation of animal behaviour should answer",
+"International Day for Biodiversity|國際生物多樣性日|🌍 Worldwide|22 May|Conservation|event|A yearly reminder that species are disappearing faster than we can name them",
+"Mei-Hsiu Hwang|黃美秀|🇹🇼 Taiwan|b.1966|Wildlife ecology|asia|Has tracked the Formosan black bear for decades to keep the species from vanishing",
+"Frans de Waal|德瓦爾|🇳🇱🇺🇸 Netherlands & US|1948–2024|Primatology|modern|Showed empathy, fairness and reconciliation in primates other than humans",
+"Svalbard Global Seed Vault|斯瓦爾巴全球種子庫|🇳🇴 Norway|opened 2008|Agriculture|event|A frozen backup of the world's crop diversity, buried inside an Arctic mountain",
+"Nettie Stevens|奈蒂·史蒂文斯|🇺🇸 United States|1861–1912|Genetics|overlooked|Discovered that X and Y chromosomes determine sex; credit often went to a male colleague",
+"Thomas Hunt Morgan|摩根|🇺🇸 United States|1866–1945|Genetics|classic|Used fruit flies to show that genes sit in a line along chromosomes",
+"Ynes Mexia|梅西亞|🇺🇸🇲🇽 US & Mexico|1870–1938|Botany|women|Began collecting plants at 51 and gathered tens of thousands of specimens",
+"George Washington Carver|卡佛|🇺🇸 United States|c.1864–1943|Agricultural science|overlooked|Born into slavery, he taught crop rotation that restored exhausted southern soils",
+"Beatrix Potter|波特|🇬🇧 United Kingdom|1866–1943|Mycology|overlooked|Her research on lichens was dismissed by the Linnean Society because she was a woman",
+"Kenting Coral Reef Research|墾丁珊瑚礁研究|🇹🇼 Taiwan|1980s–now|Marine ecology|team|Long-term monitoring of Taiwan's southern reefs tracks bleaching and recovery"
+];
+
+R[6]=[
+"William Harvey|哈維|🇬🇧 England|1578–1657|Physiology|classic|Proved that blood circulates in a closed loop pumped by the heart",
+"Ibn al-Nafis|伊本·納菲斯|🌍 Syria & Egypt|1213–1288|Medicine|overlooked|Described pulmonary circulation three centuries before it was known in Europe",
+"Florence Nightingale|南丁格爾|🇬🇧 United Kingdom|1820–1910|Nursing & statistics|women|Used data visualisation to prove that sanitation, not battle, was killing soldiers",
+"Ignaz Semmelweis|塞麥爾維斯|🇭🇺 Hungary|1818–1865|Medicine|classic|Showed handwashing saved mothers' lives, and was rejected by his profession",
+"Joseph Lister|李斯特|🇬🇧 United Kingdom|1827–1912|Surgery|classic|Introduced antiseptic technique and made surgery survivable",
+"Elizabeth Blackwell|布萊克威爾|🇬🇧🇺🇸 Britain & US|1821–1910|Medicine|women|Became the first woman to earn a medical degree in the United States",
+"Rebecca Lee Crumpler|克倫普勒|🇺🇸 United States|1831–1895|Medicine|overlooked|First African American woman physician in the US, treating freed people after the Civil War",
+"Virginia Apgar|阿普加|🇺🇸 United States|1909–1974|Anaesthesiology|women|Created a simple newborn score now used in delivery rooms worldwide",
+"Helen Taussig|陶西格|🇺🇸 United States|1898–1986|Cardiology|women|Worked out why 'blue babies' were dying and how surgery could save them",
+"Vivien Thomas|維維恩·湯瑪斯|🇺🇸 United States|1910–1985|Surgical research|overlooked|Devised the blue-baby operation as a lab technician, uncredited for decades",
+"Charles Drew|查爾斯·祝|🇺🇸 United States|1904–1950|Medicine|overlooked|Developed blood banking, then resigned over racial segregation of donated blood",
+"Henrietta Lacks|亨麗埃塔·拉克斯|🇺🇸 United States|1920–1951|Cell biology|ethics|Her cells were taken without consent and became the most-used cell line in biology",
+"Banting, Best, Collip & Macleod|胰島素團隊|🇨🇦 Canada|1921–22|Medicine|team|Four people, one bitter credit dispute, and the isolation of insulin",
+"Rosalyn Yalow|亞洛|🇺🇸 United States|1921–2011|Medical physics|women|Invented a test sensitive enough to measure hormones in a drop of blood",
+"Wu Lien-teh|伍連德|🇲🇾🇨🇳 Malaya & China|1879–1960|Epidemiology|asia|Stopped a plague epidemic in 1910 and designed an early protective face mask",
+"Chen Chien-jen|陳建仁|🇹🇼 Taiwan|b.1951|Epidemiology|asia|Linked hepatitis B to liver cancer and shaped Taiwan's public health policy",
+"Taiwan's National Health Insurance|全民健康保險|🇹🇼 Taiwan|1995|Health policy|event|A single-payer system that made universal coverage a measurable public health experiment",
+"Michael Houghton & the Hepatitis C Team|C型肝炎團隊|🇬🇧🇺🇸 Britain & US|1989|Virology|team|Found a virus no one could culture, using genetic detective work",
+"Baruch Blumberg|布隆伯格|🇺🇸 United States|1925–2011|Virology|modern|Discovered the hepatitis B antigen, leading to a vaccine against a cause of liver cancer",
+"The First Public Anaesthesia|首次公開麻醉|🇺🇸 United States|1846|Surgery|event|Ether ended the necessity of pain in surgery — and started arguments over who deserved credit",
+"The Tuskegee Study|塔斯基吉研究|🇺🇸 United States|1932–1972|Research ethics|ethics|Black men were left untreated for syphilis for forty years in the name of research",
+"The Nuremberg Code|紐倫堡守則|🌍 International|1947|Research ethics|ethics|After wartime atrocities, informed consent became a written rule of research",
+"J. Marion Sims|辛姆斯|🇺🇸 United States|1813–1883|Surgery|ethics|Gynaecological techniques developed through operations on enslaved women without anaesthesia",
+"Patricia Bath|派翠西亞·巴斯|🇺🇸 United States|1942–2019|Ophthalmology|overlooked|Invented a laser cataract device and worked to make eye care reach poor communities",
+"The First Heart Transplant|首例心臟移植|🇿🇦 South Africa|1967|Surgery|event|A transplanted heart beat for 18 days and changed the definition of death",
+"Katalin Karikó|卡里科|🇭🇺🇺🇸 Hungary & US|b.1955|Biochemistry|women|Spent decades on unfashionable mRNA research that later enabled COVID vaccines",
+"Sarah Gilbert|莎拉·吉爾伯特|🇬🇧 United Kingdom|b.1962|Vaccinology|modern|Led an Oxford vaccine designed to be cheap enough for lower-income countries",
+"Organ Transplantation Ethics|器官移植倫理|🌍 Worldwide|ongoing|Bioethics|ethics|Who gets a scarce organ, and who decides, remains an unsolved fairness problem",
+"Founding of the WHO|世界衛生組織成立|🌍 International|1948|Global health|event|Health was declared a human right, and disease surveillance became international",
+"Michael Lai|賴明詔|🇹🇼 Taiwan|b.1942|Virology|asia|A pioneer of coronavirus research long before the world had heard of one"
+];
+R[7]=[
+"Louis Pasteur|路易·巴斯德|🇫🇷 France|1822–1895|Microbiology|classic|Showed microbes cause disease and spoilage, and invented gentle heating to make drinks safe",
+"Robert Koch|柯霍|🇩🇪 Germany|1843–1910|Bacteriology|classic|Set out rules for proving a specific microbe causes a specific disease",
+"Edward Jenner|金納|🇬🇧 England|1749–1823|Medicine|classic|Used cowpox to protect against smallpox, giving us the word vaccine",
+"Onesimus|奧尼西姆斯|🇬🇭🇺🇸 West Africa & Boston|early 1700s|Medicine|overlooked|An enslaved man who taught Boston the African practice of inoculation against smallpox",
+"Lady Mary Wortley Montagu|蒙塔古夫人|🇬🇧🇹🇷 Britain & Ottoman Empire|1689–1762|Medicine|overlooked|Brought variolation from Istanbul to Britain and had her own children inoculated",
+"Alexander Fleming|弗萊明|🇬🇧 Scotland|1881–1955|Bacteriology|classic|Noticed mould killing bacteria on a forgotten plate and named penicillin",
+"Florey & Chain|弗洛里與錢恩|🇦🇺🇬🇧🇩🇪 Australia, Britain & Germany|1940s|Pharmacology|team|Turned Fleming's observation into a medicine that could actually be given to patients",
+"Norman Heatley|希特利|🇬🇧 United Kingdom|1911–2004|Biochemistry|overlooked|Devised the improvised methods that made mass penicillin production possible",
+"Waksman & Schatz|瓦克斯曼與沙茨|🇺🇸 United States|1943|Microbiology|ethics|A tuberculosis drug discovered by a graduate student, credited mostly to his supervisor",
+"Jonas Salk|沙克|🇺🇸 United States|1914–1995|Virology|classic|Made a polio vaccine and refused to patent it, saying the patent belonged to the people",
+"Albert Sabin|沙賓|🇵🇱🇺🇸 Poland & US|1906–1993|Virology|classic|Developed the oral polio vaccine that could reach children anywhere",
+"Smallpox Eradicated|天花根除|🌍 Worldwide|1980|Public health|event|The only human disease ever eradicated, through global cooperation across Cold War lines",
+"Ronald Ross|羅斯|🇬🇧🇮🇳 Britain & India|1857–1932|Parasitology|classic|Proved mosquitoes transmit malaria by dissecting them one by one",
+"Carlos Finlay|芬萊|🇨🇺 Cuba|1833–1915|Epidemiology|overlooked|Proposed the mosquito theory of yellow fever twenty years before it was believed",
+"Kitasato Shibasaburō|北里柴三郎|🇯🇵 Japan|1853–1931|Bacteriology|asia|Cultured the tetanus bacterium and co-identified the plague bacillus",
+"Hideyo Noguchi|野口英世|🇯🇵 Japan|1876–1928|Bacteriology|asia|Studied yellow fever in West Africa and died of the disease he was investigating",
+"Élie Metchnikoff|梅契尼可夫|🇺🇦🇫🇷 Ukraine & France|1845–1916|Immunology|classic|Discovered cells that swallow invaders, founding the study of innate immunity",
+"Paul Ehrlich|埃爾利希|🇩🇪 Germany|1854–1915|Immunology|classic|Searched for a chemical that would target a pathogen and spare the patient",
+"Rebecca Lancefield|蘭斯菲爾德|🇺🇸 United States|1895–1981|Bacteriology|women|Classified streptococci into the groups still used in hospitals today",
+"Gerty Cori|柯里|🇨🇿🇺🇸 Czech lands & US|1896–1957|Biochemistry|women|Mapped how the body stores and releases sugar, while employed far below her rank",
+"Esther Lederberg|埃絲特·萊德堡|🇺🇸 United States|1922–2006|Microbial genetics|overlooked|Invented replica plating and discovered lambda phage; her husband received the Nobel",
+"Joshua Lederberg|喬舒亞·萊德堡|🇺🇸 United States|1925–2008|Genetics|classic|Showed bacteria can exchange genes, explaining how resistance spreads",
+"Antibiotic Resistance|抗生素抗藥性|🌍 Worldwide|ongoing|Public health|ethics|Every prescription is a small decision with a global, long-term cost",
+"SARS, 2003|SARS 疫情|🇹🇼🇭🇰🇨🇳 East Asia|2003|Epidemiology|event|An outbreak that reshaped hospital design, quarantine law and trust in Taiwan",
+"COVID-19 and Global Science|COVID-19 與全球科學|🌍 Worldwide|2020–|Virology|team|Genome shared in days, vaccines in months — and deep inequality in who received them",
+"Françoise Barré-Sinoussi|巴爾-西諾西|🇫🇷 France|b.1947|Virology|women|Co-discovered HIV, then worked on access to treatment in lower-income countries",
+"The HIV Credit Dispute|愛滋病毒發現之爭|🇫🇷🇺🇸 France & US|1980s|Research ethics|ethics|Two labs, one virus, and a fight over priority that reached national governments",
+"World Hepatitis Day|世界肝炎日|🌍 Worldwide|28 July|Public health|event|Marks the birthday of the scientist whose vaccine prevents a major cause of liver cancer",
+"The Human Microbiome|人體微生物組|🌍 Worldwide|2007–|Microbiology|modern|You carry trillions of microbes; researchers are still learning what they do for you",
+"Félix d'Hérelle|德雷爾|🇨🇦🇫🇷 Canada & France|1873–1949|Microbiology|classic|Discovered viruses that kill bacteria, an idea now revived against resistant infections",
+"Vaccine Hesitancy|疫苗猶豫|🌍 Worldwide|ongoing|Science communication|ethics|Where trust breaks down, better data alone rarely repairs it"
+];
+
+R[8]=[
+"Rosalind Franklin|羅莎琳·富蘭克林|🇬🇧 United Kingdom|1920–1958|Biophysics|overlooked|Her X-ray image, Photo 51, revealed that DNA is a double helix",
+"Watson & Crick|華生與克里克|🇺🇸🇬🇧 US & Britain|1953|Molecular biology|team|Built the double-helix model using data they were shown without Franklin's knowledge",
+"Maurice Wilkins|威爾金斯|🇳🇿🇬🇧 New Zealand & Britain|1916–2004|Biophysics|classic|Shared the DNA Nobel; his role in passing on Franklin's data is still debated",
+"Raymond Gosling|戈斯林|🇬🇧 United Kingdom|1926–2015|Crystallography|overlooked|The doctoral student who actually exposed Photo 51 alongside Franklin",
+"Frederick Sanger|桑格|🇬🇧 United Kingdom|1918–2013|Biochemistry|classic|Invented ways to read the sequence of proteins and then of DNA",
+"Har Gobind Khorana|柯拉納|🇮🇳🇺🇸 India & US|1922–2011|Molecular biology|asia|Helped crack the genetic code by synthesising DNA of known sequence",
+"Marshall Nirenberg|尼倫伯格|🇺🇸 United States|1927–2010|Biochemistry|classic|Read the first word of the genetic code in a test tube",
+"Erwin Chargaff|查加夫|🇦🇹🇺🇸 Austria & US|1905–2002|Biochemistry|overlooked|His base-pairing rules were essential to the double helix, and rarely celebrated",
+"Oswald Avery|艾佛里|🇨🇦🇺🇸 Canada & US|1877–1955|Bacteriology|overlooked|Showed DNA carries heredity in 1944; never received a Nobel",
+"Hershey & Chase|赫希與蔡斯|🇺🇸 United States|1952|Genetics|team|A blender experiment confirmed that genes are made of DNA, not protein",
+"Kary Mullis|穆利斯|🇺🇸 United States|1944–2019|Biochemistry|modern|Invented PCR, the copying method behind every modern DNA test",
+"The Human Genome Project|人類基因體計畫|🌍 International|1990–2003|Genomics|team|Twenty institutions across six countries published a human genome as a public good",
+"Craig Venter|凡特|🇺🇸 United States|b.1946|Genomics|modern|Raced the public genome project and later built a cell with a synthetic genome",
+"Doudna & Charpentier|杜德納與夏彭提耶|🇺🇸🇫🇷 US & France|2012|Molecular biology|team|Turned a bacterial defence system into CRISPR, a tool for editing any genome",
+"Feng Zhang|張鋒|🇨🇳🇺🇸 China & US|b.1981|Bioengineering|asia|Showed CRISPR editing works inside human cells, opening therapeutic uses",
+"He Jiankui|賀建奎|🇨🇳 China|b.1984|Genetics|ethics|Announced gene-edited babies in 2018, was jailed, and triggered global rule-making",
+"Germline Editing|生殖細胞基因編輯|🌍 Worldwide|ongoing|Bioethics|ethics|Changes that pass to future generations cannot be consented to by the people affected",
+"Genetic Privacy|基因隱私|🌍 Worldwide|ongoing|Bioethics|ethics|Ancestry databases have solved cold cases and exposed relatives who never opted in",
+"Christiane Nüsslein-Volhard|紐斯林-沃爾哈德|🇩🇪 Germany|b.1942|Developmental biology|women|Found the genes that lay out an embryo's body plan",
+"Shinya Yamanaka|山中伸彌|🇯🇵 Japan|b.1962|Stem cell biology|asia|Turned adult cells back into stem cells with just four genes",
+"John Gurdon|格登|🇬🇧 United Kingdom|b.1933|Developmental biology|classic|Proved a mature cell's nucleus still holds all the instructions for a whole animal",
+"Dolly the Sheep|桃莉羊|🇬🇧 Scotland|1996|Cloning|event|The first mammal cloned from an adult cell, and the cloning debate that followed",
+"Elizabeth Blackburn|布拉克本|🇦🇺🇺🇸 Australia & US|b.1948|Molecular biology|women|Discovered the protective caps on chromosome ends",
+"Carol Greider|格雷德|🇺🇸 United States|b.1961|Molecular biology|women|Found telomerase as a graduate student on Christmas Day",
+"Sydney Brenner|布倫納|🇿🇦🇬🇧 South Africa & Britain|1927–2019|Molecular biology|classic|Chose a tiny worm as a model organism and mapped every one of its cells",
+"Ada Yonath|尤娜特|🇮🇱 Israel|b.1939|Crystallography|women|Solved the structure of the ribosome after years of being told it was impossible",
+"Venki Ramakrishnan|拉馬克里希南|🇮🇳🇬🇧 India & Britain|b.1952|Structural biology|asia|Mapped the ribosome atom by atom, showing how antibiotics jam it",
+"AlphaFold|蛋白質結構預測|🌍 International|2020|Computational biology|modern|Software predicted protein shapes so well it changed how structural biology is done",
+"Epigenetics|表觀遺傳學|🌍 Worldwide|1990s–|Genetics|modern|Experience can switch genes on and off without changing the DNA sequence",
+"Academia Sinica Genomics|中央研究院基因體研究|🇹🇼 Taiwan|2000s–now|Genomics|team|Taiwan Biobank links genomes to health data across the island's populations",
+"Chi-Huey Wong|翁啟惠|🇹🇼 Taiwan|b.1948|Chemical biology|asia|Pioneered ways to build complex sugars, opening new routes to vaccines and drugs"
+];
+
+R[9]=[
+"Ada Lovelace|艾達·勒芙蕾絲|🇬🇧 England|1815–1852|Computing|women|Wrote the first published algorithm and saw that machines could handle more than numbers",
+"Charles Babbage|巴貝奇|🇬🇧 England|1791–1871|Computing|classic|Designed a programmable mechanical computer a century before electronics",
+"Alan Turing|圖靈|🇬🇧 United Kingdom|1912–1954|Computer science|ethics|Defined computation and broke wartime codes; was prosecuted for being gay",
+"Grace Hopper|葛麗絲·霍普|🇺🇸 United States|1906–1992|Computer science|women|Built the first compiler, insisting programs could be written in words",
+"Katherine Johnson|凱薩琳·強森|🇺🇸 United States|1918–2020|Mathematics|overlooked|Calculated the orbital paths that astronauts trusted with their lives",
+"Dorothy Vaughan|桃樂絲·范恩|🇺🇸 United States|1910–2008|Mathematics|overlooked|Led NASA's segregated West Computers and retrained them as FORTRAN programmers",
+"Mary Jackson|瑪麗·傑克森|🇺🇸 United States|1921–2005|Engineering|overlooked|Petitioned a court for the right to attend classes and became NASA's first Black woman engineer",
+"The ENIAC Programmers|ENIAC 程式設計師|🇺🇸 United States|1945|Computing|team|Six women programmed the first electronic computer and were left out of the photographs",
+"Claude Shannon|夏農|🇺🇸 United States|1916–2001|Information theory|classic|Measured information in bits and set the limits of every communication channel",
+"John von Neumann|馮·紐曼|🇭🇺🇺🇸 Hungary & US|1903–1957|Mathematics|classic|Described the stored-program architecture nearly every computer still uses",
+"Margaret Hamilton|瑪格麗特·漢彌爾頓|🇺🇸 United States|b.1936|Software engineering|women|Wrote Apollo's flight software and coined the term software engineering",
+"Radia Perlman|拉迪亞·柏爾曼|🇺🇸 United States|b.1951|Networking|women|Her protocol keeps large networks from collapsing into loops",
+"Tim Berners-Lee|柏內茲-李|🇬🇧 United Kingdom|b.1955|Computer science|modern|Invented the Web at CERN and gave it away without a patent",
+"Cerf & Kahn|瑟夫與卡恩|🇺🇸 United States|1970s|Networking|team|Designed the rules that let different networks become one Internet",
+"Frances Allen|法蘭西絲·艾倫|🇺🇸 United States|1932–2020|Computer science|women|Made compilers optimise code, and was the first woman to win the Turing Award",
+"Barbara Liskov|芭芭拉·利斯科夫|🇺🇸 United States|b.1939|Computer science|women|Her principle for designing types underpins modern object-oriented programming",
+"Andrew Yao|姚期智|🇹🇼🇨🇳 Taiwan & China|b.1946|Computer science|asia|Won the Turing Award for complexity theory and now builds research schools in Asia",
+"Fan Chung|金芳蓉|🇹🇼🇺🇸 Taiwan & US|b.1949|Mathematics|asia|A leading graph theorist whose work underlies network and web analysis",
+"Shing-Tung Yau|丘成桐|🇨🇳🇺🇸 China & US|b.1949|Mathematics|asia|Solved geometry problems that string theory later built on",
+"Chern Shiing-shen|陳省身|🇨🇳🇺🇸 China & US|1911–2004|Mathematics|asia|Founded modern differential geometry and trained generations of mathematicians",
+"Srinivasa Ramanujan|拉馬努金|🇮🇳 India|1887–1920|Mathematics|asia|Produced startling formulas with almost no formal training, many proved only decades later",
+"Maryam Mirzakhani|米爾札哈尼|🇮🇷 Iran|1977–2017|Mathematics|women|The first woman to win the Fields Medal, working on the geometry of curved surfaces",
+"Sophie Germain|索菲·熱爾曼|🇫🇷 France|1776–1831|Mathematics|women|Studied under a man's name and made key advances in number theory and elasticity",
+"Karen Uhlenbeck|烏倫貝克|🇺🇸 United States|b.1942|Mathematics|women|First woman to win the Abel Prize, for geometric analysis",
+"Kurt Gödel|哥德爾|🇦🇹🇺🇸 Austria & US|1906–1978|Logic|classic|Proved that any rich mathematical system contains truths it cannot prove",
+"George Boole|布爾|🇬🇧 England|1815–1864|Logic|classic|Turned logic into algebra, the foundation of every digital circuit",
+"Gottfried Leibniz|萊布尼茲|🇩🇪 Germany|1646–1716|Mathematics|classic|Co-invented calculus and described binary arithmetic",
+"The Calculus Priority Dispute|微積分優先權之爭|🇬🇧🇩🇪 Britain & Germany|1700s|History of science|ethics|Newton and Leibniz both had a claim; nationalism made the quarrel worse",
+"Linus Torvalds & Open Source|托瓦茲與開源|🇫🇮 Finland|b.1969|Software|modern|Released a kernel anyone could read and change, and thousands did",
+"Diffie & Hellman|迪菲與赫爾曼|🇺🇸 United States|1976|Cryptography|team|Public-key cryptography let strangers keep a secret, making online privacy possible"
+];
+
+R[10]=[
+"Yuri Gagarin|加加林|🇷🇺 Soviet Union|1934–1968|Spaceflight|event|The first human in space, orbiting Earth once in 108 minutes",
+"Valentina Tereshkova|捷列什科娃|🇷🇺 Soviet Union|b.1937|Spaceflight|women|The first woman in space, two decades before the next one flew",
+"Apollo 11|阿波羅十一號|🇺🇸 United States|1969|Spaceflight|team|Three astronauts and 400,000 workers put people on the Moon and brought them back",
+"Sputnik|史普尼克|🇷🇺 Soviet Union|1957|Spaceflight|event|A beeping metal sphere started the space age and rewired science education worldwide",
+"Wernher von Braun|馮·布朗|🇩🇪🇺🇸 Germany & US|1912–1977|Rocketry|ethics|His rockets reached the Moon and were built by prisoners in concentration camps",
+"Sally Ride|莎莉·萊德|🇺🇸 United States|1951–2012|Spaceflight|women|The first American woman in space, later a physics educator",
+"Mae Jemison|梅·傑米森|🇺🇸 United States|b.1956|Spaceflight|women|Physician and engineer, the first Black woman to travel to space",
+"Kalpana Chawla|卡爾帕娜·喬拉|🇮🇳🇺🇸 India & US|1962–2003|Aerospace|asia|The first woman of Indian origin in space, lost in the Columbia disaster",
+"The Hubble Space Telescope|哈伯太空望遠鏡|🌍 International|1990–|Astronomy|team|Launched with a flawed mirror, repaired in orbit, and it redrew the universe",
+"Edwin Hubble|哈伯|🇺🇸 United States|1889–1953|Astronomy|classic|Showed other galaxies exist and that the universe is expanding",
+"Henrietta Swan Leavitt|勒維特|🇺🇸 United States|1868–1921|Astronomy|overlooked|Found the yardstick for measuring cosmic distance; Hubble's work depended on it",
+"Annie Jump Cannon|坎農|🇺🇸 United States|1863–1941|Astronomy|women|Classified hundreds of thousands of stars into the system still used today",
+"Cecilia Payne-Gaposchkin|佩恩-加波施金|🇬🇧🇺🇸 Britain & US|1900–1979|Astrophysics|overlooked|Discovered stars are mostly hydrogen, and was pressured to call it 'probably not real'",
+"Williamina Fleming|弗萊明|🇬🇧🇺🇸 Scotland & US|1857–1911|Astronomy|overlooked|A housekeeper hired to compute, she catalogued thousands of stars and found white dwarfs",
+"Nancy Grace Roman|南希·羅曼|🇺🇸 United States|1925–2018|Astronomy|women|Fought inside NASA for the space telescope that became Hubble",
+"Carl Sagan|卡爾·薩根|🇺🇸 United States|1934–1996|Astronomy|classic|Made planetary science public and argued a scientist's job includes explaining",
+"Frank Drake|德瑞克|🇺🇸 United States|1930–2022|Astronomy|modern|Wrote an equation to estimate how many civilisations we might hear from",
+"Jill Tarter|吉兒·塔特|🇺🇸 United States|b.1944|Astronomy|women|Spent a career listening for signals and defending the search as real science",
+"Voyager & the Golden Record|航海家與金唱片|🌍 Interstellar|1977–|Space exploration|event|Two probes left the solar system carrying greetings in 55 languages",
+"James Webb Space Telescope|韋伯太空望遠鏡|🌍 International|2021–|Astronomy|team|A folded gold mirror unfurled a million miles away and saw the earliest galaxies",
+"Cassini–Huygens|卡西尼-惠更斯|🌍 International|1997–2017|Planetary science|team|Orbited Saturn for 13 years, landed on Titan, and ended by diving into the planet",
+"Mars Rovers|火星探測車|🇺🇸 United States|1997–|Planetary science|team|Robots that outlived their missions by years and found evidence of ancient water",
+"Chang'e Lunar Missions|嫦娥探月|🇨🇳 China|2007–|Space exploration|asia|Landed on the Moon's far side and returned lunar samples to Earth",
+"ISRO & Chandrayaan|印度太空研究組織|🇮🇳 India|1969–|Space exploration|asia|Reached Mars orbit on a budget smaller than many films, and landed near the lunar south pole",
+"JAXA & Hayabusa|隼鳥號|🇯🇵 Japan|2003–|Space exploration|asia|Touched an asteroid, survived multiple failures, and brought samples home",
+"Taiwan Space Agency|臺灣太空總署|🇹🇼 Taiwan|1991–|Space technology|asia|From weather satellites to home-built payloads, an island building its own orbit",
+"Mayor & Queloz|梅爾與奎洛茲|🇨🇭 Switzerland|1995|Astronomy|team|Found the first planet orbiting another Sun-like star, and thousands followed",
+"Space Debris|太空垃圾|🌍 Earth orbit|ongoing|Space policy|ethics|Tens of thousands of fragments circle Earth; who is responsible for cleaning up?",
+"Who Owns the Moon?|月球屬於誰？|🌍 International|ongoing|Space law|ethics|Treaties say no nation can claim it, but mining companies are already planning",
+"Dark Skies & Sky Knowledge|暗空與星空知識|🌍 Worldwide|ongoing|Astronomy|event|Light pollution is erasing a sky that Indigenous astronomies have read for millennia",
+"Dark Matter & Dark Energy|暗物質與暗能量|🌍 Worldwide|ongoing|Cosmology|modern|About 95% of the universe is something we cannot see and cannot yet explain"
+];
+
+R[11]=[
+"Thomas Edison|愛迪生|🇺🇸 United States|1847–1931|Invention|ethics|Built the first industrial research lab — and put his name on his employees' work",
+"Lewis Latimer|拉蒂默|🇺🇸 United States|1848–1928|Engineering|overlooked|Improved the carbon filament that made light bulbs last, and drafted Bell's telephone patent",
+"Granville Woods|格蘭維爾·伍茲|🇺🇸 United States|1856–1910|Engineering|overlooked|Invented a telegraph that let moving trains warn each other, and defended it in court",
+"Garrett Morgan|摩根|🇺🇸 United States|1877–1963|Invention|overlooked|Created a breathing hood and a three-position traffic signal that saved lives",
+"Guglielmo Marconi|馬可尼|🇮🇹 Italy|1874–1937|Engineering|classic|Sent a radio signal across the Atlantic and built the first wireless industry",
+"Jagadish Chandra Bose|博斯|🇮🇳 India|1858–1937|Physics & botany|asia|Demonstrated millimetre radio waves and measured responses in plants",
+"Alexander Graham Bell|貝爾|🇬🇧🇨🇦🇺🇸 Britain, Canada & US|1847–1922|Invention|classic|Patented the telephone amid disputed claims, and taught deaf students all his life",
+"The Wright Brothers|萊特兄弟|🇺🇸 United States|1903|Aeronautics|team|Two bicycle mechanics solved control, the problem better-funded rivals had ignored",
+"Emily Warren Roebling|羅布林|🇺🇸 United States|1843–1903|Engineering|overlooked|Ran the Brooklyn Bridge project for over a decade after her husband fell ill",
+"Elijah McCoy|麥考伊|🇨🇦🇺🇸 Canada & US|1844–1929|Engineering|overlooked|His automatic lubricator let engines run without stopping, and spawned dozens of imitations",
+"Morris Chang|張忠謀|🇹🇼 Taiwan|b.1931|Semiconductors|asia|Bet that a factory making only other companies' chip designs could work — and it reshaped tech",
+"TSMC & Taiwan's Chip Ecosystem|臺灣半導體生態系|🇹🇼 Taiwan|1987–now|Engineering|team|Thousands of engineers, suppliers and researchers built the world's most advanced chip cluster",
+"ITRI|工業技術研究院|🇹🇼 Taiwan|1973–|Research institute|team|A public institute that moved technology from lab bench to Taiwanese factories",
+"Kilby & Noyce|基爾比與諾伊斯|🇺🇸 United States|1958–59|Electronics|team|Independently invented the integrated circuit, shrinking rooms of electronics onto a chip",
+"Gordon Moore|摩爾|🇺🇸 United States|1929–2023|Semiconductors|modern|Observed that transistor counts double regularly — a forecast that became a target",
+"Lynn Conway|林恩·康威|🇺🇸 United States|1938–2024|Computer engineering|overlooked|Rewrote how chips are designed after being fired for coming out as transgender",
+"ASML & EUV Lithography|極紫外光微影|🇳🇱 Netherlands|2010s–|Engineering|team|Machines that print circuits with light thinner than a virus, made by one global supply chain",
+"Akira Yoshino|吉野彰|🇯🇵 Japan|b.1948|Chemistry|asia|Built the first safe commercial lithium-ion battery, now in nearly every device",
+"Goodenough & Whittingham|古迪納夫與惠廷安|🇬🇧🇺🇸 Britain & US|1970s–80s|Materials|team|Laid the chemistry that made rechargeable batteries practical",
+"Wind & Solar Engineering|風電與太陽能工程|🌍 Worldwide|ongoing|Energy|event|The cheapest new electricity in much of the world is now built, not burned",
+"Whittle & von Ohain|惠特爾與馮·奧海因|🇬🇧🇩🇪 Britain & Germany|1930s|Aeronautics|team|Two engineers on opposite sides invented the jet engine independently",
+"Geoffrey Hinton|辛頓|🇬🇧🇨🇦 Britain & Canada|b.1947|Artificial intelligence|modern|Kept neural networks alive through decades of doubt, then warned about what they became",
+"LeCun & Bengio|楊立昆與班吉歐|🇫🇷🇨🇦 France & Canada|1990s–|Artificial intelligence|team|Built the convolutional and sequence models behind modern AI systems",
+"Fei-Fei Li|李飛飛|🇨🇳🇺🇸 China & US|b.1976|Artificial intelligence|asia|Created ImageNet and argues AI research must be centred on human needs",
+"Timnit Gebru|蓋布魯|🇪🇹🇺🇸 Ethiopia & US|b.1982|AI ethics|ethics|Her paper on the risks of large language models cost her job and changed the field's debate",
+"Joy Buolamwini|布奧拉姆維尼|🇬🇭🇺🇸 Ghana & US|b.1989|AI ethics|modern|Showed face recognition failed most on dark-skinned women, and made companies respond",
+"AlphaGo vs Lee Sedol|AlphaGo 對戰李世乭|🇰🇷 South Korea|2016|Artificial intelligence|event|A machine won at Go a decade earlier than expected, and made a move no human had played",
+"Autonomous Vehicles|自動駕駛|🌍 Worldwide|ongoing|Engineering ethics|ethics|Who is responsible when software makes a split-second decision about a life?",
+"Deepfakes & Synthetic Media|深偽與合成媒體|🌍 Worldwide|ongoing|Media ethics|ethics|When seeing is no longer believing, verification becomes a public skill",
+"AI and the Future of Work|人工智慧與工作的未來|🌍 Worldwide|ongoing|Technology policy|ethics|Automation has always moved work; the argument is about who absorbs the cost"
+];
+
+R[12]=[
+"The Manhattan Project|曼哈頓計畫|🇺🇸 United States|1942–1945|Nuclear physics|team|130,000 people built a weapon most of them could not be told about",
+"J. Robert Oppenheimer|歐本海默|🇺🇸 United States|1904–1967|Physics|ethics|Led the bomb's design, then opposed the next one and lost his security clearance",
+"Joseph Rotblat|羅特布拉特|🇵🇱🇬🇧 Poland & Britain|1908–2005|Physics|overlooked|The only scientist to leave the Manhattan Project on conscience, and won a Peace Nobel",
+"Hiroshima & Nagasaki|廣島與長崎|🇯🇵 Japan|1945|History of science|ethics|The moment physics became inseparable from questions about its own use",
+"Nuclear Test Ban Treaties|禁止核試驗條約|🌍 International|1963–|Science policy|event|Scientists' fallout measurements pushed governments to stop testing in the atmosphere",
+"Fukushima, 2011|福島核災|🇯🇵 Japan|2011|Risk communication|event|An earthquake, a tsunami and a reactor showed how hard it is to explain risk in real time",
+"The Nuclear Power Debate|核能爭議|🌍 Worldwide|ongoing|Energy policy|ethics|Low-carbon and high-consequence: a genuine trade-off with no free option",
+"Eugenics|優生學|🌍 Worldwide|1880s–1970s|History of science|ethics|Respected scientists used heredity to justify sterilisation and exclusion",
+"Nazi Medical Experiments|納粹人體實驗|🇩🇪 Germany|1939–1945|Research ethics|ethics|Atrocities committed by qualified doctors, which is why consent had to be codified",
+"Nobel Prize Day|諾貝爾獎頒獎日|🇸🇪 Sweden|10 December|Science culture|event|A ceremony that shapes what the public thinks science looks like — and who does it",
+"The Matilda Effect|瑪蒂達效應|🌍 Worldwide|named 1993|Sociology of science|ethics|The documented pattern of women's scientific work being credited to men",
+"How Peer Review Works|同儕審查如何運作|🌍 Worldwide|ongoing|Science practice|event|Anonymous strangers argue with your paper before anyone else reads it",
+"Retraction & Fraud|撤稿與造假|🌍 Worldwide|ongoing|Research integrity|ethics|Science corrects itself, but slowly, and retracted papers keep being cited",
+"The Replication Crisis|再現性危機|🌍 Worldwide|2011–|Research methods|ethics|Many published findings could not be repeated, forcing a rethink of how evidence is judged",
+"Open Access|開放取用|🌍 Worldwide|ongoing|Publishing|ethics|Publicly funded research sits behind paywalls that most of the world cannot afford",
+"Citizen Science|公民科學|🌍 Worldwide|ongoing|Public participation|modern|Volunteers count birds, classify galaxies and monitor rivers at a scale labs cannot",
+"Indigenous Knowledge & Science|原住民知識與科學|🌍 Worldwide|ongoing|Knowledge systems|event|Fire management, navigation and ecology built over millennia of careful observation",
+"Science in Your Own Language|用母語做科學|🌍 Worldwide|ongoing|Science communication|event|Most research is published in English, which shapes who can contribute and who can read",
+"The Leaky Pipeline|漏水的管線|🌍 Worldwide|ongoing|Equity in STEM|ethics|Women enter science in large numbers and leave at every stage; the causes are structural",
+"Science Diplomacy|科學外交|🌍 International|ongoing|Policy|team|CERN and ITER put rival nations in the same laboratory on purpose",
+"The Antarctic Treaty|南極條約|🌍 International|1959|Science policy|event|An entire continent reserved for peaceful science, and it has held for over 60 years",
+"Norman Borlaug|布勞格|🇺🇸🇲🇽 US & Mexico|1914–2009|Agronomy|ethics|His wheat prevented famines and also entrenched fertiliser-intensive farming",
+"Vandana Shiva|席瓦|🇮🇳 India|b.1952|Environmental policy|modern|Argues seed patents and industrial agriculture harm small farmers and biodiversity",
+"Food Security & GMOs|糧食安全與基改作物|🌍 Worldwide|ongoing|Agricultural policy|ethics|A debate where the science and the politics of ownership are often confused",
+"The Sustainable Development Goals|永續發展目標|🌍 International|2015–2030|Global policy|event|Seventeen goals that turned sustainability into something measurable and reportable",
+"Science Communication as a Field|科學傳播作為一門學科|🌍 Worldwide|1980s–|Science communication|event|Explaining science became a research discipline, not just a talent some people have",
+"Taiwan's Research Institutes|臺灣的研究機構|🇹🇼 Taiwan|ongoing|Research system|team|Academia Sinica, ITRI, universities and hospitals form a small island's research web",
+"Science Journalism|科學新聞|🌍 Worldwide|ongoing|Media|event|The translators between the laboratory and everyone else, and an endangered profession",
+"Misinformation & Fact-Checking|錯誤資訊與事實查核|🌍 Worldwide|ongoing|Information literacy|ethics|Corrections travel more slowly than claims, which is a design problem, not a moral one",
+"What Science Still Doesn't Know|科學仍未知的事|🌍 Worldwide|ongoing|Open questions|event|Consciousness, dark energy, the origin of life — the honest list is long and that is the point",
+"Your Turn|輪到你了|🌍 Everywhere|today|Science communication|event|You have read 365 stories. The last card is the one you write and speak yourself"
+];
+
+
+/* Science Every Day 365 — DEEP-AUTHORED CARDS
+   Hand-written A2/B1/B2 stories + custom Bloom questions.
+   Key = "month-day", e.g. '7-1' = July 1.
+   Add a new entry here and that day automatically upgrades from
+   auto-scaffold to a fully authored card. */
+/* ============================================================
+   DEEP-AUTHORED DAYS — hand-written stories + Bloom questions.
+   Key = "month-day". Every month has at least one.
+   All other days run on the auto-scaffold engine.
+   ============================================================ */
+const DEEP={};
+
+DEEP['1-1']={
+ kw:[['gravity','重力'],['motion','運動'],['orbit','軌道'],['law','定律']],
+ story:{
+  A2:"Isaac Newton was an English scientist. He asked a simple question: why do things fall down? He said that everything pulls on everything else. This pull is called gravity. The same pull makes an apple fall and keeps the Moon going around the Earth. He also wrote three rules about how things move.",
+  B1:"Isaac Newton asked why an apple falls to the ground while the Moon stays in the sky. His answer was that both are doing the same thing: every object pulls on every other object, and that pull is gravity. He also wrote three laws describing how forces change motion. Together these ideas explained the movement of falling objects and orbiting planets with a single set of rules — something no one had managed before.",
+  B2:"Newton's achievement was one of unification. Before him, the heavens and the Earth were treated as separate domains with separate rules; he showed that a falling apple and an orbiting Moon obey the same mathematical law of gravitation. His three laws of motion, combined with the calculus he helped invent, turned physics into a predictive science. It is worth noting that he built on Kepler, Galileo and Hooke, and that he was capable of fierce disputes over credit — the mythology of solitary genius flattens a more contested history."
+ },
+ quote:{text:"If I have seen further, it is by standing on the shoulders of giants.", tag:'verified', tagLabel:'Verified 已查證'},
+ life:"Every satellite that carries your phone signal, and every rocket launch schedule, is calculated using Newton's laws.",
+ bloom:{
+  remember:{q:"What did Newton say makes an apple fall and the Moon orbit?",
+   opts:["The same force — gravity","Two completely different forces","Magnetism only","The wind"],correct:0},
+  understand:{q:"Which sentence explains Newton's big idea most simply?",
+   opts:["Heaven and Earth follow the same rules of motion.","Only objects on Earth obey physical laws.","The Moon is pushed by sunlight.","Apples fall because they are heavy and the Moon is light."],correct:0},
+  apply:{q:"Where are Newton's laws used today?",
+   opts:["Calculating satellite and rocket paths","Choosing colours for a website","Translating languages","Baking bread"],correct:0},
+  analyze:{q:"The B2 text says the 'solitary genius' story is misleading. Which detail supports that?",
+   opts:["He built on Kepler, Galileo and Hooke and argued over credit.","He was born in England.","He wrote three laws.","He studied gravity."],correct:0},
+  evaluate:{q:"Newton's quote credits 'giants' before him, yet he fought bitterly over priority. Is the quote honest humility or good public relations? Take a stance and defend it in 1–3 English sentences.",
+   stances:["Genuine humility","Public relations","Both at once"],starter:'I think the quote is ___ because…'},
+  create:{q:"Write a 2–3 sentence explanation of gravity for a curious 8-year-old, without using the word 'force'.",
+   starter:'Try starting with something they can see: "Everything in the universe is a little bit sticky…"'}
+ }};
+
+DEEP['2-4']={
+ kw:[['radioactivity','放射性'],['radium','鐳'],['element','元素'],['Nobel Prize','諾貝爾獎']],
+ story:{
+  A2:"Marie Curie was a scientist from Poland who worked in France. She studied strange rays that come out of some rocks. She found two new elements and named one of them radium. She won the Nobel Prize two times. She was the first woman to win it. Her work helps doctors treat cancer today.",
+  B1:"Marie Curie studied strange rays given off by certain minerals. Because these rays were new to science, she gave them a name: radioactivity. Working in a cold, leaking shed with her husband Pierre, she discovered two elements, polonium and radium. Her research later helped doctors use radiation to treat cancer, and she became the first person to win a Nobel Prize in two different sciences.",
+  B2:"Marie Curie transformed physics and chemistry by investigating the radiation emitted by uranium, coining the term radioactivity. Working in poor conditions and facing barriers as a woman and an immigrant, she isolated polonium and radium. Yet her story is not one of a lone genius: Pierre Curie was her research partner, and her results built directly on Henri Becquerel's findings. Her discoveries reshaped medicine, though the same radiation that made her famous ultimately damaged her health and killed her."
+ },
+ quote:{text:"Nothing in life is to be feared, it is only to be understood.", tag:'attributed', tagLabel:'Attributed 常被引用'},
+ life:"The radiation therapy used in hospitals to treat some cancers traces directly back to Curie's work on radium.",
+ bloom:{
+  remember:{q:"Which two elements did Marie Curie discover?",
+   opts:["Polonium and radium","Oxygen and helium","Uranium and gold","Sodium and iron"],correct:0},
+  understand:{q:"Which sentence best explains 'radioactivity' to a 10-year-old?",
+   opts:["Some materials give off invisible energy rays all by themselves.","It is a machine that makes electricity for cities.","It is a type of rock found only in Poland.","It is a medicine you drink when you are sick."],correct:0},
+  apply:{q:"Where do you meet Curie's work in everyday life?",
+   opts:["A hospital X-ray or cancer radiation therapy","A refrigerator keeping milk cold","A phone charging overnight","A bicycle going downhill"],correct:0},
+  analyze:{q:"The story says Curie was 'not a lone genius'. Which detail best supports that?",
+   opts:["Her work built on Becquerel's findings and Pierre was her partner.","She won two Nobel Prizes.","She worked in a cold shed.","She coined the word radioactivity."],correct:0},
+  evaluate:{q:"Curie's radium research led to cancer treatment but also killed her. Was the trade-off worth it? Take a stance and give 1–3 sentences of reasoning in English.",
+   stances:["Worth it","Not worth it","It's complicated"],starter:'I think it was ___ because…'},
+  create:{q:"Write a 2–3 sentence social-media post introducing Marie Curie to teenagers. Start with a hook.",
+   starter:'Try starting with: "Imagine glowing rocks that could…"'}
+ }};
+
+DEEP['2-25']={
+ kw:[['parity','宇稱'],['beta decay','β衰變'],['symmetry','對稱'],['experiment','實驗']],
+ story:{
+  A2:"Chien-Shiung Wu was a physicist. She was very good at doing careful experiments. Two other scientists had an idea about how nature works, but they could not test it. Wu did the test. She showed their idea was right. They won the Nobel Prize. She did not.",
+  B1:"Chien-Shiung Wu became one of the greatest experimental physicists of her time. Two theorists, Lee and Yang, suggested that nature might not be perfectly symmetric — that left and right could behave differently at the smallest scale. Their idea needed proof. Wu designed an extremely careful experiment with supercooled cobalt atoms and showed they were right. Lee and Yang won the Nobel Prize; Wu, whose experiment made it possible, was left out.",
+  B2:"Chien-Shiung Wu was a master of experimental precision at a time when few women led physics laboratories. When theorists Lee and Yang proposed that parity — the assumption that nature treats left and right identically — might be violated, only an experiment could decide. Wu's meticulous work with supercooled cobalt-60 confirmed the violation, overturning a law physicists had taken for granted. Lee and Yang received the 1957 Nobel Prize; Wu's foundational role went unrecognised by the committee, and her case is now a standard example in discussions of how scientific credit is assigned."
+ },
+ quote:{text:"It is shameful that there are so few women in science.", tag:'attributed', tagLabel:'Attributed 常被引用'},
+ life:"Every particle physics detector built since 1957 assumes the left-right asymmetry Wu was the first to demonstrate.",
+ bloom:{
+  remember:{q:"What did Wu's famous experiment prove?",
+   opts:["That parity (left–right symmetry) can be violated","That the Earth orbits the Sun","That radium glows in the dark","That light is a wave"],correct:0},
+  understand:{q:"Which is the simplest way to explain her result?",
+   opts:["Nature does not always treat 'left' and 'right' the same way.","Cold makes all atoms stop moving forever.","Physics only works inside a laboratory.","Metals become magnets when heated."],correct:0},
+  apply:{q:"Wu was famous for being extremely careful. In which everyday situation does that same skill matter most?",
+   opts:["A pharmacist measuring an exact medicine dose","Choosing a colour to paint a wall","Picking a song to play","Deciding what to eat for lunch"],correct:0},
+  analyze:{q:"Why is Wu a standard example in discussions of scientific credit?",
+   opts:["Her experiment made the discovery possible, but only the theorists won the Nobel.","She never published her results.","She refused to do the experiment.","She worked with no theoretical input at all."],correct:0},
+  evaluate:{q:"The Nobel went to the theorists, not to Wu who ran the decisive experiment. Was that fair? Take a stance and explain in 1–3 English sentences.",
+   stances:["Fair","Unfair","Depends"],starter:'I believe this was ___ because…'},
+  create:{q:"Write a one-line news headline announcing Wu's 1957 result for a general audience.",
+   starter:'Headlines are short and punchy — try: "Physicist proves nature has a…"'}
+ }};
+
+DEEP['3-1']={
+ kw:[['relativity','相對論'],['spacetime','時空'],['energy','能量'],['light speed','光速']],
+ story:{
+  A2:"Albert Einstein was a scientist born in Germany. He worked in a patent office and thought about light. He said that time can run faster or slower. He also said that mass and energy are the same thing. His famous equation is E = mc². Many people think he is the most famous scientist ever.",
+  B1:"Albert Einstein asked what the world would look like if you rode alongside a beam of light. His answer, special relativity, showed that time and distance are not fixed: they depend on how you are moving. Later, general relativity described gravity not as a pull but as a bending of space and time itself. His equation E = mc² revealed that mass and energy are two forms of the same thing — an idea with consequences he could not have predicted.",
+  B2:"Einstein's work dismantled the Newtonian assumption of absolute space and time. Special relativity established that the speed of light is constant for all observers, forcing simultaneity itself to become relative. General relativity then reinterpreted gravity as the curvature of spacetime by mass and energy, a prediction confirmed by starlight bending during a 1919 eclipse. His mass–energy equivalence later underpinned nuclear physics, and Einstein — a lifelong pacifist — signed a letter urging the US to build an atomic weapon, a decision he described afterwards as his greatest regret."
+ },
+ quote:{text:"Imagination is more important than knowledge.", tag:'attributed', tagLabel:'Attributed 常被引用'},
+ life:"Your phone's GPS would drift by kilometres each day if the satellites did not correct for relativity.",
+ bloom:{
+  remember:{q:"What does Einstein's equation E = mc² say?",
+   opts:["Mass and energy are two forms of the same thing","Light always travels in circles","Gravity does not exist","Time is exactly the same for everyone"],correct:0},
+  understand:{q:"How does general relativity describe gravity?",
+   opts:["As mass and energy bending space and time","As a magnetic pull between metals","As air pushing objects down","As a chemical reaction"],correct:0},
+  apply:{q:"Which everyday technology must correct for relativity?",
+   opts:["GPS navigation on your phone","A mechanical wristwatch","A bicycle bell","A paper map"],correct:0},
+  analyze:{q:"What does the B2 text suggest about the relationship between discovery and responsibility?",
+   opts:["A pacifist's physics enabled a weapon he later regretted supporting.","Scientific ideas never affect politics.","Einstein designed the atomic bomb himself.","Relativity has no practical uses."],correct:0},
+  evaluate:{q:"Should a scientist be held responsible for how their discoveries are later used? Take a stance and argue it in 1–3 English sentences.",
+   stances:["Yes, responsible","No, not responsible","Partly responsible"],starter:'I think scientists are ___ because…'},
+  create:{q:"Design an analogy that explains 'space bends around heavy objects' using something in a classroom.",
+   starter:'Think about fabric, trampolines, mattresses — or invent something better.'}
+ }};
+
+DEEP['4-5']={
+ kw:[['ocean floor','海床'],['mid-ocean ridge','中洋脊'],['plate tectonics','板塊構造'],['map','地圖']],
+ story:{
+  A2:"Marie Tharp was an American scientist. She made maps of the bottom of the sea. Women were not allowed on the research ships, so she stayed in the office. She drew the numbers by hand. She found a huge mountain range under the ocean with a valley in the middle. At first, people said she was wrong.",
+  B1:"Marie Tharp was not allowed on the research ships because she was a woman, so she worked from the numbers other people brought back. Drawing them by hand, she revealed something no one expected: a chain of mountains running down the middle of the Atlantic, split by a deep valley. That valley was evidence that the seafloor was spreading apart. Her colleague first dismissed the idea as 'girl talk' — but the map was right, and it helped prove plate tectonics.",
+  B2:"Marie Tharp spent two decades converting sonar soundings into the first physiographic maps of the ocean floor, work she performed from shore because women were barred from the research vessels. Her hand-drawn profiles revealed a continuous mid-ocean ridge system bisected by a rift valley — an observation that supported seafloor spreading and, with it, the then-controversial theory of continental drift. Her collaborator initially rejected the interpretation. Tharp's maps were eventually published under joint authorship, and her recognition arrived largely in the final years of her life."
+ },
+ quote:{text:"I was so busy making maps I let them argue.", tag:'attributed', tagLabel:'Attributed 常被引用'},
+ life:"Undersea internet cables — carrying almost all international data — are routed using maps descended from Tharp's work.",
+ bloom:{
+  remember:{q:"What did Marie Tharp discover on the ocean floor?",
+   opts:["A mid-ocean mountain ridge split by a rift valley","A sunken continent","A new species of whale","An underwater volcano in Taiwan"],correct:0},
+  understand:{q:"Why did she work from shore instead of at sea?",
+   opts:["Women were not allowed on the research ships.","She was afraid of water.","The ships had no space for equipment.","She preferred computers."],correct:0},
+  apply:{q:"Where does her ocean-floor mapping matter today?",
+   opts:["Routing the undersea cables that carry the internet","Deciding train timetables","Predicting stock prices","Designing phone screens"],correct:0},
+  analyze:{q:"What does the 'girl talk' dismissal reveal about how evidence is received?",
+   opts:["Who presents evidence can affect whether it is believed.","Data always convinces people immediately.","Maps are less reliable than opinions.","Her measurements were actually wrong."],correct:0},
+  evaluate:{q:"Tharp's recognition came near the end of her life. Whose responsibility is it to correct historical credit — universities, textbooks, or the public? Argue in 1–3 English sentences.",
+   stances:["Institutions","Educators & textbooks","Everyone"],starter:'I think the responsibility lies with ___ because…'},
+  create:{q:"Write a 30-second museum audio-guide script for visitors standing in front of Tharp's map.",
+   starter:'Audio guides speak directly: "Look closely at the line running down the middle…"'}
+ }};
+
+DEEP['5-1']={
+ kw:[['evolution','演化'],['natural selection','天擇'],['species','物種'],['adaptation','適應']],
+ story:{
+  A2:"Charles Darwin travelled around the world on a ship called the Beagle. He looked at many animals and plants. He saw that babies are a little different from their parents. Animals with useful differences live longer and have more babies. Slowly, over a very long time, species change. This idea is called evolution by natural selection.",
+  B1:"On a five-year voyage, Charles Darwin collected finches, fossils and beetles, and noticed patterns that puzzled him. His explanation was simple but powerful: offspring vary, more are born than can survive, and those with helpful variations leave more descendants. Repeated over immense time, this process — natural selection — can produce new species. He delayed publishing for twenty years, and only went to press when Alfred Russel Wallace independently arrived at the same idea.",
+  B2:"Darwin's contribution was mechanistic rather than merely descriptive: evolution had been proposed before, but he supplied a process. Variation, inheritance, overproduction and differential survival together explain adaptation without appeal to design. He assembled an unusually broad evidential base — domestication, biogeography, embryology, the fossil record — and anticipated objections in print. He also withheld publication for two decades, aware of the theological storm ahead, and moved only when Wallace's manuscript arrived. The joint 1858 presentation is a rare case of a priority dispute resolved gracefully."
+ },
+ quote:{text:"It is not the strongest of the species that survives, but the most adaptable.", tag:'paraphrased', tagLabel:'Paraphrased 概念改寫 — 常被誤植'},
+ life:"Antibiotic resistance in hospitals is natural selection happening fast enough to watch within a single patient.",
+ bloom:{
+  remember:{q:"What is 'natural selection'?",
+   opts:["Individuals with helpful variations leave more offspring","Animals choosing where to live","Humans breeding animals on purpose","Species changing instantly in one generation"],correct:0},
+  understand:{q:"Which statement best summarises Darwin's specific contribution?",
+   opts:["He supplied a mechanism for how species change.","He was the first to suggest species change at all.","He proved the Earth is old.","He discovered DNA."],correct:0},
+  apply:{q:"Where can you see natural selection acting quickly today?",
+   opts:["Bacteria becoming resistant to antibiotics","Rocks eroding on a beach","Ice melting in a glass","A car rusting"],correct:0},
+  analyze:{q:"Why is the famous 'most adaptable' quote tagged as paraphrased rather than verified?",
+   opts:["It is widely attributed to Darwin but does not appear in his writings.","It was written in Latin.","Darwin said it twice.","It comes from Wallace's diary."],correct:0},
+  evaluate:{q:"Darwin waited twenty years, partly fearing public reaction. Is delaying publication for social reasons ever defensible for a scientist? Argue in 1–3 English sentences.",
+   stances:["Defensible","Not defensible","Depends on the stakes"],starter:'I think delaying publication is ___ because…'},
+  create:{q:"Explain natural selection in three sentences using ONLY an example from your own country or campus.",
+   starter:'Local examples land harder than finches — think insects, plants, stray animals, or bacteria.'}
+ }};
+
+DEEP['6-12']={
+ kw:[['consent','知情同意'],['HeLa cells','海拉細胞'],['cell line','細胞株'],['research ethics','研究倫理']],
+ story:{
+  A2:"Henrietta Lacks was a young mother in the United States. She was very sick with cancer. Doctors took some of her cells without asking her. Those cells did something strange: they kept living and growing. Scientists still use them today. Her family did not know for many years.",
+  B1:"In 1951, Henrietta Lacks went to hospital with cancer. A doctor took a sample of her tumour without asking her permission — normal practice at the time. Unlike other cells, hers kept dividing in the laboratory, and they still do. Called HeLa cells, they helped test the polio vaccine and appear in tens of thousands of studies. Henrietta died at 31, and her family learned about the cells only twenty years later, while companies were already selling them.",
+  B2:"The HeLa cell line, derived from Henrietta Lacks's cervical tumour in 1951, is the most widely used human cell line in biomedical research. It was established without her knowledge or consent, in an era when tissue taken during treatment carried no requirement of permission. HeLa underpinned polio vaccine testing, cancer research and countless protocols; meanwhile her descendants lacked health insurance and were not informed for two decades. The case reshaped debates on consent, tissue ownership, racial inequity in medicine, and whether benefit-sharing is owed to donors — questions that remain only partly resolved."
+ },
+ quote:{text:"Her cells outlived her by generations; her name took decades to catch up.", tag:'paraphrased', tagLabel:'Paraphrased 概念改寫'},
+ life:"If you were vaccinated against polio, or take almost any modern medicine, HeLa cells were part of the testing chain.",
+ bloom:{
+  remember:{q:"How were Henrietta Lacks's cells obtained?",
+   opts:["Taken during treatment without her knowledge or consent","Donated by her in writing","Bought from her family","Created artificially in a laboratory"],correct:0},
+  understand:{q:"Why were her cells so scientifically valuable?",
+   opts:["They kept dividing indefinitely in the laboratory.","They cured cancer directly.","They were the first cells ever seen.","They could be eaten safely."],correct:0},
+  apply:{q:"How does this story connect to modern hospital paperwork?",
+   opts:["It is part of why you now sign informed consent forms.","It explains hospital parking fees.","It set the price of medicine.","It created the ambulance system."],correct:0},
+  analyze:{q:"Which factors does the B2 text link together in this case?",
+   opts:["Consent, tissue ownership, racial inequity and benefit-sharing","Only the speed of cell division","Only the polio vaccine","Only hospital funding"],correct:0},
+  evaluate:{q:"Should families of tissue donors share in profits from discoveries made with those cells? Take a stance and argue it in 1–3 English sentences.",
+   stances:["Yes, they should","No, they should not","A middle path"],starter:'I think donors and families ___ because…'},
+  create:{q:"Write a short, respectful consent-form paragraph (2–3 sentences) explaining to a patient in plain English what may happen to their tissue sample.",
+   starter:'Plain English means no jargon and no hiding — say what will happen and what choice they have.'}
+ }};
+
+DEEP['7-1']={
+ kw:[['microbe','微生物'],['germ theory','細菌學說'],['pasteurization','巴氏消毒'],['vaccine','疫苗']],
+ story:{
+  A2:"Louis Pasteur was a French scientist. He showed that very small living things — germs — can make food go bad and make people sick. He found that heating milk a little kills the germs. This idea is called pasteurization. He also helped make some of the first vaccines.",
+  B1:"Louis Pasteur helped prove germ theory — the idea that invisible microbes, not bad air, cause many diseases and make food spoil. To keep drinks safe, he showed that gently heating them killed harmful microbes without ruining the taste. This process, now called pasteurization, is still used on milk today. He also developed early vaccines against anthrax and rabies, saving countless lives.",
+  B2:"Louis Pasteur was central to establishing germ theory, demonstrating that microorganisms — not spontaneous generation or foul air — cause fermentation, spoilage and infectious disease. His swan-neck flask experiments were models of controlled reasoning. To protect France's wine and dairy industries he devised gentle heat treatment, and he pioneered vaccines against anthrax and rabies. His breakthroughs drew on a wider community of microbiologists and on strong commercial pressure, and his notebooks later revealed he took clinical risks his public accounts did not mention."
+ },
+ quote:{text:"Chance favors the prepared mind.", tag:'verified', tagLabel:'Verified 已查證'},
+ life:"The milk in your refrigerator is safe to drink largely because it was pasteurized — heated exactly the way Pasteur described.",
+ bloom:{
+  remember:{q:"What does 'pasteurization' do?",
+   opts:["Gently heats drinks to kill harmful microbes","Freezes food to make it last","Adds sugar to milk","Colours drinks to look fresh"],correct:0},
+  understand:{q:"Which statement best summarises germ theory?",
+   opts:["Tiny living microbes cause many diseases and food spoilage.","Bad smells alone cause all illness.","Food never goes bad if kept in the dark.","Only large animals can spread sickness."],correct:0},
+  apply:{q:"How is Pasteur's work connected to your refrigerator?",
+   opts:["The milk inside was pasteurized so microbes won't make you sick.","It keeps the milk frozen solid.","It makes the milk taste sweeter.","It turns milk into cheese automatically."],correct:0},
+  analyze:{q:"Which part of the B2 text complicates the heroic version of Pasteur?",
+   opts:["Commercial pressure shaped his work and his notebooks show undisclosed risks.","He heated milk gently.","He was born in France.","He made a rabies vaccine."],correct:0},
+  evaluate:{q:"Pasteur tested his rabies vaccine on a boy before it was fully proven safe. Judge that decision by today's ethics in 1–3 English sentences.",
+   stances:["Justified","Not justified","Hard to judge"],starter:"By today's standards, this was ___ because…"},
+  create:{q:"Design a simple metaphor that explains 'germs cause disease' to a young child.",
+   starter:'Try: "Germs are like tiny…" — then make it specific enough to picture.'}
+ }};
+
+DEEP['8-1']={
+ kw:[['DNA','去氧核醣核酸'],['X-ray diffraction','X光繞射'],['double helix','雙螺旋'],['Photo 51','51號照片']],
+ story:{
+  A2:"Rosalind Franklin was a British scientist. She used X-rays to take pictures of DNA, the code inside our cells. One picture, called Photo 51, was very important. It helped show that DNA has a twisted shape like a ladder. She did not get much credit while she was alive.",
+  B1:"Rosalind Franklin was an expert at X-ray diffraction, a way of photographing the shape of tiny molecules. Her clear image of DNA, known as Photo 51, gave the strongest evidence that DNA is a double helix — two strands twisted together. Watson and Crick used her data to build their famous model, but Franklin received little recognition at the time, partly because she was a woman in a male-dominated field.",
+  B2:"Rosalind Franklin's expertise in X-ray crystallography produced Photo 51, the diffraction image that revealed DNA's helical geometry. Watson and Crick relied on her data — shown to them without her knowledge — to construct their double-helix model, for which they and Wilkins later received the Nobel Prize. Franklin died of ovarian cancer at 37, before any Nobel could have been awarded to her, and her contribution was minimised in early published accounts. Her case is now a landmark in discussions of gender, credit and research ethics."
+ },
+ quote:{text:"Science and everyday life cannot and should not be separated.", tag:'verified', tagLabel:'Verified 已查證'},
+ life:"DNA tests used in medicine, ancestry kits and crime labs all depend on the double-helix structure Franklin's images helped reveal.",
+ bloom:{
+  remember:{q:"What did 'Photo 51' show?",
+   opts:["Strong evidence that DNA is a double helix","A map of the human brain","The surface of the Moon","A new kind of vaccine"],correct:0},
+  understand:{q:"What did X-ray diffraction let Franklin do?",
+   opts:["Photograph the shape of tiny molecules like DNA","Cure diseases directly","Make DNA glow in the dark","Count cells one by one"],correct:0},
+  apply:{q:"Franklin's discovery underlies which modern technology?",
+   opts:["DNA ancestry and forensic testing","Weather forecasting","Wireless charging","Solar panels"],correct:0},
+  analyze:{q:"Why is Franklin a key example in research ethics discussions?",
+   opts:["Her data was shown to Watson and Crick without her knowledge and her role was minimised.","She refused to share any of her work.","She invented the Nobel Prize.","She worked on the Moon landing."],correct:0},
+  evaluate:{q:"Watson and Crick used Franklin's data without her consent. Judge this by today's research ethics in 1–3 English sentences.",
+   stances:["Unacceptable","Understandable for the era","Complicated"],starter:"By today's standards, this was ___ because…"},
+  create:{q:"Write a short museum plaque (2–3 sentences) that gives Franklin the credit she deserves.",
+   starter:'Plaques are factual but warm — start with her name and what she revealed.'}
+ }};
+
+DEEP['9-1']={
+ kw:[['algorithm','演算法'],['computing','計算'],['program','程式'],['symbol','符號']],
+ story:{
+  A2:"Ada Lovelace lived in England almost 200 years ago. Her friend Charles Babbage designed a big machine that could do maths. Ada wrote notes about it. In her notes she wrote the first computer program. She also said the machine could work with music and pictures, not just numbers. She was right.",
+  B1:"Ada Lovelace was asked to translate an article about Charles Babbage's proposed calculating engine. She added her own notes, which ended up three times longer than the original. In them she wrote a step-by-step method for the machine to compute a sequence of numbers — now considered the first published algorithm. More importantly, she saw further than Babbage: if numbers could represent musical notes or letters, the machine could compose and write, not just calculate.",
+  B2:"Ada Lovelace's 1843 notes on Menabrea's paper contain both the first published algorithm intended for machine execution and a conceptual leap that Babbage himself did not make: the recognition that a general-purpose engine manipulates symbols, not merely quantities, and could therefore operate on music or language. She also cautioned that the machine could only do what it was ordered to do — a remark still cited in debates about machine creativity. Her contribution has been alternately inflated and dismissed, and the historiographical argument over her role is itself a useful case study in how credit is contested."
+ },
+ quote:{text:"The Analytical Engine has no pretensions whatever to originate anything.", tag:'verified', tagLabel:'Verified 已查證'},
+ life:"Every app on your phone rests on Lovelace's insight that numbers can stand for anything — sound, images, or text.",
+ bloom:{
+  remember:{q:"What did Ada Lovelace write in her notes?",
+   opts:["The first published algorithm for a machine","The first novel about robots","A new system of arithmetic","A design for the telephone"],correct:0},
+  understand:{q:"What was her leap beyond Babbage's own thinking?",
+   opts:["That the machine could handle symbols like music and letters, not just numbers","That machines should be smaller","That maths is difficult","That the engine should be steam-powered"],correct:0},
+  apply:{q:"Where do you see her insight in daily life?",
+   opts:["Music, photos and text all stored as numbers on your phone","Water pipes in a building","The taste of food","The colour of the sky"],correct:0},
+  analyze:{q:"The B2 text says her legacy is 'contested'. What does that mean here?",
+   opts:["Historians disagree about how much of the work was hers.","Her notes were lost.","She never published anything.","Babbage denied knowing her."],correct:0},
+  evaluate:{q:"Lovelace wrote that a machine cannot 'originate anything'. Given today's AI, was she right? Take a stance and argue it in 1–3 English sentences.",
+   stances:["She was right","She was wrong","Still an open question"],starter:'I think Lovelace was ___ because…'},
+  create:{q:"Write a 3-sentence pitch for a film about Ada Lovelace aimed at teenagers.",
+   starter:'A pitch names the hook, the tension and why it matters now.'}
+ }};
+
+DEEP['9-5']={
+ kw:[['orbit','軌道'],['trajectory','軌跡'],['segregation','種族隔離'],['computer','計算員']],
+ story:{
+  A2:"Katherine Johnson was a mathematician in the United States. She worked for NASA. She did the maths to send astronauts into space and bring them home safely. She was a Black woman, and at that time she had to use a different bathroom and eat in a different room. John Glenn would not fly until she checked the numbers.",
+  B1:"Katherine Johnson calculated flight paths for America's first crewed space missions. She worked in a segregated NASA where Black women mathematicians — called 'computers' — sat in a separate building and used separate facilities. When electronic computers first produced the orbital numbers for John Glenn's flight, Glenn reportedly refused to fly until Johnson had checked them by hand. She later worked on Apollo and stayed at NASA for over three decades.",
+  B2:"Katherine Johnson's analytic geometry underpinned the trajectory calculations for Alan Shepard's suborbital flight, John Glenn's orbital mission and the Apollo lunar programme. She performed this work within a legally segregated institution, where Black women in the West Computing group faced separate facilities and restricted advancement. Glenn's request that she personally verify the electronic computer's output has become emblematic — not merely of individual brilliance, but of how institutional racism concealed capability that the mission itself depended on. Her public recognition came more than fifty years later."
+ },
+ quote:{text:"Get the girl to check the numbers.", tag:'attributed', tagLabel:'Attributed 常被引用'},
+ life:"The orbital mechanics she calculated by hand still govern every satellite launch scheduled today.",
+ bloom:{
+  remember:{q:"What did Katherine Johnson calculate for NASA?",
+   opts:["Flight paths and orbital trajectories","Rocket fuel prices","Astronaut meal plans","Radio frequencies"],correct:0},
+  understand:{q:"Why is the John Glenn story significant?",
+   opts:["An astronaut trusted her hand calculations over the electronic computer.","She refused to let him fly.","She designed the rocket herself.","She was the first woman in space."],correct:0},
+  apply:{q:"Where is her kind of orbital mathematics used today?",
+   opts:["Planning satellite and rocket launches","Designing furniture","Setting exam timetables","Writing song lyrics"],correct:0},
+  analyze:{q:"What does the B2 text argue the Glenn story really illustrates?",
+   opts:["How institutional racism hid capability the mission depended on","That electronic computers were useless","That astronauts disliked mathematics","That NASA had no rules"],correct:0},
+  evaluate:{q:"Johnson was recognised publicly only decades later, largely after a book and film. Is popular media a good way to correct historical credit? Argue in 1–3 English sentences.",
+   stances:["Yes, it works","No, it distorts","Useful but risky"],starter:'I think popular media is ___ for correcting credit because…'},
+  create:{q:"Write a 30-second spoken introduction for Katherine Johnson at an awards ceremony.",
+   starter:'Spoken introductions build: who she is, what she did, why the room should care.'}
+ }};
+
+DEEP['10-11']={
+ kw:[['Cepheid variable','造父變星'],['distance','距離'],['luminosity','光度'],['galaxy','星系']],
+ story:{
+  A2:"Henrietta Swan Leavitt worked at Harvard. Her job was to look at photographs of stars. She was paid very little. She found that some stars get bright and dim in a pattern. The slower the pattern, the brighter the star really is. This let other scientists measure how far away stars are.",
+  B1:"Henrietta Swan Leavitt was hired as a 'computer' at Harvard Observatory, examining photographic plates for a low wage and without the freedom to choose her own research. Studying variable stars, she found a precise relationship: the longer a star takes to pulse, the brighter it truly is. Comparing true brightness with apparent brightness gives distance. This became astronomy's measuring stick — the tool Edwin Hubble later used to show the universe is expanding.",
+  B2:"Leavitt's period–luminosity relation for Cepheid variables supplied astronomy with its first reliable standard candle, converting the intractable problem of cosmic distance into a measurable quantity. Working as a poorly paid assistant with restricted research autonomy, and deaf from early adulthood, she published the relation in 1912. Hubble's demonstration that spiral nebulae lie outside the Milky Way, and his subsequent expansion law, rest directly upon it. A Nobel nomination was prepared in 1925, four years after her death; the prize is not awarded posthumously."
+ },
+ quote:{text:"A straight line can readily be drawn among each of the two series of points.", tag:'verified', tagLabel:'Verified 已查證'},
+ life:"Every statement about how far away a galaxy is — including the age of the universe — traces back to Leavitt's ruler.",
+ bloom:{
+  remember:{q:"What relationship did Leavitt discover?",
+   opts:["The slower a star pulses, the brighter it truly is","Stars are all the same distance away","Bigger stars are always closer","Stars pulse only in winter"],correct:0},
+  understand:{q:"Why was this so useful?",
+   opts:["Comparing true and apparent brightness gives distance.","It proved stars are made of hydrogen.","It showed the Sun will explode.","It measured the temperature of space."],correct:0},
+  apply:{q:"What modern claim depends on her work?",
+   opts:["Estimates of how far away galaxies are and how old the universe is","Weather forecasts for next week","The length of a year on Earth","Tide tables"],correct:0},
+  analyze:{q:"Which conditions of her employment does the B2 text highlight?",
+   opts:["Low pay, restricted research autonomy, and no posthumous Nobel possible","She led the observatory","She chose all her own projects","She was paid more than her colleagues"],correct:0},
+  evaluate:{q:"The Nobel is never awarded posthumously. Should that rule change for cases like Leavitt's? Argue your stance in 1–3 English sentences.",
+   stances:["Change the rule","Keep the rule","Create another honour"],starter:'I think the rule should ___ because…'},
+  create:{q:"Explain a 'standard candle' in three sentences using an everyday object as the analogy.",
+   starter:'Think about how you judge distance at night — street lamps, car headlights, phone torches.'}
+ }};
+
+DEEP['11-12']={
+ kw:[['semiconductor','半導體'],['foundry','晶圓代工'],['supply chain','供應鏈'],['ecosystem','生態系']],
+ story:{
+  A2:"This is a team story. Many engineers in Taiwan worked together to make computer chips. Chips are tiny parts inside phones and computers. Taiwan became one of the best places in the world to make them. This was not one hero. It was thousands of people working together for many years.",
+  B1:"Instead of one scientist, today is about a team. From the 1980s, Taiwanese engineers, government planners and returning overseas researchers built a semiconductor industry from almost nothing. The 'foundry' model — factories that manufacture chips designed by other companies — turned Taiwan into a global leader. Today many of the world's most advanced chips, found in phones and cars, are made on the island. It is a story of collective effort, not a single genius.",
+  B2:"Taiwan's rise as a semiconductor powerhouse illustrates how modern breakthroughs are systemic rather than individual. From the 1980s, a combination of state industrial strategy, returning overseas-trained engineers, and the pure-play foundry model reshaped global technology. Thousands of specialists in materials, optics, metrology and manufacturing pushed transistors to ever smaller scales, supported by an unusually dense supplier network. The result — an island central to the world's chip supply chain — is a case study in infrastructure, accumulated tacit skill, and the social conditions that make discovery possible, as well as a live question in geopolitics."
+ },
+ quote:{text:"No single person builds a chip; a whole ecosystem does.", tag:'paraphrased', tagLabel:'Paraphrased 概念改寫'},
+ life:"The phone or laptop you are reading this on almost certainly contains chips connected to Taiwan's semiconductor ecosystem.",
+ bloom:{
+  remember:{q:"What made Taiwan a global technology leader?",
+   opts:["Building an advanced semiconductor industry","Growing the most rice","Making the tallest buildings","Discovering a new ocean"],correct:0},
+  understand:{q:"What is a chip 'foundry'?",
+   opts:["A factory that manufactures chips designed by other companies","A shop that sells phones","A school for engineers","A type of computer game"],correct:0},
+  apply:{q:"How does this story connect to your daily life?",
+   opts:["Your phone and laptop contain chips from this ecosystem.","It decides the weather each day.","It grows the food you eat.","It powers ocean tides."],correct:0},
+  analyze:{q:"Why is this a 'collective' rather than a 'lone genius' story?",
+   opts:["State strategy, returning engineers and dense supplier networks all played a part.","One inventor did everything alone.","It happened overnight by accident.","No teamwork was involved."],correct:0},
+  evaluate:{q:"The world now depends heavily on one island for advanced chips. Is that concentration a strength or a risk? Argue in 1–3 English sentences.",
+   stances:["Mostly a strength","Mostly a risk","Both at once"],starter:'I think this concentration is ___ because…'},
+  create:{q:"Design a 'parallel world' scenario: \"If Taiwan had never built its chip industry, then…\" (2–3 sentences).",
+   starter:'Imagine the ripple effects on phones, cars, hospitals and daily life.'}
+ }};
+
+DEEP['12-3']={
+ kw:[['conscience','良知'],['disarmament','裁軍'],['responsibility','責任'],['Pugwash','帕格沃什']],
+ story:{
+  A2:"Joseph Rotblat was a physicist from Poland. He worked on the atomic bomb during the war. He joined because he was afraid Germany would build one first. When he learned Germany had stopped, he left the project. He was the only scientist who did. Later he won the Nobel Peace Prize.",
+  B1:"Joseph Rotblat joined the Manhattan Project for one reason: he feared Nazi Germany would build an atomic bomb first. In late 1944, when it became clear Germany had abandoned its programme, his reason disappeared — so he left. He was the only scientist to walk away on grounds of conscience, and he was treated with suspicion for it. He spent the rest of his life on nuclear disarmament and medical physics, and shared the 1995 Nobel Peace Prize.",
+  B2:"Rotblat's departure from Los Alamos in December 1944 is the clearest historical instance of a scientist withdrawing from a project on ethical grounds after his stated justification lapsed. He faced accusations of espionage and had his papers confiscated. He subsequently co-founded the Pugwash Conferences, which created a durable back-channel between Soviet and Western scientists throughout the Cold War, and he argued for a Hippocratic-style oath for scientists. His career poses the sharpest version of the question this month circles: what, concretely, does a researcher do when the work is proceeding and the reasons have changed?"
+ },
+ quote:{text:"Above all, remember your humanity.", tag:'verified', tagLabel:'Verified 已查證 (Russell–Einstein Manifesto)'},
+ life:"Debates today about AI researchers resigning over safety concerns follow a path Rotblat walked first.",
+ bloom:{
+  remember:{q:"Why did Rotblat leave the Manhattan Project?",
+   opts:["Germany had abandoned its bomb programme, so his reason was gone","He was fired for poor work","He wanted a better salary","He became too ill to continue"],correct:0},
+  understand:{q:"What made his decision unusual?",
+   opts:["He was the only scientist to leave on grounds of conscience.","He was the youngest person there.","He had never studied physics.","He told no one his reasons."],correct:0},
+  apply:{q:"Which modern situation most resembles his choice?",
+   opts:["A researcher resigning over safety concerns about their own project","A student changing university major","An engineer taking a holiday","A company changing its logo"],correct:0},
+  analyze:{q:"What was the personal cost of his decision, according to the B2 text?",
+   opts:["He was accused of espionage and had his papers confiscated.","He was immediately given a Nobel Prize.","He was promoted to project leader.","Nothing happened to him."],correct:0},
+  evaluate:{q:"Is leaving a project the most effective form of protest, or does staying inside allow more influence? Take a stance and argue it in 1–3 English sentences.",
+   stances:["Leaving is stronger","Staying is stronger","Depends on the situation"],starter:'I think ___ has more effect because…'},
+  create:{q:"Draft three lines of an oath you think scientists should take before starting a project.",
+   starter:'Oaths are short, concrete and testable — avoid vague words like "good" or "responsible".'}
+ }};
+
+
+/* Science Every Day 365 — APPLICATION ENGINE
+   Views, Bloom ladder, coach feedback, paths, search, studio, badges. */
+/* ============================================================
+   ENGINE
+   ============================================================ */
+const CAT={
+ classic:{label:'Classic figure 經典人物',c:'#1F35B0',ico:'📜'},
+ women:{label:'Women in science 女性科學家',c:'#E8558E',ico:'👩‍🔬'},
+ asia:{label:'Asia & Taiwan 亞洲與臺灣',c:'#FF5D47',ico:'🌏'},
+ modern:{label:'Contemporary 當代',c:'#2EA8E0',ico:'🛰️'},
+ overlooked:{label:'Overlooked 被忽略',c:'#FF9F1C',ico:'🔦'},
+ team:{label:'Team or institution 團隊',c:'#2FBE8F',ico:'🤝'},
+ event:{label:'Event or discovery 事件',c:'#7B5CD6',ico:'📅'},
+ ethics:{label:'Ethics case 倫理案例',c:'#171431',ico:'⚖️'}
+};
+
+const BLOOM=[
+ {key:'remember',n:'1',name:'Remember',zh:'記憶',color:'#2EA8E0',pts:10},
+ {key:'understand',n:'2',name:'Understand',zh:'理解',color:'#2FBE8F',pts:15},
+ {key:'apply',n:'3',name:'Apply',zh:'應用',color:'#FFC53D',pts:20},
+ {key:'analyze',n:'4',name:'Analyze',zh:'分析',color:'#FF9F1C',pts:25},
+ {key:'evaluate',n:'5',name:'Evaluate',zh:'評鑑',color:'#FF5D47',pts:35},
+ {key:'create',n:'6',name:'Create',zh:'創造',color:'#7B5CD6',pts:50}
+];
+
+/* build the 365 entries */
+const DAYS=[];
+for(let m=1;m<=12;m++){
+  (R[m]||[]).forEach((row,i)=>{
+    const p=row.split('|');
+    const key=m+'-'+(i+1);
+    const d=DEEP[key]||{};
+    DAYS.push({
+      m, d:i+1, key,
+      name:p[0], zh:p[1], country:p[2], years:p[3], field:p[4], cat:p[5], disc:p[6],
+      deep:!!DEEP[key],
+      kw:d.kw, story:d.story, quote:d.quote, life:d.life, bloom:d.bloom
+    });
+  });
+}
+const byKey=k=>DAYS.find(x=>x.key===k);
+const TOTAL=DAYS.length;   // 365 + one leap-day bonus card
+document.getElementById('collTot').textContent=TOTAL;
+
+/* monogram from name */
+function mono(e){
+  if(CAT[e.cat].ico && (e.cat==='team'||e.cat==='event'||e.cat==='ethics')) return CAT[e.cat].ico;
+  const w=e.name.replace(/[^A-Za-z '’-]/g,'').trim().split(/\s+/).filter(Boolean);
+  if(!w.length) return '★';
+  if(w.length===1) return w[0].slice(0,2).toUpperCase();
+  return (w[0][0]+w[w.length-1][0]).toUpperCase();
+}
+
+/* ============ STATE ============ */
+const TODAY={m:7,d:24};
+const state={
+  points:0, view:'year', month:TODAY.m, curKey:null, level:'B1',
+  progress:{},        // key -> {bloomKey:val}
+  cards:new Set(),
+  evals:0, creates:0,
+  earned:new Set(),
+  authored:{}         // key -> {A2,B1,B2} written in the Studio
+};
+
+const $=s=>document.querySelector(s);
+const stage=$('#stage');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2300);}
+function addPoints(p){state.points+=p;$('#ptsVal').textContent=state.points;}
+function confetti(color){
+  const cs=[color||'#FFC53D','#2FBE8F','#FF5D47','#2EA8E0','#7B5CD6'];
+  for(let i=0;i<40;i++){const c=document.createElement('div');c.className='confetti';
+    c.style.left=Math.random()*100+'vw';c.style.background=cs[i%cs.length];
+    c.style.animationDuration=(1.6+Math.random()*1.3)+'s';
+    document.body.appendChild(c);setTimeout(()=>c.remove(),3200);}
+}
+const doneCount=k=>Object.keys(state.progress[k]||{}).length;
+
+/* ============ AUTO SCAFFOLD ============ */
+function autoStory(e){
+  return {
+   A2:`${e.name} — ${e.zh}. From ${e.country.replace(/^\S+\s/,'')}, ${e.years}. Field: ${e.field}. In simple words: ${e.disc.toLowerCase()}. Read the card, then try the tasks below. ✍️ This card is waiting for a full A2 story — write one in the Studio.`,
+   B1:`${e.name} (${e.zh}) worked in ${e.field.toLowerCase()} — ${e.country.replace(/^\S+\s/,'')}, ${e.years}. ${e.disc}. This entry currently shows the verified summary only; the full B1 narrative has not been written yet. Use the Studio to draft it, or write it yourself as a science-communication task.`,
+   B2:`${e.name} (${e.zh}), ${e.country.replace(/^\S+\s/,'')}, ${e.years}, ${e.field}. ${e.disc}. This is a roster entry rather than an authored card. A complete B2 version would add historical context, name the collaborators and institutions involved, and identify at least one contested or overlooked aspect of the story — exactly the kind of writing this platform asks students to produce.`
+  };
+}
+/* Remember MCQ built from real roster data — distractors are other people's real contributions */
+function autoRemember(e){
+  const pool=DAYS.filter(x=>x.key!==e.key&&x.cat===e.cat);
+  const src=pool.length>=3?pool:DAYS.filter(x=>x.key!==e.key);
+  const picks=[];const used=new Set();
+  while(picks.length<3&&picks.length<src.length){
+    const c=src[Math.floor(Math.random()*src.length)];
+    if(used.has(c.key))continue;used.add(c.key);
+    picks.push(c.disc.length>90?c.disc.slice(0,88)+'…':c.disc);
+  }
+  const correct=e.disc.length>90?e.disc.slice(0,88)+'…':e.disc;
+  const opts=[correct,...picks];
+  for(let i=opts.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[opts[i],opts[j]]=[opts[j],opts[i]];}
+  return {q:`Which contribution belongs to ${e.name}?`,opts,correct:opts.indexOf(correct)};
+}
+function autoBloom(e){
+  const n=e.name;
+  return {
+   remember:autoRemember(e),
+   understand:{q:`In your own words, explain what ${n} contributed — as if to a 10-year-old who has never heard the name.`,
+     starter:'Avoid technical words. One clear sentence beats three vague ones.'},
+   apply:{q:`Where might you meet this work in everyday life, at home, on campus, or in Taiwan? Give one concrete example.`,
+     starter:'Be specific: name an object, a place, or a moment in your day.'},
+   analyze:{q:`Compare this card with one you have already collected. What do the two have in common, and where do they differ — in method, in era, or in who received the credit?`,
+     starter:'Try: "Both … , but whereas X … , Y … ."'},
+   evaluate:{q:`Judge the significance of this contribution. Take a stance and defend it with a reason in 1–3 English sentences.`,
+     stances:['Major impact','Moderate impact','Overrated'],starter:'I would rate this as ___ because…'},
+   create:{q:`Create a 30-second spoken introduction to ${n} for a general audience. Open with a hook, not a date.`,
+     starter:'Hooks work: a question, a surprising image, or "Imagine a world without…"'}
+  };
+}
+const getStory=e=>state.authored[e.key]||e.story||autoStory(e);
+const getBloom=e=>e.bloom||(e._ab||(e._ab=autoBloom(e)));
+const getKw=e=>e.kw||[[e.field,''],[e.country.replace(/^\S+\s/,''),''],[e.years,'']];
+
+/* ============ VIEWS ============ */
+function setView(v){
+  state.view=v;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.v===v));
+  if(v==='year')viewYear();
+  else if(v==='today')openDay(TODAY.m+'-'+TODAY.d);
+  else if(v==='paths')viewPaths();
+  else if(v==='search')viewSearch();
+  else if(v==='studio')viewStudio();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function viewYear(){
+  const total=state.cards.size;
+  stage.innerHTML=`
+   <div class="sec-head"><h2>📅 A Year of Scientific Minds</h2>
+   <p>365 days + a leap-day bonus · 12 themed months · every month mixes classic figures with women, Asian, overlooked and collective stories 每月皆混合不同類型人物</p></div>
+   <div class="year-grid">${MONTHS.map((mo,i)=>{
+     const m=i+1;const days=DAYS.filter(x=>x.m===m);
+     const done=days.filter(x=>state.cards.has(x.key)).length;
+     return `<button class="month-tile" data-m="${m}">
+       <div class="mt-band" style="background:${mo.c}">
+         <div class="mt-num">MONTH ${String(m).padStart(2,'0')}</div>
+         <div class="mt-name">${mo.n}</div>
+         <div class="mt-theme">${mo.theme}</div>
+       </div>
+       <div class="mt-body">
+         <div class="mt-zh">${mo.zh}｜${mo.tz}</div>
+         <div class="mini-bar"><div class="mini-fill" style="width:${done/days.length*100}%"></div></div>
+         <div class="mt-count">${done} / ${days.length} collected</div>
+       </div></button>`;}).join('')}
+   </div>
+   <div class="sec-head"><h2>📊 Your year so far</h2></div>
+   <div class="day-progress">
+     <div class="prog-txt">${total} / ${TOTAL}</div>
+     <div class="prog-bar"><div class="prog-fill" style="width:${total/TOTAL*100}%"></div></div>
+     <div class="collect-note">⭐ ${state.points} points · ⚖️ ${state.evals} judgements · ✍️ ${state.creates} creations · 🏅 ${state.earned.size} badges</div>
+   </div>`;
+  stage.querySelectorAll('.month-tile').forEach(b=>b.onclick=()=>viewMonth(+b.dataset.m));
+}
+
+function viewMonth(m){
+  state.month=m;state.view='month';
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  const mo=MONTHS[m-1];const days=DAYS.filter(x=>x.m===m);
+  const done=days.filter(x=>state.cards.has(x.key)).length;
+  /* first-of-month weekday offset, purely visual, using a 2026 non-leap layout */
+  const offs=[3,6,6,2,4,0,2,5,1,3,6,1];
+  const off=offs[m-1];
+  let cells='';
+  for(let i=0;i<off;i++)cells+=`<div class="dcell blank"></div>`;
+  days.forEach(e=>{
+    const isDone=state.cards.has(e.key);
+    const isToday=(e.m===TODAY.m&&e.d===TODAY.d);
+    cells+=`<button class="dcell${isDone?' done':''}${isToday?' today':''}" data-k="${e.key}" title="${esc(e.name)}">
+      <span class="cdot" style="background:${CAT[e.cat].c}"></span>
+      <div class="dn">${e.d}</div>
+      <div class="dnm">${esc(e.name)}</div></button>`;
+  });
+  stage.innerHTML=`
+   <div class="month-head">
+     <div class="mh-l"><h2>${mo.n} ${mo.zh} · ${mo.theme}</h2>
+     <p>${mo.tz} · ${done}/${days.length} collected</p></div>
+     <div class="mh-nav">
+       <button class="nav-btn ghost" id="pm">← Prev</button>
+       <button class="nav-btn ghost" id="yr">All months</button>
+       <button class="nav-btn" id="nm">Next →</button>
+     </div>
+   </div>
+   <div class="dow-row">${['S','M','T','W','T','F','S'].map(d=>`<div class="dow">${d}</div>`).join('')}</div>
+   <div class="day-grid">${cells}</div>`;
+  $('#pm').onclick=()=>viewMonth(m===1?12:m-1);
+  $('#nm').onclick=()=>viewMonth(m===12?1:m+1);
+  $('#yr').onclick=()=>setView('year');
+  stage.querySelectorAll('.dcell[data-k]').forEach(b=>b.onclick=()=>openDay(b.dataset.k));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============ DAY ============ */
+function openDay(key){
+  const e=byKey(key);if(!e)return;
+  state.curKey=key;state.view='day';
+  state.progress[key]=state.progress[key]||{};
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  const st=getStory(e), cat=CAT[e.cat], isAuto=!e.deep&&!state.authored[key];
+  const mo=MONTHS[e.m-1];
+
+  stage.innerHTML=`
+   <div class="back-row">
+     <button class="btn-main ghost" id="bk">← ${mo.n} ${mo.zh}</button>
+     <button class="btn-main ghost" id="bkY">📅 All months</button>
+   </div>
+   <article class="sci-card">
+     <div class="sci-band" style="background:${cat.c}">
+       <span class="daytag">${mo.n.slice(0,3).toUpperCase()} ${e.d}</span>
+       <div class="sci-top">
+         <div class="monogram">${mono(e)}</div>
+         <div><div class="sci-name">${esc(e.name)}</div><div class="sci-zh">${esc(e.zh)}</div></div>
+       </div>
+       <div class="sci-meta">
+         <span class="tag">${esc(e.country)}</span><span class="tag">${esc(e.years)}</span>
+         <span class="tag">${esc(e.field)}</span><span class="tag">${cat.ico} ${cat.label}</span>
+       </div>
+     </div>
+     <div class="sci-body">
+       <span class="block-label">🔎 Contribution 貢獻</span>
+       <div class="discovery">${esc(e.disc)}</div>
+       ${isAuto?`<div class="draft-note">✍️<div><b>Roster entry — story not yet written</b>
+         The facts above are curated; the A2/B1/B2 narrative below is a placeholder. Writing it is the task.
+         Open the <b>Studio</b> to author this card, or set it as a student assignment.</div></div>`:''}
+       <div class="lvl-row"><span class="hint">Reading level 閱讀程度:</span>
+         <div class="lvl-toggle" id="lvl">${['A2','B1','B2'].map(l=>`<button data-l="${l}" class="${l===state.level?'on':''}">${l}</button>`).join('')}</div>
+       </div>
+       <p class="story" id="storyTxt">${esc(st[state.level])}</p>
+       <div class="kw-row">${getKw(e).map(k=>`<span class="kw">${esc(k[0])}${k[1]?' <span>'+esc(k[1])+'</span>':''}</span>`).join('')}</div>
+       ${e.quote?`<div class="quote"><p>"${esc(e.quote.text)}"</p>
+         <span class="q-tag ${e.quote.tag}">${esc(e.quote.tagLabel)}</span></div>`:''}
+       ${e.life?`<span class="block-label">🔗 Science in life 生活連結</span><div class="life">${esc(e.life)}</div>`:''}
+     </div>
+   </article>
+   <div class="sec-head"><h2>🪜 Climb the Bloom Ladder</h2>
+     <p>Six levels · finish any 3 to collect this card · levels 5 &amp; 6 are never auto-graded</p></div>
+   <div class="bloom" id="bl"></div>
+   <div class="day-progress">
+     <div class="prog-txt"><span id="pn">0</span>/6</div>
+     <div class="prog-bar"><div class="prog-fill" id="pf"></div></div>
+     <div class="collect-note">💡 The coach nudges, it does not score. You revise, then a partner or teacher responds. 教師與同儕才是評分者。</div>
+   </div>`;
+  $('#bk').onclick=()=>viewMonth(e.m);
+  $('#bkY').onclick=()=>setView('year');
+  $('#lvl').onclick=ev=>{const b=ev.target.closest('button');if(!b)return;
+    state.level=b.dataset.l;
+    $('#lvl').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    $('#storyTxt').textContent=getStory(e)[state.level];};
+  renderBloom(e);updateProg(e);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderBloom(e){
+  const bl=$('#bl');if(!bl)return;bl.innerHTML='';
+  const B=getBloom(e);
+  BLOOM.forEach(b=>{
+    const done=!!state.progress[e.key][b.key];
+    const isMcq=!!(B[b.key]&&B[b.key].opts);
+    const row=document.createElement('div');
+    row.className='b-row'+(done?' done':'');
+    row.innerHTML=`<div class="b-head">
+      <div class="b-num" style="background:${b.color}">${b.n}</div>
+      <div class="b-info"><div class="b-name">${b.name}<span class="zh">${b.zh}</span></div>
+        <div class="b-pts">+${b.pts} pts · ${isMcq?'quick check':'open response'}</div></div>
+      <div class="b-state ${done?'':'arrow'}">${done?'✅':'▾'}</div></div>
+      <div class="b-panel" id="p-${b.key}"></div>`;
+    bl.appendChild(row);
+    row.querySelector('.b-head').onclick=()=>{
+      const was=row.classList.contains('open');
+      bl.querySelectorAll('.b-row').forEach(r=>r.classList.remove('open'));
+      if(!was){row.classList.add('open');buildPanel(e,b);}
+    };
+  });
+}
+
+function buildPanel(e,b){
+  const p=$('#p-'+b.key);if(!p||p.dataset.built)return;p.dataset.built='1';
+  const data=getBloom(e)[b.key];
+  const saved=state.progress[e.key][b.key];
+
+  if(data.opts){
+    p.innerHTML=`<p class="b-q">${esc(data.q)}</p><div class="opts"></div>`;
+    const box=p.querySelector('.opts');
+    data.opts.forEach((t,i)=>{
+      const btn=document.createElement('button');
+      btn.className='opt';btn.textContent=t;btn.disabled=!!saved;
+      if(saved&&i===data.correct)btn.classList.add('right');
+      btn.onclick=()=>{
+        if(state.progress[e.key][b.key])return;
+        if(i===data.correct){btn.classList.add('right');
+          box.querySelectorAll('.opt').forEach(o=>o.disabled=true);mark(e,b,true);}
+        else{btn.classList.add('wrong');btn.disabled=true;toast('Not quite — try another 再試一次');}
+      };
+      box.appendChild(btn);
+    });
+    return;
+  }
+
+  const stancesHTML=data.stances?`<div class="stances" id="s-${b.key}">${
+    data.stances.map(s=>`<button class="stance" data-s="${esc(s)}">${esc(s)}</button>`).join('')}</div>`:'';
+  p.innerHTML=`<p class="b-q">${esc(data.q)}</p>${stancesHTML}
+    <p class="starter">✏️ ${esc(data.starter||'Write in full sentences.')}</p>
+    <textarea id="t-${b.key}" placeholder="Write your response in English…" ${saved?'disabled':''}>${saved?esc(saved.text||''):''}</textarea>
+    <div class="submit-row">
+      <button class="btn-main mint" id="sb-${b.key}" ${saved?'disabled':''}>${saved?'✓ Submitted':'Get coach feedback →'}</button>
+      <span class="wc" id="w-${b.key}">0 words</span></div>
+    <div class="feedback ${saved?'show':''}" id="f-${b.key}">${saved?saved.fb||'':''}</div>`;
+
+  let stance=null;
+  if(data.stances){p.querySelector('#s-'+b.key).onclick=ev=>{
+    const btn=ev.target.closest('.stance');if(!btn||saved)return;stance=btn.dataset.s;
+    p.querySelectorAll('.stance').forEach(x=>x.classList.toggle('on',x===btn));};}
+  const ta=p.querySelector('#t-'+b.key),wc=p.querySelector('#w-'+b.key);
+  ta.oninput=()=>{const n=ta.value.trim()?ta.value.trim().split(/\s+/).length:0;
+    wc.textContent=n+' word'+(n===1?'':'s');};
+  p.querySelector('#sb-'+b.key).onclick=()=>{
+    if(state.progress[e.key][b.key])return;
+    const text=ta.value.trim(),words=text?text.split(/\s+/).length:0;
+    if(data.stances&&!stance){toast('Pick a stance first 先選立場');return;}
+    if(words<6){toast('Write at least 6 words ✍️');return;}
+    const fb=coach(b.key,text,words);
+    const fbx=p.querySelector('#f-'+b.key);fbx.innerHTML=fb;fbx.classList.add('show');
+    ta.disabled=true;const sb=p.querySelector('#sb-'+b.key);sb.textContent='✓ Submitted';sb.disabled=true;
+    if(b.key==='evaluate')state.evals++;
+    if(b.key==='create')state.creates++;
+    mark(e,b,true,{text,fb});
+  };
+}
+
+/* coach: scaffolds language, never assigns a score */
+function coach(key,text,words){
+  const l=text.toLowerCase();
+  const reason=/because|since|so that|as a result|therefore|due to|which means/.test(l);
+  const example=/example|for instance|such as|like when|imagine|in taiwan|every time/.test(l);
+  const hedge=/however|although|on the other hand|but |while /.test(l);
+  let a,b;
+  if(key==='evaluate'){
+    a=reason?'You supported your stance with a reason — that is the core move of an Evaluate task.'
+            :'Add the word <b>because</b> and give one reason for the stance you chose.';
+    b=hedge?'You also acknowledged another side, which strengthens the judgement.'
+           :'Now add one clause beginning <b>Although…</b> or <b>However…</b> to show you considered the other side.';
+  }else if(key==='create'){
+    a=example?'Good — you used something concrete, which is what makes science communication land.'
+             :'Add one concrete image or example a listener can picture.';
+    b=words<25?'Expand to 2–3 full sentences so the idea has room to breathe.'
+              :'Good length. Read it aloud — does it sound like speech, or like a textbook?';
+  }else if(key==='analyze'){
+    a=/both|whereas|while|differ|similar|unlike/.test(l)?'You used comparison language — exactly right for Analyze.'
+      :'Use explicit comparison signals: <b>Both… but whereas… </b>';
+    b='Push further: name <b>one difference in method or era</b>, not only in topic.';
+  }else if(key==='apply'){
+    a=example?'You named something concrete — that is what Apply asks for.'
+             :'Name a specific object, place or moment rather than a general area.';
+    b='Add a second sentence explaining <b>how</b> the connection actually works.';
+  }else{
+    a=words<15?'Try one more sentence — a 10-year-old needs a little more.'
+              :'Reasonable length for a simple explanation.';
+    b=/[A-Z][a-z]+ology|physics|chemistry|molecul|quantum/.test(text)
+      ?'Check for jargon: could you swap the technical word for an everyday one?'
+      :'Nice plain language. Now check: is every sentence something a child could picture?';
+  }
+  return `<b>Coach:</b> ${a}<br>👉 ${b}<br><span style="color:#4A4763">No score is given here. Revise it, then take it to a partner or your teacher.</span>`;
+}
+
+function mark(e,b,ok,extra){
+  state.progress[e.key][b.key]=extra||true;
+  addPoints(b.pts);
+  /* update this row in place — re-rendering would collapse the open panel
+     and destroy the coach feedback the moment it appeared */
+  const bl=$('#bl'), idx=BLOOM.findIndex(x=>x.key===b.key), row=bl&&bl.children[idx];
+  if(row){
+    row.classList.add('done');
+    const st=row.querySelector('.b-state');
+    st.textContent='✅'; st.classList.remove('arrow');
+  }
+  updateProg(e);
+  toast(`✅ ${b.name} complete +${b.pts} pts`);
+}
+function updateProg(e){
+  const n=doneCount(e.key),f=$('#pf'),t=$('#pn');
+  if(f){f.style.width=(n/6*100)+'%';t.textContent=n;}
+  if(n>=3&&!state.cards.has(e.key))collect(e);
+}
+function collect(e){
+  state.cards.add(e.key);
+  $('#collCount').textContent=state.cards.size;
+  $('#streakVal').textContent=state.cards.size;
+  confetti(CAT[e.cat].c);
+  toast(`🃏 Collected ${e.name}!`);
+  checkBadges();
+}
+
+/* ============ PATHS ============ */
+const PATHS=[
+ {id:'women',ico:'👩‍🔬',t:'Women in Science',zh:'女性科學家',c:'#E8558E',
+  d:'Deliberately spread across all twelve months rather than confined to one — because segregating them into a single month is part of the problem.',f:e=>e.cat==='women'},
+ {id:'overlooked',ico:'🔦',t:'The Overlooked',zh:'被忽略的人',c:'#FF9F1C',
+  d:'People whose work was essential and whose names were not on the prize. The best entry point for discussing how credit works.',f:e=>e.cat==='overlooked'},
+ {id:'asia',ico:'🌏',t:'Asia & Taiwan',zh:'亞洲與臺灣',c:'#FF5D47',
+  d:'Local and regional science, from Zhang Heng to the chip ecosystem — the strand that makes this platform yours.',f:e=>e.cat==='asia'},
+ {id:'ethics',ico:'⚖️',t:'Ethics & Judgement',zh:'倫理與判斷',c:'#171431',
+  d:'Consent, credit, weapons, bias, risk. Every card here is built for the Evaluate level.',f:e=>e.cat==='ethics'},
+ {id:'team',ico:'🤝',t:'It Took a Team',zh:'這是團隊的事',c:'#2FBE8F',
+  d:'The direct antidote to the lone-genius myth: collaborations, institutions and collectives.',f:e=>e.cat==='team'},
+ {id:'modern',ico:'🛰️',t:'Living Scientists',zh:'當代科學家',c:'#2EA8E0',
+  d:'Researchers working now. Useful when students say science already finished.',f:e=>e.cat==='modern'},
+ {id:'event',ico:'📅',t:'Moments & Discoveries',zh:'關鍵時刻',c:'#7B5CD6',
+  d:'Events rather than people — treaties, missions, outbreaks and turning points.',f:e=>e.cat==='event'},
+ {id:'classic',ico:'📜',t:'The Canon',zh:'經典人物',c:'#1F35B0',
+  d:'The names most curricula already include — best read alongside the Overlooked path.',f:e=>e.cat==='classic'},
+ {id:'deep',ico:'⭐',t:'Fully Authored Cards',zh:'完整撰寫的卡片',c:'#FFC53D',
+  d:'Days with hand-written A2/B1/B2 stories and custom Bloom questions. Start here to see the target quality.',f:e=>e.deep}
+];
+
+function viewPaths(){
+  stage.innerHTML=`<div class="sec-head"><h2>🧭 Learning Paths</h2>
+    <p>Cross-cutting collections that run through the whole year, so a theme can be taught in one week or followed all year 主題可貫穿全年，也可濃縮為單週課程</p></div>
+    <div class="path-grid">${PATHS.map(p=>{
+      const days=DAYS.filter(p.f);const got=days.filter(d=>state.cards.has(d.key)).length;
+      return `<button class="path" data-p="${p.id}">
+        <div class="path-band" style="background:${p.c}"><div class="path-ico">${p.ico}</div>
+          <div><div class="pt">${p.t}</div><div class="pz">${p.zh} · ${days.length} days</div></div></div>
+        <div class="path-body"><p>${p.d}</p>
+          <div class="mini-bar"><div class="mini-fill" style="width:${got/days.length*100}%"></div></div>
+          <div class="mt-count">${got} / ${days.length} collected</div></div></button>`;}).join('')}
+    </div>`;
+  stage.querySelectorAll('.path').forEach(b=>b.onclick=()=>viewPath(b.dataset.p));
+}
+function viewPath(id){
+  const p=PATHS.find(x=>x.id===id),days=DAYS.filter(p.f);
+  stage.innerHTML=`<div class="month-head"><div class="mh-l"><h2>${p.ico} ${p.t}</h2>
+    <p>${p.zh} · ${days.length} cards across the year</p></div>
+    <div class="mh-nav"><button class="nav-btn ghost" id="bp">← All paths</button></div></div>
+    <div class="list">${days.map(e=>listItem(e)).join('')}</div>`;
+  $('#bp').onclick=()=>viewPaths();
+  bindList();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function listItem(e){
+  return `<button class="li" data-k="${e.key}">
+    <div class="li-date"><div class="m">${MONTHS[e.m-1].n.slice(0,3).toUpperCase()}</div><div class="d">${e.d}</div></div>
+    <div class="li-main"><div class="n">${esc(e.name)}${e.deep?' ⭐':''}</div>
+      <div class="s">${esc(e.zh)} · ${esc(e.field)} · ${esc(e.country)}</div></div>
+    <div class="li-chk">${state.cards.has(e.key)?'✅':'○'}</div></button>`;
+}
+function bindList(){stage.querySelectorAll('.li[data-k]').forEach(b=>b.onclick=()=>openDay(b.dataset.k));}
+
+/* ============ SEARCH ============ */
+function viewSearch(){
+  stage.innerHTML=`<div class="sec-head"><h2>🔍 Find a scientist</h2>
+    <p>Search all 365 by name, field, country or Chinese name 可用姓名、領域、國家或中文檢索</p></div>
+    <div class="month-head"><input type="text" id="q" placeholder="e.g. Taiwan, genetics, 女性, Curie, ethics…" autocomplete="off"></div>
+    <div class="list" id="res"></div>`;
+  const q=$('#q'),res=$('#res');
+  const run=()=>{
+    const v=q.value.trim().toLowerCase();
+    if(!v){res.innerHTML=`<div class="draft-note" style="background:var(--paper)">🔎<div>Type anything above. Try <b>Taiwan</b>, <b>overlooked</b>, <b>vaccine</b>, or a Chinese name.</div></div>`;return;}
+    const hits=DAYS.filter(e=>(e.name+e.zh+e.field+e.country+e.disc+e.cat).toLowerCase().includes(v)).slice(0,60);
+    res.innerHTML=hits.length?hits.map(listItem).join('')
+      :`<div class="draft-note" style="background:var(--paper)">😕<div>No match for "<b>${esc(q.value)}</b>". Try a broader word — a field, a country, or a category like <b>ethics</b>.</div></div>`;
+    bindList();
+  };
+  q.oninput=run;run();q.focus();
+}
+
+/* ============ STUDIO ============ */
+function viewStudio(){
+  const unwritten=DAYS.filter(e=>!e.deep&&!state.authored[e.key]).length;
+  stage.innerHTML=`<div class="sec-head"><h2>✍️ Authoring Studio</h2>
+    <p>${TOTAL-unwritten} of ${TOTAL} cards have full stories. Writing the rest is the curriculum, not the obstacle — this is where students become the authors. 學生撰寫卡片本身就是科學傳播任務。</p></div>
+    <div class="month-head" style="display:block">
+      <div class="field"><label>Pick a day 選擇日期</label>
+        <select id="pick" style="width:100%;border:3px solid var(--ink);border-radius:12px;padding:9px 12px;font-family:var(--body);font-size:14.5px;background:var(--paper)"></select>
+        <div class="help">Days already written show ⭐. Anything you write here appears immediately on that day's card.</div></div>
+      <div class="field"><label>A2 story — 80–100 words, short sentences</label>
+        <textarea id="a2" placeholder="Simple present, everyday vocabulary, one idea per sentence…"></textarea></div>
+      <div class="field"><label>B1 story — 120–150 words, add cause and effect</label>
+        <textarea id="b1" placeholder="Explain why it mattered, and connect the discovery to a consequence…"></textarea></div>
+      <div class="field"><label>B2 story — 180–220 words, add context and contest</label>
+        <textarea id="b2" placeholder="Add historical context, name collaborators, and identify what is disputed or overlooked…"></textarea></div>
+      <div class="submit-row">
+        <button class="btn-main mint" id="save">Save to this day</button>
+        <button class="btn-main sky" id="draft">Load roster facts as a starting draft</button>
+        <button class="btn-main ghost" id="exp">Export all as JSON</button>
+      </div>
+    </div>
+    <div id="expOut"></div>
+    <div class="sec-head"><h2>📋 Writing checklist</h2>
+      <p>The house style for every card — worth giving to students as the rubric</p></div>
+    <div class="month-head" style="display:block">
+      <div style="font-size:14px;line-height:1.9">
+      ✅ <b>No lone geniuses.</b> Name at least one collaborator, predecessor, or institution.<br>
+      ✅ <b>Say who was overlooked</b>, if anyone was, and say it plainly.<br>
+      ✅ <b>One life connection</b> a student could point at today.<br>
+      ✅ <b>Tag every quote</b> as verified, attributed, or paraphrased — never guess.<br>
+      ✅ <b>Social conditions matter.</b> What made this discovery possible at that time and place?<br>
+      ✅ <b>A2 is not baby language.</b> Short sentences, real content.
+      </div>
+    </div>`;
+  const sel=$('#pick');
+  sel.innerHTML=DAYS.map(e=>`<option value="${e.key}">${MONTHS[e.m-1].n.slice(0,3)} ${e.d} — ${e.name}${(e.deep||state.authored[e.key])?' ⭐':''}</option>`).join('');
+  sel.value=state.curKey||(TODAY.m+'-'+TODAY.d);
+  const load=()=>{const e=byKey(sel.value);const s=state.authored[e.key]||e.story||{A2:'',B1:'',B2:''};
+    $('#a2').value=s.A2||'';$('#b1').value=s.B1||'';$('#b2').value=s.B2||'';};
+  sel.onchange=load;load();
+  $('#draft').onclick=()=>{const e=byKey(sel.value),a=autoStory(e);
+    $('#a2').value=`${e.name} (${e.zh}) — ${e.country}, ${e.years}. ${e.disc}`;
+    $('#b1').value=`${e.disc} `;$('#b2').value=`${e.disc} `;
+    toast('Facts loaded — now write it properly ✍️');};
+  $('#save').onclick=()=>{
+    const e=byKey(sel.value);
+    const A2=$('#a2').value.trim(),B1=$('#b1').value.trim(),B2=$('#b2').value.trim();
+    if(!A2||!B1||!B2){toast('All three levels are needed 三個程度都要填');return;}
+    state.authored[e.key]={A2,B1,B2};
+    addPoints(60);confetti('#FFC53D');
+    toast(`✍️ ${e.name} authored! +60 pts`);
+    checkBadges();
+    sel.innerHTML=DAYS.map(x=>`<option value="${x.key}">${MONTHS[x.m-1].n.slice(0,3)} ${x.d} — ${x.name}${(x.deep||state.authored[x.key])?' ⭐':''}</option>`).join('');
+    sel.value=e.key;
+  };
+  $('#exp').onclick=()=>{
+    const out=Object.keys(state.authored).map(k=>{const e=byKey(k);
+      return {day:`${MONTHS[e.m-1].n} ${e.d}`,name:e.name,zh:e.zh,story:state.authored[k]};});
+    $('#expOut').innerHTML=out.length
+      ?`<pre class="out">${esc(JSON.stringify(out,null,1))}</pre>`
+      :`<div class="draft-note" style="background:var(--paper)">📭<div>Nothing authored in this session yet. Write a card above, then export.</div></div>`;
+  };
+}
+
+/* ============ BADGES & COLLECTION ============ */
+const BADGES=[
+ {id:'first',ico:'🌱',t:'First Card',d:'Collect any one card',f:s=>s.cards.size>=1},
+ {id:'ten',ico:'🔟',t:'Ten Minds',d:'Collect 10 cards',f:s=>s.cards.size>=10},
+ {id:'month',ico:'🗓️',t:'Month Complete',d:'Collect every card in one month',
+   f:s=>MONTHS.some((m,i)=>{const d=DAYS.filter(x=>x.m===i+1);return d.every(x=>s.cards.has(x.key));})},
+ {id:'women',ico:'👩‍🔬',t:'Hidden Figures',d:'Collect 5 women-in-science cards',
+   f:s=>DAYS.filter(e=>e.cat==='women'&&s.cards.has(e.key)).length>=5},
+ {id:'taiwan',ico:'🏝️',t:'Taiwan Focus',d:'Collect 5 Asia & Taiwan cards',
+   f:s=>DAYS.filter(e=>e.cat==='asia'&&s.cards.has(e.key)).length>=5},
+ {id:'overlooked',ico:'🔦',t:'Credit Where Due',d:'Collect 5 overlooked-figure cards',
+   f:s=>DAYS.filter(e=>e.cat==='overlooked'&&s.cards.has(e.key)).length>=5},
+ {id:'ethics',ico:'⚖️',t:'Critical Thinker',d:'Submit 10 Evaluate responses',f:s=>s.evals>=10},
+ {id:'creator',ico:'✍️',t:'Science Communicator',d:'Submit 10 Create responses',f:s=>s.creates>=10},
+ {id:'author',ico:'📝',t:'Card Author',d:'Write a full card in the Studio',f:s=>Object.keys(s.authored).length>=1},
+ {id:'author5',ico:'📚',t:'Staff Writer',d:'Author 5 cards',f:s=>Object.keys(s.authored).length>=5},
+ {id:'world',ico:'🌍',t:'Around the World',d:'Collect cards from 15 countries',f:s=>countries().got>=15},
+ {id:'year',ico:'🏆',t:'A Full Year',d:'Collect every card in the year',f:s=>s.cards.size>=TOTAL}
+];
+function checkBadges(){
+  BADGES.forEach(b=>{if(!state.earned.has(b.id)&&b.f(state)){
+    state.earned.add(b.id);setTimeout(()=>toast(`🏅 Badge unlocked: ${b.t}`),700);}});
+}
+function countries(){
+  const all=new Map();
+  DAYS.forEach(e=>{const f=e.country.split(' ')[0];
+    if(!all.has(f))all.set(f,{flag:f,name:e.country.replace(/^\S+\s/,''),n:0,got:0});
+    all.get(f).n++;if(state.cards.has(e.key))all.get(f).got++;});
+  const list=[...all.values()].sort((a,b)=>b.n-a.n);
+  return {list,got:list.filter(x=>x.got>0).length,total:list.length};
+}
+function openCollection(){
+  const c=countries();
+  $('#ovBody').innerHTML=`<button class="close-x" id="cx">✕ Close</button>
+    <h2>🃏 Collection</h2>
+    <p class="sub">${state.cards.size} of 365 cards · ${c.got} of ${c.total} places · ${state.earned.size} of ${BADGES.length} badges</p>
+    <h3>🌍 World Map 世界地圖</h3><p class="sub">Places light up as you collect cards from them</p>
+    <div class="world">${c.list.map(x=>`<div class="wc-item${x.got?'':' dim'}">
+      <div class="f">${x.flag}</div><div class="n">${esc(x.name)}</div>
+      <div class="c">${x.got}/${x.n}</div></div>`).join('')}</div>
+    <h3>🏅 Badges 徽章</h3><p class="sub">Earned through consistency, curiosity, judgement and creation</p>
+    <div class="badge-grid">${BADGES.map(b=>`<div class="badge${state.earned.has(b.id)?'':' locked'}">
+      <div class="b-ico">${b.ico}</div><div><div class="b-t">${b.t}</div><div class="b-d">${b.d}</div></div></div>`).join('')}</div>`;
+  $('#ov').classList.add('show');
+  $('#cx').onclick=()=>$('#ov').classList.remove('show');
+}
+
+/* ============ WIRING ============ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>setView(t.dataset.v));
+$('#collBtn').onclick=openCollection;
+$('#brandHome').onclick=()=>setView('year');
+$('#ov').onclick=e=>{if(e.target.id==='ov')$('#ov').classList.remove('show');};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#ov').classList.remove('show');});
+
+setView('year');
+toast(`Today is ${MONTHS[TODAY.m-1].n} ${TODAY.d} — tap ⭐ Today to begin`);
+
+</script>
+</body>
+</html>

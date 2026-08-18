@@ -427,7 +427,7 @@ button, select, input { font: inherit; }
   <section class="hero">
     <div class="eyebrow">🌍 Interactive SDGs English Learning</div>
     <h2>Pick a game.<br><span class="grad">Start playing.</span></h2>
-    <p id="heroCopy">Your game library. Launch the SDGs card-matching challenge today — more Claude-built mini-games are on the way.</p>
+    <p id="heroCopy">Your game library — six English-learning games: SDGs card-matching, intercultural board travel, daily science communicators, inquiry debate, morpheme building, and a 3-minute thesis lab.</p>
   </section>
 
   <div class="section-head">
@@ -524,34 +524,52 @@ const GAMES = [
     tags: ["CEFR B1–B2", "Speaking", "Culture"]
   },
   {
-    id: "word-sprint",
-    title: "Word Sprint",
-    sub: "Claude Mini-Game",
-    desc: "A fast-paced vocabulary matching race against the clock. Arriving soon.",
-    icon: "⚡",
-    accent: "#3b82f6",
-    status: "soon",
-    tags: ["Vocabulary", "Timed"]
+    id: "science-365",
+    title: "Science Every Day 365",
+    sub: "每日科學人 · 科學傳播",
+    desc: "366 daily science-communicator cards, each with a CEFR story and a six-level Bloom's Taxonomy ladder for ESP / EAP / EMI.",
+    icon: "🔬",
+    accent: "#0ea5e9",
+    status: "live",
+    action: "link",
+    url: "/pages/science_365.html",
+    tags: ["CEFR A2–B2", "Reading", "Science"]
   },
   {
-    id: "eco-quiz",
-    title: "Eco Quiz Quest",
-    sub: "Claude Mini-Game",
-    desc: "Branching SDG scenarios that test your reasoning and reading. Arriving soon.",
-    icon: "🌱",
-    accent: "#a855f7",
-    status: "soon",
-    tags: ["Reading", "Quiz"]
+    id: "science-debate",
+    title: "Science Inquiry Debate",
+    sub: "IYNT · 科學辯論訓練",
+    desc: "An interactive masterclass trainer for structured scientific debate — build claims, rebuttals, and evidence-based argument.",
+    icon: "⚖️",
+    accent: "#f59e0b",
+    status: "live",
+    action: "link",
+    url: "/pages/science_debate.html",
+    tags: ["CEFR B1–B2", "Speaking", "Argument"]
   },
   {
-    id: "sound-match",
-    title: "Sound Match",
-    sub: "Claude Mini-Game",
-    desc: "Listen and pair pronunciation cards to sharpen your ear. Arriving soon.",
-    icon: "🎧",
+    id: "science-vocab",
+    title: "Morpheme Synthesis Lab",
+    sub: "詞素合成實驗室 · 科學字彙",
+    desc: "Build long science words from prefixes, roots, and suffixes across seven fields — synthesise, dissect, rapid-screen, and infer.",
+    icon: "🧬",
+    accent: "#0e8f7a",
+    status: "live",
+    action: "link",
+    url: "/pages/science_vocab.html",
+    tags: ["Vocabulary", "Morphology", "Science"]
+  },
+  {
+    id: "three-minute-thesis",
+    title: "3MT Mission Lab",
+    sub: "三分鐘論文互動挑戰",
+    desc: "Craft and refine a Three Minute Thesis pitch — draft your script, design one slide, and run the AI judge for feedback.",
+    icon: "🎤",
     accent: "#fb7185",
-    status: "soon",
-    tags: ["Listening", "Pronunciation"]
+    status: "live",
+    action: "link",
+    url: "/pages/three_minute_thesis.html",
+    tags: ["Speaking", "Presentation", "Research"]
   }
 ];
 
